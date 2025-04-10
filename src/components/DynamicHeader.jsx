@@ -18,7 +18,7 @@ export default function DynamicHeader({
   };
 
   return (
-    <div className="bg-base-100 shadow px-6 w-full navbar">
+    <div className="px-6 w-full navbar">
       {/* 왼쪽 아이콘 */}
       <div className="navbar-start">
         <button className="btn btn-ghost btn-circle">{leftIcon}</button>
