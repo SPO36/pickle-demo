@@ -19,7 +19,7 @@ function TodayTheme() {
         ))}
       </div>
       <div>
-        <button className="w-full btn">
+        <button className="bg-base-300 w-full btn">
           <RefreshCcw size={16} />
           다른 큐레이션 추천받기
         </button>

@@ -7,7 +7,7 @@ function HostAvatarList() {
       <div className="flex gap-4">
         {hosts.map((name, idx) => (
           <div key={idx} className="flex flex-col items-center">
-            <div className="bg-white border border-base-300 rounded-full w-40 h-40 overflow-hidden">
+            <div className="bg-base-100 border border-base-300 rounded-full w-40 h-40 overflow-hidden">
               {/* 여기에 이미지 있으면 <img src="..." className="w-full h-full object-cover" /> */}
             </div>
             <p className="mt-2 text-lg">{name}</p>

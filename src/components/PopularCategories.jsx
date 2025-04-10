@@ -28,7 +28,7 @@ function PopularCategories() {
       </div>
 
       <div>
-        <button className="w-full btn">
+        <button className="bg-base-300 w-full btn">
           <RefreshCcw size={16} />
           다른 카테고리 추천받기
         </button>
