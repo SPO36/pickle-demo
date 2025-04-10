@@ -1,9 +1,7 @@
-import TodayTheme from '../components/TodayTheme';
-
 function TagDetail() {
   return (
     <>
-      <TodayTheme />
+      <div>TagDetail Page</div>
     </>
   );
 }

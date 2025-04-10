@@ -71,7 +71,9 @@ function WeekplyPopularChannels() {
                 >
                   <Heart
                     size={16}
-                    className="transition-transform duration-300"
+                    className={`transition-transform duration-300 ${
+                      likes[card.title] ? 'scale-125' : 'scale-100'
+                    }`}
                     fill={likes[card.title] ? '#F43F5E' : 'none'}
                     stroke={likes[card.title] ? '#F43F5E' : 'currentColor'}
                   />

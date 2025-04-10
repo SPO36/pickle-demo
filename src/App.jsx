@@ -1,41 +1,92 @@
 import { Menu, Mic, Search } from 'lucide-react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import DynamicHeader from './components/DynamicHeader';
 import Layout from './components/Layout';
 import Home from './pages/Home';
+import MenuPage from './pages/MenuPage';
+import SearchPage from './pages/SearchPage';
 import TagDetail from './pages/TagDetail';
+import VoiceSearch from './pages/VoiceSearch';
+
+function AppRoutes() {
+  const navigate = useNavigate();
+
+  return (
+    <Routes>
+      {/* Home Route */}
+      <Route
+        path="/"
+        element={
+          <Layout
+            headerContent={
+              <DynamicHeader
+                leftIcon={{
+                  icon: <Mic size={24} />,
+                  onClick: () => navigate('/voiceSearch'),
+                }}
+                rightIcons={[
+                  {
+                    icon: <Search size={24} />,
+                    onClick: () => navigate('/search'),
+                  },
+                  {
+                    icon: <Menu size={24} />,
+                    onClick: () => navigate('/menu'),
+                  },
+                ]}
+              />
+            }
+          >
+            <Home />
+          </Layout>
+        }
+      />
+
+      {/* Tag Detail Route */}
+      <Route
+        path="/tags/:tagId"
+        element={
+          <Layout headerContent={<DynamicHeader />}>
+            <TagDetail />
+          </Layout>
+        }
+      />
+
+      {/* Voice Search Route */}
+      <Route
+        path="/voiceSearch"
+        element={
+          <Layout headerContent={<DynamicHeader />}>
+            <VoiceSearch />
+          </Layout>
+        }
+      />
+      {/* SearchPage Route */}
+      <Route
+        path="/search"
+        element={
+          <Layout headerContent={<DynamicHeader />}>
+            <SearchPage />
+          </Layout>
+        }
+      />
+      {/* MenuPage Route */}
+      <Route
+        path="/menu"
+        element={
+          <Layout headerContent={<DynamicHeader />}>
+            <MenuPage />
+          </Layout>
+        }
+      />
+    </Routes>
+  );
+}
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Home Route */}
-        <Route
-          path="/"
-          element={
-            <Layout
-              headerContent={
-                <DynamicHeader
-                  leftIcon={<Mic size={24} />}
-                  rightIcons={[<Search size={24} />, <Menu size={24} />]}
-                />
-              }
-            >
-              <Home />
-            </Layout>
-          }
-        />
-
-        {/* Tag Detail Route */}
-        <Route
-          path="/tags/:tagId"
-          element={
-            <Layout headerContent={<DynamicHeader />}>
-              <TagDetail />
-            </Layout>
-          }
-        />
-      </Routes>
+      <AppRoutes />
     </BrowserRouter>
   );
 }

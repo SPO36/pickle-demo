@@ -15,7 +15,7 @@ module.exports = {
         },
         like: {
           '0%': { transform: 'scale(1)' },
-          '50%': { transform: 'scale(1.4)' },
+          '50%': { transform: 'scale(1.25)' },
           '100%': { transform: 'scale(1)' },
         },
       },
