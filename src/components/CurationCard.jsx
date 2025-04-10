@@ -23,7 +23,7 @@ function CurationCard({ subTitle, title, tagId, isCompact = false }) {
 
         {!isCompact && (
           <div className="card-actions">
-            <button className="bg-base-300 rounded-full btn">
+            <button className="bg-base-200 rounded-full btn">
               <Play size={16} />
               재생하기
             </button>

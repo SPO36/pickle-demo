@@ -8,7 +8,6 @@ function TrendingBanner() {
   const [isAnimating, setIsAnimating] = useState(true);
   const containerRef = useRef(null);
 
-  // 🔄 Supabase에서 데이터 불러오기
   useEffect(() => {
     async function fetchTrending() {
       const { data, error } = await supabase.from('trending').select('*');
@@ -22,10 +21,8 @@ function TrendingBanner() {
     fetchTrending();
   }, []);
 
-  // ❗ undefined 에러 방지: 아이템이 있을 때만 복제
   const extendedItems = items.length > 0 ? [...items, items[0]] : [];
 
-  // ⏱ 자동 롤링 애니메이션
   useEffect(() => {
     if (items.length === 0) return;
 
@@ -36,7 +33,6 @@ function TrendingBanner() {
     return () => clearInterval(interval);
   }, [items]);
 
-  // 🔁 마지막 → 처음으로 자연스럽게 복귀
   useEffect(() => {
     if (currentIdx === items.length) {
       setTimeout(() => {
@@ -70,7 +66,7 @@ function TrendingBanner() {
               </div>
               <div className="shrink-0">{(idx % items.length) + 1}</div>
               <div className="truncate">{item.title}</div>
-              <div className="text-slate-500 whitespace-nowrap shrink-0">by {item.source}</div>
+              <div className="whitespace-nowrap shrink-0">by {item.source}</div>
             </div>
           ) : null
         )}

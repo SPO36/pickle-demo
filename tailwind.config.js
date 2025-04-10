@@ -13,9 +13,15 @@ module.exports = {
           '0%': { transform: 'tranbaseY(0)' },
           '100%': { transform: 'tranbaseY(-100%)' },
         },
+        like: {
+          '0%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.4)' },
+          '100%': { transform: 'scale(1)' },
+        },
       },
       animation: {
         scroll: 'scroll 5s linear infinite',
+        like: 'like 0.3s ease-in-out',
       },
     },
   },
