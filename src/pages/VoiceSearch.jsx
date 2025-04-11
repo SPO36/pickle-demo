@@ -31,9 +31,12 @@ function VoiceSearch() {
         <p className="z-10 text-gray-500 text-2xl animate-pulse">듣는 중...</p>
 
         <div className="z-10 relative w-32 h-32">
-          <div className="absolute inset-0 bg-slate-400 opacity-40 rounded-full animate-ping" />
+          {/* 파동 원 1: 기본 크기 → 2배 */}
+          <div className="absolute inset-2 bg-slate-400 opacity-30 rounded-full animate-ping" />
+
+          {/* 마이크 아이콘 */}
           <div className="relative flex justify-center items-center bg-slate-600 rounded-full w-full h-full text-white">
-            <Mic size={40} />
+            <Mic size={40} className="animate-[micGrow_1.2s_ease-in-out_infinite]" />
           </div>
         </div>
 
