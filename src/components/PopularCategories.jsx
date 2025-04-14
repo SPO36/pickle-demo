@@ -1,11 +1,17 @@
 import { RefreshCcw } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import CurationCard from './CurationCard';
 
 function PopularCategories() {
   const [categories, setCategories] = useState([]);
   const [shuffledCards, setShuffledCards] = useState([]);
+  const navigate = useNavigate();
+
+  const handleClickCategory = (slug) => {
+    navigate(`/categories/${slug}`);
+  };
 
   const getRandomCards = (source) => {
     if (!source || source.length === 0) return [];
@@ -53,9 +59,10 @@ function PopularCategories() {
                 image={category.image}
                 subTitle="CATEGORY"
                 title={category.title}
-                tagId={`tag-${idx}`}
+                to={`/categories/${category.slug}`} // ✅ 이거만 있어야 함
                 isCompact={true}
                 textColor="text-white"
+                // ❌ tagId는 절대 넘기지 말 것!!
               />
             ))}
       </div>

@@ -1,11 +1,15 @@
 import { Play } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-function CurationCard({ subTitle, title, tagId, image, textColor, isCompact = false }) {
+function CurationCard({ subTitle, title, tagId, image, textColor, isCompact = false, to }) {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/tags/${tagId}`);
+    if (to) {
+      navigate(to); // ✅ to가 있으면 우선 사용
+    } else if (tagId) {
+      navigate(`/tags/${tagId}`);
+    }
   };
 
   return (

@@ -1,5 +1,7 @@
+import Lottie from 'lottie-react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import animationData from '../assets/VoiceSearch_bg2.json';
 import ChannelCard from '../components/ChannelCard';
 import EpisodeCard from '../components/EpisodeCard';
 import { supabase } from '../lib/supabase';
@@ -59,7 +61,17 @@ function TagDetail() {
     fetchData();
   }, [tab]);
 
-  if (!theme) return <div className="p-6">로딩 중...</div>;
+  // 로딩 중일 때 애니메이션만 표시
+  if (!theme) {
+    return (
+      <div className="flex justify-center items-center p-6">
+        <div className="flex flex-col items-center w-400 h-400">
+          <Lottie style={{ fill: 'black' }} animationData={animationData} loop={true} />
+          <div>로딩 중...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={fadeClass}>

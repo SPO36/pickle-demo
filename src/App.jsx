@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import DynamicHeader from './components/DynamicHeader';
 import Layout from './components/Layout';
 import TagDetailLayoutWrapper from './components/TagDetailLayoutWrapper';
+import CategoryDetail from './pages/CategoryDetail';
 import Home from './pages/Home';
 import MenuPage from './pages/MenuPage';
 import SearchPage from './pages/SearchPage';
@@ -52,6 +53,16 @@ function AppRoutes() {
         element={
           <Layout headerContent={<DynamicHeader centerText=" " />}>
             <VoiceSearch />
+          </Layout>
+        }
+      />
+
+      {/* Category Detail Route */}
+      <Route
+        path="/categories/:slug"
+        element={
+          <Layout headerContent={<DynamicHeader centerText="카테고리" />}>
+            <CategoryDetail />
           </Layout>
         }
       />
