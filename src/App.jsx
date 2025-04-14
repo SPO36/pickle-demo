@@ -7,6 +7,7 @@ import TagDetailLayoutWrapper from './components/TagDetailLayoutWrapper';
 import CategoryDetail from './pages/CategoryDetail';
 import Home from './pages/Home';
 import MenuPage from './pages/MenuPage';
+import PlayEpisode from './pages/PlayEpisode';
 import SearchPage from './pages/SearchPage';
 import VoiceSearch from './pages/VoiceSearch';
 
@@ -46,6 +47,16 @@ function AppRoutes() {
       />
       {/* Tag Detail Route */}
       <Route path="/tags/:slug" element={<TagDetailLayoutWrapper />} />
+
+      {/* Episode Detail (Play Page) Route */}
+      <Route
+        path="/episode"
+        element={
+          <Layout headerContent={<DynamicHeader centerText=" " />}>
+            <PlayEpisode />
+          </Layout>
+        }
+      />
 
       {/* Voice Search Route */}
       <Route

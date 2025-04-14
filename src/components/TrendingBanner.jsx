@@ -83,7 +83,7 @@ function TrendingBanner() {
             </div>
             <div className="shrink-0">{(idx % items.length) + 1}</div>
             <div className="truncate">{item.title}</div>
-            <div className="whitespace-nowrap shrink-0">by {item.source}</div>
+            <div className="text-gray-500 whitespace-nowrap shrink-0">by {item.source}</div>
           </div>
         ))}
       </div>

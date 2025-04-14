@@ -1,20 +1,23 @@
 import { Play } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-function CurationCard({ subTitle, title, tagId, image, textColor, isCompact = false, to }) {
+function CurationCard({ subTitle, title, tagId, image, textColor, isCompact = false }) {
   const navigate = useNavigate();
 
-  const handleClick = () => {
-    if (to) {
-      navigate(to); // ✅ to가 있으면 우선 사용
-    } else if (tagId) {
+  const handleCardClick = () => {
+    if (tagId) {
       navigate(`/tags/${tagId}`);
     }
   };
 
+  const handlePlayClick = (e) => {
+    e.stopPropagation(); // 카드 클릭 막기
+    navigate('/episode'); // 임시로 고정된 재생 페이지로 이동
+  };
+
   return (
     <div
-      onClick={handleClick}
+      onClick={handleCardClick}
       className={`relative flex flex-col p-6 w-full border border-base-300 overflow-hidden ${
         isCompact ? 'h-44' : 'h-56'
       } cursor-pointer ${image ? '' : 'bg-base-100'}`}
@@ -32,7 +35,7 @@ function CurationCard({ subTitle, title, tagId, image, textColor, isCompact = fa
 
       <div
         className={`relative z-10 flex flex-col flex-1 justify-between ${
-          textColor ? textColor : 'text-base-content'
+          textColor ?? 'text-base-content'
         }`}
       >
         <div>
@@ -42,7 +45,7 @@ function CurationCard({ subTitle, title, tagId, image, textColor, isCompact = fa
 
         {!isCompact && (
           <div className="mt-3 card-actions">
-            <button className="rounded-full btn">
+            <button onClick={handlePlayClick} className="rounded-full btn">
               <Play size={16} />
               재생하기
             </button>

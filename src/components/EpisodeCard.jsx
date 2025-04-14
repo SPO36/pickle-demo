@@ -10,7 +10,7 @@ function EpisodeCard({ title, creator, src }) {
         </figure>
         <div className="card-body">
           <h2 className="overflow-hidden line-clamp-2 card-title">{title}</h2>
-          <p>{creator}</p>
+          <p className="text-gray-500">{creator}</p>
         </div>
       </div>
     </div>

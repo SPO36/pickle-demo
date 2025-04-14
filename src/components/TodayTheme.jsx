@@ -40,6 +40,7 @@ function TodayTheme() {
                   title={theme.title}
                   tagId={theme.slug}
                   image={theme.image_url}
+                  episodeId={theme.episode_id}
                 />
               </div>
             ))}
