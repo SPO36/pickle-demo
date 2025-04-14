@@ -2,7 +2,7 @@ import { ArrowLeft, Menu, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function DynamicHeader({ leftIcon, rightIcons }) {
+export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
   const navigate = useNavigate();
   const [theme, setTheme] = useState('light');
 
@@ -96,9 +96,13 @@ export default function DynamicHeader({ leftIcon, rightIcons }) {
 
       {/* 중앙 로고 */}
       <div className="navbar-center">
-        <button onClick={() => navigate('/')} className="text-xl btn btn-ghost">
-          Pickle
-        </button>
+        {centerText ? (
+          <span className="font-semibold text-lg">{centerText?.replace(/\\n/g, ' ')}</span>
+        ) : (
+          <button onClick={() => navigate('/')} className="text-xl btn btn-ghost">
+            Pickle
+          </button>
+        )}
       </div>
 
       {/* 오른쪽 아이콘들 */}

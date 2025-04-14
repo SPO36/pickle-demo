@@ -1,5 +1,6 @@
 import { RefreshCcw } from 'lucide-react';
 import { useState } from 'react';
+import EpisodeCard from '../components/EpisodeCard'; // 경로는 프로젝트 구조에 맞게 수정
 
 function WeekplyPopularHosts() {
   const cardData = [
@@ -29,14 +30,6 @@ function WeekplyPopularHosts() {
   };
 
   const [shuffledCards, setShuffledCards] = useState(getRandomCards());
-  const [likes, setLikes] = useState({});
-
-  const toggleLike = (title) => {
-    setLikes((prev) => ({
-      ...prev,
-      [title]: !prev[title],
-    }));
-  };
 
   const handleRefresh = () => {
     setShuffledCards(getRandomCards());
@@ -47,17 +40,7 @@ function WeekplyPopularHosts() {
       <div className="mb-4 font-bold text-2xl">이번주 급상승 에피소드</div>
       <div className="flex gap-4 w-full">
         {shuffledCards.map((card, idx) => (
-          <div key={idx} className="w-1/3">
-            <div className="bg-base-100 shadow-sm card">
-              <figure>
-                <img src={card.src} alt={card.creator} />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title">{card.title}</h2>
-                <p>{card.creator}</p>
-              </div>
-            </div>
-          </div>
+          <EpisodeCard key={idx} title={card.title} creator={card.creator} src={card.src} />
         ))}
       </div>
       <div>

@@ -34,31 +34,45 @@ function PopularCategories() {
 
   return (
     <div className="space-y-3">
-      <div className="mb-4 font-bold text-2xl">인기 카테고리</div>
+      <div className="mb-4 font-bold text-2xl">
+        {shuffledCards.length === 0 ? (
+          <div className="bg-base-300 rounded-xl w-40 h-8 animate-pulse" />
+        ) : (
+          '인기 카테고리'
+        )}
+      </div>
 
       <div className="gap-4 grid grid-cols-3">
-        {shuffledCards.map((category, idx) => (
-          <CurationCard
-            key={category.id || idx}
-            image={category.image}
-            subTitle="CATEGORY"
-            title={category.title}
-            tagId={`tag-${idx}`}
-            isCompact={true}
-            textColor="text-white"
-          />
-        ))}
+        {shuffledCards.length === 0
+          ? Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="bg-base-300 rounded-xl h-44 animate-pulse" />
+            ))
+          : shuffledCards.map((category, idx) => (
+              <CurationCard
+                key={category.id || idx}
+                image={category.image}
+                subTitle="CATEGORY"
+                title={category.title}
+                tagId={`tag-${idx}`}
+                isCompact={true}
+                textColor="text-white"
+              />
+            ))}
       </div>
 
       <div>
-        <button
-          onClick={handleShuffle}
-          disabled={categories.length === 0}
-          className="bg-base-200 w-full btn"
-        >
-          <RefreshCcw size={16} />
-          다른 카테고리 추천받기
-        </button>
+        {categories.length === 0 ? (
+          <div className="bg-base-300 rounded-xl w-full h-10 animate-pulse" />
+        ) : (
+          <button
+            onClick={handleShuffle}
+            disabled={categories.length === 0}
+            className="bg-base-200 w-full btn"
+          >
+            <RefreshCcw size={16} />
+            다른 카테고리 추천받기
+          </button>
+        )}
       </div>
     </div>
   );

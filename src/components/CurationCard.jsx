@@ -15,7 +15,6 @@ function CurationCard({ subTitle, title, tagId, image, textColor, isCompact = fa
         isCompact ? 'h-44' : 'h-56'
       } cursor-pointer ${image ? '' : 'bg-base-100'}`}
     >
-      {/* 🔹 배경 이미지 */}
       {image && (
         <>
           <img
@@ -27,7 +26,6 @@ function CurationCard({ subTitle, title, tagId, image, textColor, isCompact = fa
         </>
       )}
 
-      {/* 🔸 콘텐츠 (textColor 유무에 따라 다르게 처리) */}
       <div
         className={`relative z-10 flex flex-col flex-1 justify-between ${
           textColor ? textColor : 'text-base-content'
@@ -35,7 +33,7 @@ function CurationCard({ subTitle, title, tagId, image, textColor, isCompact = fa
       >
         <div>
           <p className="opacity-80 mb-1 text-sm">{subTitle}</p>
-          <h2 className="text-xl whitespace-pre-line card-title">{title}</h2>
+          <h2 className="text-xl whitespace-pre-line card-title">{title.replace(/\\n/g, '\n')}</h2>
         </div>
 
         {!isCompact && (
