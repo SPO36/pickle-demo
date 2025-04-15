@@ -85,8 +85,13 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
         onClick: () => navigate('/search'),
       },
       {
-        icon: <Menu size={24} />,
-        onClick: () => navigate('/menu'),
+        // ✅ 메뉴 버튼을 drawer toggle로 교체
+        icon: (
+          <label htmlFor="menu-drawer" className="cursor-pointer btn btn-ghost btn-circle">
+            <Menu size={24} />
+          </label>
+        ),
+        onClick: null, // label이 toggle 역할
       },
     ]),
   ];

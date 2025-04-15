@@ -1,13 +1,13 @@
-import { Menu, Mic, Search } from 'lucide-react';
+import { Mic } from 'lucide-react';
 import { useState } from 'react';
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import DynamicHeader from './components/DynamicHeader';
 import Layout from './components/Layout';
+import ScrollToTop from './components/ScrollToTop';
 import TagDetailLayoutWrapper from './components/TagDetailLayoutWrapper';
 import ZoomProvider from './components/ZoomProvider';
 import CategoryDetail from './pages/CategoryDetail';
 import Home from './pages/Home';
-import MenuPage from './pages/MenuPage';
 import PlayEpisode from './pages/PlayEpisode';
 import SearchPage from './pages/SearchPage';
 import VoiceSearch from './pages/VoiceSearch';
@@ -38,16 +38,6 @@ function AppRoutes() {
                     ),
                     onClick: () => navigate('/voiceSearch'),
                   }}
-                  rightIcons={[
-                    {
-                      icon: <Search size={24} />,
-                      onClick: () => navigate('/search'),
-                    },
-                    {
-                      icon: <Menu size={24} />,
-                      onClick: () => navigate('/menu'),
-                    },
-                  ]}
                 />
               }
             >
@@ -97,16 +87,6 @@ function AppRoutes() {
             </Layout>
           }
         />
-
-        {/* MenuPage Route */}
-        <Route
-          path="/menu"
-          element={
-            <Layout headerContent={<DynamicHeader centerText=" " />}>
-              <MenuPage />
-            </Layout>
-          }
-        />
       </Routes>
     </>
   );
@@ -115,6 +95,7 @@ function AppRoutes() {
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AppRoutes />
     </BrowserRouter>
   );

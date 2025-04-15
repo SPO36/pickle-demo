@@ -6,7 +6,10 @@ function WeekplyPopularHosts() {
 
   useEffect(() => {
     async function fetchHosts() {
-      const { data, error } = await supabase.from('hosts').select('*');
+      const { data, error } = await supabase
+        .from('hosts')
+        .select('*')
+        .order('no', { ascending: true });
       if (error) console.error('❌ Error loading hosts:', error.message);
       else setHosts(data);
     }
@@ -21,12 +24,12 @@ function WeekplyPopularHosts() {
         {hosts.length === 0 ? (
           <div className="bg-base-300 rounded-xl w-40 h-8 animate-pulse" />
         ) : (
-          '이번주 인기 진행자'
+          '뜨는 사람들'
         )}
       </div>
 
       {/* 호스트 리스트 or 스켈레톤 */}
-      <div className="flex gap-4 overflow-x-auto scrollbar-hide">
+      <div className="flex gap-4 overflow-x-auto cursor-pointer scrollbar-hide">
         {hosts.length === 0
           ? Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="flex flex-col flex-shrink-0 items-center gap-2">

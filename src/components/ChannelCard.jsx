@@ -1,8 +1,15 @@
 import { Heart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 function ChannelCard({ src, title, creator, liked, onToggleLike }) {
+  const navigate = useNavigate();
+  const handlePlayClick = (e) => {
+    e.stopPropagation(); // 카드 클릭 막기
+    navigate('/episode'); // 임시로 고정된 재생 페이지로 이동
+  };
+
   return (
-    <div className="w-full">
+    <div className="w-full cursor-pointer" onClick={handlePlayClick}>
       <div className="bg-base-100 shadow-sm border border-base-300 h-full card">
         <figure className="bg-base-100 px-10 pt-10">
           <img src={src} alt={title} className="rounded-xl w-full h-full object-cover" />

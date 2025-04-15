@@ -34,7 +34,7 @@ function WeeklySmartPick() {
         )}
       </div>
 
-      <div className="flex gap-4 w-full">
+      <div className="flex gap-2 w-full">
         {themes.length === 0
           ? Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="bg-base-300 rounded-xl w-1/3 h-56 animate-pulse" />

@@ -21,7 +21,7 @@ function CurationCard({ subTitle, title, tagId, to, image, textColor, isCompact 
     <div
       onClick={handleCardClick}
       className={`relative flex flex-col p-6 w-full border border-base-300 overflow-hidden ${
-        isCompact ? 'h-44' : 'h-56'
+        isCompact ? 'h-56' : 'h-60'
       } cursor-pointer ${image ? '' : 'bg-base-100'}`}
     >
       {image && (

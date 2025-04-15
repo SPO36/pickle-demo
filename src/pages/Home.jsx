@@ -6,6 +6,7 @@ import WeeklyHotEmisodes from '../components/WeeklyHotEpisodes';
 import WeeklySmartPick from '../components/WeeklySmartPick';
 import WeeklyPopularChannels from '../components/WeekplyPopularChannels';
 import WeeklyPopularHosts from '../components/WeekplyPopularHosts';
+import MenuPage from './MenuPage';
 
 function Home() {
   const [fadeClass, setFadeClass] = useState('fade-enter');
@@ -19,14 +20,28 @@ function Home() {
   }, []);
 
   return (
-    <div className={`space-y-12 ${fadeClass}`}>
-      <TrendingBanner />
-      <TodayTheme />
-      <PopularCategories />
-      <WeeklyPopularHosts />
-      <WeeklySmartPick />
-      <WeeklyPopularChannels />
-      <WeeklyHotEmisodes />
+    <div className="drawer drawer-end">
+      <input id="menu-drawer" type="checkbox" className="drawer-toggle" />
+      <div className={`drawer-content space-y-12 ${fadeClass}`}>
+        <TrendingBanner />
+        <TodayTheme />
+        <PopularCategories />
+        <WeeklyPopularHosts />
+        <WeeklySmartPick />
+        <WeeklyPopularChannels />
+        <WeeklyHotEmisodes />
+      </div>
+      <div className="z-50 drawer-side">
+        <label htmlFor="menu-drawer" className="drawer-overlay"></label>
+        <div className="bg-base-100 p-4 w-80 min-h-full">
+          <div className="flex justify-end mb-2">
+            <label htmlFor="menu-drawer" className="btn btn-sm btn-circle">
+              ✕
+            </label>
+          </div>
+          <MenuPage />
+        </div>
+      </div>
     </div>
   );
 }
