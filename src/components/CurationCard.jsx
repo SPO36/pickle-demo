@@ -1,11 +1,13 @@
 import { Play } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-function CurationCard({ subTitle, title, tagId, image, textColor, isCompact = false }) {
+function CurationCard({ subTitle, title, tagId, to, image, textColor, isCompact = false }) {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    if (tagId) {
+    if (to) {
+      navigate(to);
+    } else if (tagId) {
       navigate(`/tags/${tagId}`);
     }
   };

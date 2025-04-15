@@ -7,28 +7,26 @@ import { supabase } from '../lib/supabase';
 const TAGS = ['경제', '주식', '재테크', '글로벌경제', '돈 버는 법', '비즈니스', '경제 브리핑'];
 
 function SearchPage() {
+  const [loading, setLoading] = useState(true);
   const [channels, setChannels] = useState([]);
   const [episodes, setEpisodes] = useState([]);
   const [query, setQuery] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
+
+      // 인위적인 지연
+      // await new Promise((resolve) => setTimeout(resolve, 10000));
+
       const [channelRes, episodeRes] = await Promise.all([
         supabase.from('channel').select('*'),
         supabase.from('episodes').select('*'),
       ]);
+      if (!channelRes.error) setChannels(channelRes.data);
+      if (!episodeRes.error) setEpisodes(episodeRes.data);
 
-      if (channelRes.error) {
-        console.error('❌ 채널 로딩 실패:', channelRes.error.message);
-      } else {
-        setChannels(channelRes.data);
-      }
-
-      if (episodeRes.error) {
-        console.error('❌ 에피소드 로딩 실패:', episodeRes.error.message);
-      } else {
-        setEpisodes(episodeRes.data);
-      }
+      setLoading(false);
     };
 
     fetchData();
@@ -36,9 +34,9 @@ function SearchPage() {
 
   const handleSearch = async () => {
     const keyword = query.trim();
+    setLoading(true);
 
     if (!keyword) {
-      // 전체 다시 불러오기
       const [channelRes, episodeRes] = await Promise.all([
         supabase.from('channel').select('*'),
         supabase.from('episodes').select('*'),
@@ -46,15 +44,16 @@ function SearchPage() {
 
       if (channelRes.error || episodeRes.error) {
         console.error('❌ 전체 로딩 실패:', channelRes.error || episodeRes.error);
+        setLoading(false);
         return;
       }
 
       setChannels(channelRes.data);
       setEpisodes(episodeRes.data);
+      setLoading(false);
       return;
     }
 
-    // 키워드 검색
     const [channelRes, episodeRes] = await Promise.all([
       supabase.from('channel').select('*').ilike('title', `%${keyword}%`),
       supabase.from('episodes').select('*').ilike('title', `%${keyword}%`),
@@ -62,11 +61,12 @@ function SearchPage() {
 
     if (channelRes.error || episodeRes.error) {
       console.error('❌ 검색 실패:', channelRes.error || episodeRes.error);
-      return;
+    } else {
+      setChannels(channelRes.data);
+      setEpisodes(episodeRes.data);
     }
 
-    setChannels(channelRes.data);
-    setEpisodes(episodeRes.data);
+    setLoading(false);
   };
 
   const toggleLike = async (channelId, current) => {
@@ -87,6 +87,9 @@ function SearchPage() {
     const trimmed = keyword.trim();
     if (!trimmed) return;
 
+    setQuery(trimmed);
+    setLoading(true);
+
     const [channelRes, episodeRes] = await Promise.all([
       supabase.from('channel').select('*').ilike('title', `%${trimmed}%`),
       supabase.from('episodes').select('*').ilike('title', `%${trimmed}%`),
@@ -94,12 +97,17 @@ function SearchPage() {
 
     if (channelRes.error || episodeRes.error) {
       console.error('❌ 태그 검색 실패:', channelRes.error || episodeRes.error);
-      return;
+    } else {
+      setChannels(channelRes.data);
+      setEpisodes(episodeRes.data);
     }
 
-    setChannels(channelRes.data);
-    setEpisodes(episodeRes.data);
+    setLoading(false);
   };
+
+  const SkeletonCard = ({ keyVal }) => (
+    <div key={keyVal} className="bg-base-300 shadow rounded-xl w-full aspect-[3/4] animate-pulse" />
+  );
 
   return (
     <>
@@ -131,10 +139,7 @@ function SearchPage() {
               <div
                 key={tag}
                 className="rounded-full cursor-pointer badge badge-soft badge-lg badge-primary"
-                onClick={() => {
-                  setQuery(tag);
-                  handleSearchWithTag(tag);
-                }}
+                onClick={() => handleSearchWithTag(tag)}
               >
                 {tag}
               </div>
@@ -146,16 +151,18 @@ function SearchPage() {
         <section id="channel section">
           <h2 className="mb-4 font-bold text-2xl">채널</h2>
           <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {channels.map((channel) => (
-              <ChannelCard
-                key={channel.id}
-                src={channel.src}
-                title={channel.title}
-                creator={channel.creator}
-                liked={channel.isLike}
-                onToggleLike={() => toggleLike(channel.id, channel.isLike)}
-              />
-            ))}
+            {loading
+              ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard keyVal={`channel-${i}`} />)
+              : channels.map((channel) => (
+                  <ChannelCard
+                    key={channel.id}
+                    src={channel.src}
+                    title={channel.title}
+                    creator={channel.creator}
+                    liked={channel.isLike}
+                    onToggleLike={() => toggleLike(channel.id, channel.isLike)}
+                  />
+                ))}
           </div>
         </section>
 
@@ -163,9 +170,16 @@ function SearchPage() {
         <section id="episode section">
           <h2 className="mb-4 font-bold text-2xl">에피소드</h2>
           <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
-            {episodes.map((card) => (
-              <EpisodeCard key={card.id} title={card.title} creator={card.creator} src={card.src} />
-            ))}
+            {loading
+              ? Array.from({ length: 3 }).map((_, i) => <SkeletonCard keyVal={`episode-${i}`} />)
+              : episodes.map((card) => (
+                  <EpisodeCard
+                    key={card.id}
+                    title={card.title}
+                    creator={card.creator}
+                    src={card.src}
+                  />
+                ))}
           </div>
         </section>
       </div>
