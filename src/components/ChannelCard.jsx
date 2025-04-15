@@ -11,8 +11,8 @@ function ChannelCard({ src, title, creator, liked, onToggleLike }) {
   return (
     <div className="w-full cursor-pointer" onClick={handlePlayClick}>
       <div className="bg-base-100 shadow-sm border border-base-300 h-full card">
-        <figure className="bg-base-100 px-10 pt-10">
-          <img src={src} alt={title} className="rounded-xl w-full h-full object-cover" />
+        <figure className="bg-base-100">
+          <img src={src} alt={title} className="rounded-b-none w-full h-full object-cover" />
         </figure>
         <div className="items-center gap-4 text-center card-body">
           <div className="w-full">

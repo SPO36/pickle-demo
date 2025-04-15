@@ -34,22 +34,21 @@ function WeeklySmartPick() {
         )}
       </div>
 
-      <div className="flex gap-2 w-full">
+      <div className="gap-3 grid grid-cols-1 md:grid-cols-3">
         {themes.length === 0
-          ? Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="bg-base-300 rounded-xl w-1/3 h-56 animate-pulse" />
+          ? Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="bg-base-300 rounded-xl h-56 animate-pulse" />
             ))
           : themes.map((theme, idx) => (
-              <div key={idx} className="w-1/3">
-                <CurationCard
-                  subTitle="P!CKLE P!CK"
-                  title={theme.title}
-                  tagId={theme.slug}
-                  image={theme.image}
-                  episodeId={theme.episode_id}
-                  textColor="text-white"
-                />
-              </div>
+              <CurationCard
+                key={idx}
+                subTitle="P!CKLE P!CK"
+                title={theme.title}
+                tagId={theme.slug}
+                image={theme.image}
+                episodeId={theme.episode_id}
+                textColor="text-white"
+              />
             ))}
       </div>
     </div>

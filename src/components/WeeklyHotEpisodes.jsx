@@ -30,11 +30,12 @@ function WeeklyHotEpisodes() {
   return (
     <div className="space-y-3">
       <div className="mb-4 font-bold text-2xl">이번주 급상승 에피소드</div>
-      <div className="flex gap-4 w-full">
+      <div className="gap-4 grid grid-cols-1 md:grid-cols-3">
         {shuffledCards.map((card, idx) => (
           <EpisodeCard key={idx} title={card.title} creator={card.creator} src={card.src} />
         ))}
       </div>
+
       <div>
         <button onClick={handleRefresh} className="bg-base-200 w-full btn">
           <RefreshCcw size={16} />

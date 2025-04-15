@@ -47,7 +47,7 @@ function PopularCategories() {
         )}
       </div>
 
-      <div className="gap-2 grid grid-cols-3">
+      <div className="gap-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {shuffledCards.length === 0
           ? Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="bg-base-300 rounded-xl h-44 animate-pulse" />
