@@ -1,8 +1,5 @@
 module.exports = {
-  content: [
-    './index.html',
-    './src/**/*.{js,ts,jsx,tsx}', // ← 꼭 있어야 함!
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       fontFamily: {
@@ -37,7 +34,4 @@ module.exports = {
     },
   },
   plugins: [require('daisyui')],
-  daisyui: {
-    themes: ['wireframe'],
-  },
 };

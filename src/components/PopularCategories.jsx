@@ -29,7 +29,6 @@ function PopularCategories() {
         setShuffledCards(getRandomCards(data));
       }
     }
-
     fetchCategories();
   }, []);
 

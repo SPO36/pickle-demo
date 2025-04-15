@@ -45,7 +45,7 @@ function VoiceSearch() {
           wrapper="p"
           speed={250}
           cursor={false}
-          className="z-10 font-semibold text-2xl md:text-3xl"
+          className="z-10 font-bold text-2xl md:text-3xl"
         />
       </div>
     </div>
