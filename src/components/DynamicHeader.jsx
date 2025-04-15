@@ -2,9 +2,13 @@ import { ArrowLeft, Menu, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const THEME_KEY = 'siteTheme';
+
 export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
   const navigate = useNavigate();
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem(THEME_KEY) || 'light';
+  });
 
   // 왼쪽 아이콘: 기본값은 뒤로가기 or 홈 이동
   const defaultLeftIcon = {
@@ -21,7 +25,9 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
 
   // 테마 토글
   const toggleTheme = () => {
-    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem(THEME_KEY, newTheme); // 저장
   };
 
   useEffect(() => {

@@ -6,7 +6,6 @@
 
 @layer base {
   html, body {
-    zoom: 1.4;
     @apply font-pretendard;
     @apply font-pretendard scrollbar-hide;
   }
