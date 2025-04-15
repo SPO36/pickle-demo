@@ -8,7 +8,7 @@ function Layout({ headerContent, children }) {
 
       {/* 본문 내용 */}
       <div className="bg-base-200 min-h-screen drawer-content">
-        {headerContent}
+        <div className="mx-auto max-w-screen-xl">{headerContent}</div>
         <main className="space-y-12 mx-auto px-6 py-8 max-w-screen-xl">{children}</main>
       </div>
 

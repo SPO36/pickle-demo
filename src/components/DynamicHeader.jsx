@@ -97,7 +97,7 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
   ];
 
   return (
-    <div className="px-6 w-full navbar">
+    <div className="px-6 max-w-screen-xl navbar">
       {/* 왼쪽 아이콘 */}
       <div className="navbar-start">
         <button className="btn btn-ghost btn-circle" onClick={resolvedLeftIcon.onClick}>
