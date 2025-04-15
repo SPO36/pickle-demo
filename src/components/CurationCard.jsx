@@ -31,7 +31,7 @@ function CurationCard({ subTitle, title, tagId, to, image, textColor, isCompact 
             alt={title}
             className="z-0 absolute inset-0 w-full h-full object-cover"
           />
-          <div className="z-0 absolute inset-0 bg-black/10 backdrop-brightness-75" />
+          <div className="z-0 absolute inset-0 bg-black/5 backdrop-brightness-75" />
         </>
       )}
 

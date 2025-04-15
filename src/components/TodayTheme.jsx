@@ -39,8 +39,9 @@ function TodayTheme() {
                   subTitle="P!CKLE THEME"
                   title={theme.title}
                   tagId={theme.slug}
-                  image={theme.image_url}
+                  image={theme.image}
                   episodeId={theme.episode_id}
+                  textColor="text-white"
                 />
               </div>
             ))}

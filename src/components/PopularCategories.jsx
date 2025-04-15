@@ -58,10 +58,9 @@ function PopularCategories() {
                 image={category.image}
                 subTitle="CATEGORY"
                 title={category.title}
-                to={`/categories/${category.slug}`} // ✅ 이거만 있어야 함
+                to={`/categories/${category.slug}`}
                 isCompact={true}
                 textColor="text-white"
-                // ❌ tagId는 절대 넘기지 말 것!!
               />
             ))}
       </div>
