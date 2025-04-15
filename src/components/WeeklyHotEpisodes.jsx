@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 
 function WeeklyHotEpisodes() {
   const [episodes, setEpisodes] = useState([]);
+  const [shuffledCards, setShuffledCards] = useState([]);
 
   useEffect(() => {
     async function fetchEpisodes() {
@@ -13,27 +14,24 @@ function WeeklyHotEpisodes() {
         console.error('❌ Error loading episodes:', error.message);
       } else {
         setEpisodes(data);
+        // 초기 로드 시 무작위로 4개 선택
+        const shuffled = [...data].sort(() => Math.random() - 0.5).slice(0, 4);
+        setShuffledCards(shuffled);
       }
     }
     fetchEpisodes();
   }, []);
 
-  const getRandomCards = () => {
-    const shuffled = [...episodes].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, 4);
-  };
-
-  const [shuffledCards, setShuffledCards] = useState(getRandomCards());
-
   const handleRefresh = () => {
-    setShuffledCards(getRandomCards());
+    const shuffled = [...episodes].sort(() => Math.random() - 0.5).slice(0, 4);
+    setShuffledCards(shuffled);
   };
 
   return (
     <div className="space-y-3">
       <div className="mb-4 font-bold text-2xl">이번주 급상승 에피소드</div>
       <div className="flex gap-4 w-full">
-        {episodes.map((card, idx) => (
+        {shuffledCards.map((card, idx) => (
           <EpisodeCard key={idx} title={card.title} creator={card.creator} src={card.src} />
         ))}
       </div>
