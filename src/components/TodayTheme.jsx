@@ -7,7 +7,10 @@ function TodayTheme() {
 
   useEffect(() => {
     async function fetchThemes() {
-      const { data, error } = await supabase.from('theme').select('*');
+      const { data, error } = await supabase
+        .from('theme')
+        .select('*')
+        .eq('category', 'today_theme');
       if (error) {
         console.error('❌ Error loading themes:', error.message);
       } else {

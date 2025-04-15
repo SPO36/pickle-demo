@@ -6,6 +6,7 @@
 
 @layer base {
   html, body {
+    zoom: 1.2;
     @apply font-pretendard;
     @apply font-pretendard scrollbar-hide;
   }
@@ -26,4 +27,31 @@
 }
 .fade-enter-active {
   opacity: 1;
+}
+
+@keyframes rotateBg {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.disco-border-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  color: white;
+  font-weight: bold;
+  overflow: hidden;
+  z-index: 0;
+  background: linear-gradient(320deg, #3670F3, #6066F0,#36caf3);
+  background-size: 400% 400%;
+  animation: rotateBg 3s linear infinite;
 }

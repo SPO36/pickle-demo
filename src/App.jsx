@@ -25,7 +25,14 @@ function AppRoutes() {
             headerContent={
               <DynamicHeader
                 leftIcon={{
-                  icon: <Mic size={24} />,
+                  icon: (
+                    <div
+                      onClick={() => navigate('/voiceSearch')}
+                      className="disco-border-btn cursor-pointer btn btn-circle btn-ghost"
+                    >
+                      <Mic size={24} className="text-white" />
+                    </div>
+                  ),
                   onClick: () => navigate('/voiceSearch'),
                 }}
                 rightIcons={[
