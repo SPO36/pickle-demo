@@ -47,21 +47,26 @@ function PopularCategories() {
         )}
       </div>
 
-      <div className="gap-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      {/* <div className="gap-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"> */}
+      <div className="flex gap-3 overflow-x-auto cursor-pointer scrollbar-hide">
         {shuffledCards.length === 0
           ? Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-base-300 rounded-xl h-44 animate-pulse" />
+              <div
+                key={i}
+                className="flex-shrink-0 bg-base-300 rounded-xl w-[23%] min-w-[200px] h-44 animate-pulse"
+              />
             ))
           : shuffledCards.map((category, idx) => (
-              <CurationCard
-                key={category.id || idx}
-                image={category.image}
-                subTitle="CATEGORY"
-                title={category.title}
-                to={`/categories/${category.slug}`}
-                isCompact={true}
-                textColor="text-white"
-              />
+              <div key={category.id || idx} className="flex-shrink-0 w-[23%] min-w-[200px]">
+                <CurationCard
+                  image={category.image}
+                  subTitle="CATEGORY"
+                  title={category.title}
+                  to={`/categories/${category.slug}`}
+                  isCompact={true}
+                  textColor="text-white"
+                />
+              </div>
             ))}
       </div>
 

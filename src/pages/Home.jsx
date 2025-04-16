@@ -24,9 +24,9 @@ function Home() {
       <input id="menu-drawer" type="checkbox" className="drawer-toggle" />
       <div className={`drawer-content space-y-12 ${fadeClass}`}>
         <TrendingBanner />
+        <WeeklyPopularHosts />
         <TodayTheme />
         <PopularCategories />
-        <WeeklyPopularHosts />
         <WeeklySmartPick />
         <WeeklyPopularChannels />
         <WeeklyHotEmisodes />
