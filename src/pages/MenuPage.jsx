@@ -22,6 +22,9 @@ function MenuPage() {
     setZoomLevel(newZoom);
     document.documentElement.style.zoom = newZoom;
     localStorage.setItem(ZOOM_KEY, newZoom);
+
+    // ✅ 동일 탭에서도 실시간 반영되도록 이벤트 디스패치
+    window.dispatchEvent(new Event('zoomChange'));
   };
 
   return (

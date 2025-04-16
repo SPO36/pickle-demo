@@ -1,22 +1,57 @@
 import { Headphones, Heart, List, Pause, Play, Shuffle, SkipBack, SkipForward } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+const HEADER_HEIGHT = 128;
 
 function PlayEpisode() {
   const [liked, setLiked] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [containerHeight, setContainerHeight] = useState('100vh');
 
-  const togglePlay = () => {
-    setIsPlaying((prev) => !prev);
+  // 🔁 zoomLevel 적용 및 실시간 반영
+  const updateHeight = () => {
+    const zoom = parseFloat(localStorage.getItem('zoomLevel')) || 1;
+    const physicalViewport = window.innerHeight;
+    const adjustedHeight = physicalViewport / zoom - HEADER_HEIGHT * zoom;
+    setContainerHeight(`${adjustedHeight}px`);
   };
 
+  useEffect(() => {
+    updateHeight(); // 초기 적용
+
+    // ✅ 실시간 반영: storage & custom zoomChange 이벤트
+    window.addEventListener('storage', updateHeight);
+    window.addEventListener('zoomChange', updateHeight);
+
+    // ✅ 스크롤 방지
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      window.removeEventListener('storage', updateHeight);
+      window.removeEventListener('zoomChange', updateHeight);
+      document.body.style.overflow = originalOverflow;
+    };
+  }, []);
+
+  const togglePlay = () => setIsPlaying((prev) => !prev);
   const toggleLike = () => setLiked((prev) => !prev);
 
   return (
     <div
-      className="flex justify-center items-center px-4 py-12"
-      style={{ minHeight: 'calc(100vh - 128px)' }}
+      className="px-4 py-12"
+      style={{
+        height: containerHeight,
+        display: 'flex',
+        justifyContent: 'center',
+      }}
     >
-      <div className="space-y-10 w-full">
+      <div
+        className="space-y-10 w-full max-w-5xl"
+        style={{
+          margin: 'auto',
+        }}
+      >
         {/* 상단 정보 */}
         <div className="flex md:flex-row flex-col items-center gap-12 w-full">
           <img
@@ -26,7 +61,7 @@ function PlayEpisode() {
           />
           <div className="flex-1 space-y-8 w-full">
             <div className="space-y-2">
-              <h2 className="font-semibold text-4xl leading-snug">
+              <h2 className="font-semibold text-4xl line-clamp-2 leading-snug">
                 The surprising habits of original thinkers | Adam Grant | TED
               </h2>
               <p className="text-gray-500 text-lg">TED Business</p>
@@ -59,18 +94,15 @@ function PlayEpisode() {
 
         {/* 플레이어 영역 */}
         <div className="space-y-6 w-full">
-          {/* 진행 바 */}
           <div className="bg-base-300 rounded-full w-full h-2 overflow-hidden">
             <div className="bg-primary w-[12%] h-full" />
           </div>
 
-          {/* 시간 텍스트 */}
           <div className="flex justify-between w-full text-gray-500 text-sm">
             <span>00:03</span>
             <span>35:00</span>
           </div>
 
-          {/* 재생 컨트롤 */}
           <div className="flex justify-center items-center pt-4 w-full">
             <div className="flex justify-between items-center px-6 w-full max-w-2xl">
               <button className="hover:bg-base-300 p-3 rounded-full transition">
