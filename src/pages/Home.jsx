@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import PopularCategories from '../components/PopularCategories';
 import TodayTheme from '../components/TodayTheme';
-import TrendingBanner from '../components/TrendingBanner';
 import WeeklyHotEmisodes from '../components/WeeklyHotEpisodes';
 import WeeklySmartPick from '../components/WeeklySmartPick';
 import WeeklyPopularChannels from '../components/WeekplyPopularChannels';
@@ -23,7 +22,7 @@ function Home() {
     <div className="drawer drawer-end">
       <input id="menu-drawer" type="checkbox" className="drawer-toggle" />
       <div className={`drawer-content space-y-12 ${fadeClass}`}>
-        <TrendingBanner />
+        {/* <TrendingBanner /> */}
         <WeeklyPopularHosts />
         <TodayTheme />
         <PopularCategories />
