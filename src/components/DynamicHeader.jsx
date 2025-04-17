@@ -110,9 +110,10 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
         {centerText ? (
           <span className="font-semibold text-lg">{centerText?.replace(/\\n/g, ' ')}</span>
         ) : (
-          <button onClick={() => navigate('/')} className="text-xl btn btn-ghost">
-            Pickle
-          </button>
+          // <button onClick={() => navigate('/')} className="text-xl btn btn-ghost">
+          //   Pickle
+          // </button>
+          <></>
         )}
       </div>
 
