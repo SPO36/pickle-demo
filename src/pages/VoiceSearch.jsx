@@ -1,40 +1,59 @@
 import Lottie from 'lottie-react';
 import { Mic } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TypeAnimation } from 'react-type-animation';
 import animationData from '../assets/VoiceSearch_bg2.json';
 
+const HEADER_HEIGHT = 128;
+
 function VoiceSearch() {
   const navigate = useNavigate();
+  const [containerHeight, setContainerHeight] = useState('100vh');
 
-  // 뒤로가기 없을 때 홈으로 이동
   useEffect(() => {
+    // history가 너무 짧으면 홈으로 이동
     if (window.history.length <= 2) {
       navigate('/');
     }
+
+    const updateHeight = () => {
+      const zoom = parseFloat(localStorage.getItem('zoomLevel')) || 1;
+      const physicalViewport = window.innerHeight;
+      const adjustedHeight = physicalViewport / zoom - HEADER_HEIGHT * zoom;
+      setContainerHeight(`${adjustedHeight}px`);
+    };
+
+    updateHeight();
+    window.addEventListener('storage', updateHeight);
+    window.addEventListener('zoomChange', updateHeight);
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      window.removeEventListener('storage', updateHeight);
+      window.removeEventListener('zoomChange', updateHeight);
+      document.body.style.overflow = originalOverflow;
+    };
   }, [navigate]);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden">
-      {/* 전체 콘텐츠 + 배경 함께 감싸기 */}
-      <div className="z-10 absolute inset-0 flex flex-col justify-center items-center gap-12 px-4 text-center -translate-y-20 transform">
-        {/* 배경 로티 */}
-        <Lottie
-          animationData={animationData}
-          loop
-          autoplay
-          className="top-0 left-0 z-0 absolute w-full h-full object-cover"
-        />
+    <div className="relative w-full overflow-hidden" style={{ height: containerHeight }}>
+      {/* 배경 로티 애니메이션 */}
+      <Lottie
+        animationData={animationData}
+        loop
+        autoplay
+        className="top-0 left-0 z-0 absolute w-full h-full object-cover"
+      />
 
-        {/* 텍스트 콘텐츠 */}
-        <p className="z-10 text-gray-500 text-2xl animate-pulse">듣는 중...</p>
+      {/* 정중앙 콘텐츠 */}
+      <div className="z-10 relative flex flex-col justify-center items-center gap-12 px-4 h-full text-center">
+        <p className="text-gray-500 text-2xl animate-pulse">듣는 중...</p>
 
-        <div className="z-10 relative w-32 h-32">
-          {/* 파동 원 1: 기본 크기 → 2배 */}
+        <div className="relative w-32 h-32">
           <div className="absolute inset-2 bg-slate-400 opacity-30 rounded-full animate-ping" />
-
-          {/* 마이크 아이콘 */}
           <div className="relative flex justify-center items-center bg-slate-600 rounded-full w-full h-full text-white">
             <Mic size={40} className="animate-[micGrow_1.2s_ease-in-out_infinite]" />
           </div>
@@ -45,7 +64,7 @@ function VoiceSearch() {
           wrapper="p"
           speed={250}
           cursor={false}
-          className="z-10 font-bold text-2xl md:text-3xl"
+          className="font-bold text-2xl md:text-3xl"
         />
       </div>
     </div>
