@@ -1,5 +1,5 @@
 import { Mic } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import DynamicHeader from './components/DynamicHeader';
 import Layout from './components/Layout';
@@ -93,6 +93,13 @@ function AppRoutes() {
 }
 
 function App() {
+  useEffect(() => {
+    const savedZoom = localStorage.getItem('zoomLevel');
+    if (savedZoom) {
+      document.documentElement.style.zoom = parseFloat(savedZoom);
+    }
+  }, []);
+
   return (
     <BrowserRouter>
       <ScrollToTop />

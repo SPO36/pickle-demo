@@ -1,35 +1,67 @@
 import { ChevronDown } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ChannelCard from '../components/ChannelCard';
 import { supabase } from '../lib/supabase';
 
 function CategoryDetail() {
   const { slug } = useParams();
-  const [tab, setTab] = useState('channel');
+  const [tab, setTab] = useState('all');
   const [channels, setChannels] = useState([]);
   const [sort, setSort] = useState('latest');
   const [fadeClass, setFadeClass] = useState('fade-enter');
+  const [categories, setCategories] = useState([]);
+  const navigate = useNavigate();
 
+  // 슬러그 기반 탭 설정
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setFadeClass('fade-enter fade-enter-active');
-    }, 50);
+    setTab(slug ?? 'all');
+  }, [slug]);
+
+  // 🔙 뒤로가기 시 홈으로 이동
+  useEffect(() => {
+    const handlePopState = () => {
+      navigate('/', { replace: true });
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
+  // 애니메이션 페이드인
+  useEffect(() => {
+    const timer = setTimeout(() => setFadeClass('fade-enter fade-enter-active'), 50);
     return () => clearTimeout(timer);
   }, []);
 
+  // Supabase 데이터 fetch
   useEffect(() => {
-    const fetchChannels = async () => {
-      const { data, error } = await supabase.from('channel').select('*');
-      if (error) {
-        console.error('❌ 채널 로딩 실패:', error.message);
+    const fetchData = async () => {
+      const [channelRes, categoryRes] = await Promise.all([
+        supabase.from('channel').select('*'),
+        supabase.from('category').select('*'),
+      ]);
+
+      if (channelRes.error) {
+        console.error('❌ 채널 로딩 실패:', channelRes.error.message);
       } else {
-        setChannels(data || []);
+        setChannels(channelRes.data || []);
+      }
+
+      if (categoryRes.error) {
+        console.error('❌ 카테고리 로딩 실패:', categoryRes.error.message);
+      } else {
+        setCategories(categoryRes.data || []);
       }
     };
-    fetchChannels();
+
+    fetchData();
   }, []);
 
+  // 좋아요 토글
   const toggleLike = async (channelId, current) => {
     const { error } = await supabase
       .from('channel')
@@ -43,44 +75,41 @@ function CategoryDetail() {
     }
   };
 
-  // 정렬 처리
-  const sortedChannels = [...channels].sort((a, b) => {
-    if (sort === 'latest') {
-      return new Date(b.created_at) - new Date(a.created_at);
-    } else if (sort === 'popular') {
-      return b.likes - a.likes;
-    } else if (sort === 'az') {
-      return a.title.localeCompare(b.title);
-    }
+  // 필터링 + 정렬
+  const filteredChannels =
+    tab === 'all' ? channels : channels.filter((c) => c.category_slug === tab);
+
+  const sortedChannels = [...filteredChannels].sort((a, b) => {
+    if (sort === 'latest') return new Date(b.created_at) - new Date(a.created_at);
+    if (sort === 'popular') return b.likes - a.likes;
+    if (sort === 'az') return a.title.localeCompare(b.title);
     return 0;
   });
 
   return (
     <div className={fadeClass}>
-      {/* 탭 UI */}
+      {/* 카테고리 탭 */}
       <div role="tablist" className="flex flex-wrap gap-2 mb-6 tabs-border tabs">
-        {[
-          { label: '전체', value: 'channel' },
-          { label: '시사', value: 'current' },
-          { label: '경제', value: 'economy' },
-          { label: '비즈니스', value: 'business' },
-          { label: '일상/토크', value: 'daily' },
-          { label: '예능', value: 'entertainment' },
-          { label: '스포츠', value: 'sports' },
-          { label: '키즈', value: 'kids' },
-          { label: '어학', value: 'language' },
-        ].map(({ label, value }) => (
+        <button
+          key="all"
+          className={`tab text-lg py-3 h-auto min-h-0 ${tab === 'all' ? 'tab-active' : ''}`}
+          onClick={() => setTab('all')}
+        >
+          전체
+        </button>
+
+        {categories.map((cat) => (
           <button
-            key={value}
-            className={`tab text-lg py-3 h-auto min-h-0 ${tab === value ? 'tab-active' : ''}`}
-            onClick={() => setTab(value)}
+            key={cat.slug}
+            className={`tab text-lg py-3 h-auto min-h-0 ${tab === cat.slug ? 'tab-active' : ''}`}
+            onClick={() => navigate(`/categories/${cat.slug}`)}
           >
-            {label}
+            {cat.title}
           </button>
         ))}
       </div>
 
-      {/* 드롭다운: 왼쪽 정렬 */}
+      {/* 정렬 드롭다운 */}
       <div className="mb-4 dropdown">
         <div
           tabIndex={0}
@@ -92,7 +121,6 @@ function CategoryDetail() {
           {sort === 'az' && '가나다순'}
           <ChevronDown size={18} />
         </div>
-
         <ul
           tabIndex={0}
           className="z-10 bg-base-100 shadow-sm p-2 rounded-box w-40 dropdown-content menu"
@@ -109,7 +137,7 @@ function CategoryDetail() {
         </ul>
       </div>
 
-      {/* 채널 카드 목록 */}
+      {/* 채널 카드 */}
       <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
         {sortedChannels.map((item) => (
           <ChannelCard
