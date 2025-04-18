@@ -7,7 +7,10 @@ function WeeklySmartPick() {
 
   useEffect(() => {
     async function fetchThemes() {
-      const { data, error } = await supabase.from('theme').select('*').eq('category', 'smart_pick');
+      const { data, error } = await supabase
+        .from('themes')
+        .select('*')
+        .eq('category', 'smart_pick');
       if (error) {
         console.error('❌ Error loading themes:', error.message);
       } else {

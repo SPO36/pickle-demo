@@ -8,6 +8,7 @@ import TagDetailLayoutWrapper from './components/TagDetailLayoutWrapper';
 import ZoomProvider from './components/ZoomProvider';
 import CategoryDetail from './pages/CategoryDetail';
 import Home from './pages/Home';
+import HostDetail from './pages/HostDetail';
 import PlayEpisode from './pages/PlayEpisode';
 import SearchPage from './pages/SearchPage';
 import VoiceSearch from './pages/VoiceSearch';
@@ -47,6 +48,16 @@ function AppRoutes() {
         />
         {/* Tag Detail Route */}
         <Route path="/tags/:slug" element={<TagDetailLayoutWrapper />} />
+
+        {/* Host Detail Route */}
+        <Route
+          path="/host/:slug"
+          element={
+            <Layout headerContent={<DynamicHeader centerText=" " />}>
+              <HostDetail />
+            </Layout>
+          }
+        />
 
         {/* Episode Detail (Play Page) Route */}
         <Route

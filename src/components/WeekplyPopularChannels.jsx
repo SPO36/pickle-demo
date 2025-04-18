@@ -9,7 +9,7 @@ function WeekplyPopularChannels() {
 
   useEffect(() => {
     async function fetchChannels() {
-      const { data, error } = await supabase.from('channel').select('*');
+      const { data, error } = await supabase.from('channels').select('*');
       if (error) {
         console.error('❌ Error loading channels:', error.message);
       } else {
@@ -28,7 +28,7 @@ function WeekplyPopularChannels() {
 
   const toggleLike = async (channelId, current) => {
     const { error } = await supabase
-      .from('channel')
+      .from('channels')
       .update({ isLike: !current })
       .eq('id', channelId);
 

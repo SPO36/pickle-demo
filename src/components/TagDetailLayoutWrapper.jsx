@@ -12,7 +12,7 @@ export default function TagDetailLayoutWrapper() {
   useEffect(() => {
     async function fetchTitle() {
       const { data, error } = await supabase
-        .from('theme')
+        .from('themes')
         .select('title')
         .eq('slug', slug)
         .single();

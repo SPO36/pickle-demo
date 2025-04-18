@@ -41,8 +41,8 @@ function CategoryDetail() {
   useEffect(() => {
     const fetchData = async () => {
       const [channelRes, categoryRes] = await Promise.all([
-        supabase.from('channel').select('*'),
-        supabase.from('category').select('*'),
+        supabase.from('channels').select('*'),
+        supabase.from('categories').select('*'),
       ]);
 
       if (channelRes.error) {
@@ -64,7 +64,7 @@ function CategoryDetail() {
   // 좋아요 토글
   const toggleLike = async (channelId, current) => {
     const { error } = await supabase
-      .from('channel')
+      .from('channels')
       .update({ isLike: !current })
       .eq('id', channelId);
 

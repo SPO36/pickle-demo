@@ -8,7 +8,7 @@ function TodayTheme() {
   useEffect(() => {
     async function fetchThemes() {
       const { data, error } = await supabase
-        .from('theme')
+        .from('themes')
         .select('*')
         .eq('category', 'today_theme');
       if (error) {

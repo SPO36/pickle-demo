@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
 function WeekplyPopularHosts() {
   const [hosts, setHosts] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchHosts() {
@@ -40,7 +42,11 @@ function WeekplyPopularHosts() {
               </div>
             ))
           : hosts.map((host) => (
-              <div key={host.id} className="flex flex-col flex-shrink-0 items-center">
+              <div
+                key={host.id}
+                className="flex flex-col flex-shrink-0 items-center"
+                onClick={() => navigate(`/host/${host.slug}`)}
+              >
                 <div className="bg-base-100 border border-base-300 rounded-full w-40 h-40 overflow-hidden">
                   {host.image && (
                     <img src={host.image} alt={host.name} className="w-full h-full object-cover" />

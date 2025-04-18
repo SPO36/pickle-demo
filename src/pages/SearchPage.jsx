@@ -20,7 +20,7 @@ function SearchPage() {
       // await new Promise((resolve) => setTimeout(resolve, 10000));
 
       const [channelRes, episodeRes] = await Promise.all([
-        supabase.from('channel').select('*'),
+        supabase.from('channels').select('*'),
         supabase.from('episodes').select('*'),
       ]);
       if (!channelRes.error) setChannels(channelRes.data);
@@ -38,7 +38,7 @@ function SearchPage() {
 
     if (!keyword) {
       const [channelRes, episodeRes] = await Promise.all([
-        supabase.from('channel').select('*'),
+        supabase.from('channels').select('*'),
         supabase.from('episodes').select('*'),
       ]);
 
@@ -55,7 +55,7 @@ function SearchPage() {
     }
 
     const [channelRes, episodeRes] = await Promise.all([
-      supabase.from('channel').select('*').ilike('title', `%${keyword}%`),
+      supabase.from('channels').select('*').ilike('title', `%${keyword}%`),
       supabase.from('episodes').select('*').ilike('title', `%${keyword}%`),
     ]);
 
@@ -71,7 +71,7 @@ function SearchPage() {
 
   const toggleLike = async (channelId, current) => {
     const { error } = await supabase
-      .from('channel')
+      .from('channels')
       .update({ isLike: !current })
       .eq('id', channelId);
 
@@ -91,7 +91,7 @@ function SearchPage() {
     setLoading(true);
 
     const [channelRes, episodeRes] = await Promise.all([
-      supabase.from('channel').select('*').ilike('title', `%${trimmed}%`),
+      supabase.from('channels').select('*').ilike('title', `%${trimmed}%`),
       supabase.from('episodes').select('*').ilike('title', `%${trimmed}%`),
     ]);
 

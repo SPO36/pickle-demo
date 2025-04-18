@@ -25,7 +25,7 @@ function TagDetail() {
   // 좋아요 토글 함수
   const toggleLike = async (channelId, current) => {
     const { error } = await supabase
-      .from('channel')
+      .from('channels')
       .update({ isLike: !current })
       .eq('id', channelId);
 
@@ -38,7 +38,7 @@ function TagDetail() {
 
   useEffect(() => {
     const fetchTheme = async () => {
-      const { data, error } = await supabase.from('theme').select('*').eq('slug', slug).single();
+      const { data, error } = await supabase.from('themes').select('*').eq('slug', slug).single();
       if (error) {
         console.error('❌ 테마 로딩 실패:', error.message);
       } else {
@@ -51,7 +51,7 @@ function TagDetail() {
   useEffect(() => {
     const fetchData = async () => {
       if (tab === 'channel') {
-        const { data } = await supabase.from('channel').select('*');
+        const { data } = await supabase.from('channels').select('*');
         setChannels(data || []);
       } else {
         const { data } = await supabase.from('episodes').select('*');
