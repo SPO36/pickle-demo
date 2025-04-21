@@ -25,11 +25,12 @@ function PopularCategories() {
         .from('categories')
         .select('*')
         .order('no', { ascending: true });
+
       if (error) {
         console.error('❌ Error loading categories:', error.message);
       } else {
-        setCategories(data);
-        setShuffledCards(getRandomCards(data));
+        setCategories(data); // 전체 목록은 정렬된 그대로 저장
+        setShuffledCards(data.slice(0, 6)); // 초기에 no순으로 상위 6개만 사용
       }
     }
     fetchCategories();
@@ -37,7 +38,7 @@ function PopularCategories() {
 
   const handleShuffle = () => {
     const newShuffle = getRandomCards(categories);
-    setShuffledCards(newShuffle);
+    setShuffledCards(newShuffle); // 이때만 무작위 섞기
   };
 
   return (

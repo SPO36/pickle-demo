@@ -20,7 +20,10 @@ function ChannelCard({ src, title, creator, liked, onToggleLike }) {
             <p className="text-gray-500 text-sm text-center truncate">{creator}</p>
           </div>
           <button
-            onClick={onToggleLike}
+            onClick={(e) => {
+              e.stopPropagation(); // 페이지 이동 막기
+              onToggleLike();
+            }}
             className={`btn rounded-full ${liked ? 'bg-base-200 text-rose-500' : 'bg-base-200'}`}
           >
             <Heart
