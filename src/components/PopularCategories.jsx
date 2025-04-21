@@ -21,7 +21,10 @@ function PopularCategories() {
 
   useEffect(() => {
     async function fetchCategories() {
-      const { data, error } = await supabase.from('categories').select('*');
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .order('no', { ascending: true });
       if (error) {
         console.error('❌ Error loading categories:', error.message);
       } else {
