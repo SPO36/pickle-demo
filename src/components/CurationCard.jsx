@@ -52,13 +52,13 @@ function CurationCard({
           textColor ?? 'text-base-content'
         }`}
       >
-        <div>
+        <div className="z-20">
           <p className="opacity-80 mb-1 text-sm">{subTitle}</p>
           <h2 className="text-xl whitespace-pre-line card-title">{title.replace(/\\n/g, '\n')}</h2>
         </div>
 
         {!isCompact && (
-          <div className="mt-3 card-actions">
+          <div className="z-20 mt-3 card-actions">
             <button onClick={handlePlayClick} className="rounded-full btn">
               <Play size={16} />
               재생하기
@@ -67,7 +67,7 @@ function CurationCard({
         )}
 
         {badgeImage && (
-          <img src={badgeImage} alt="badge" className="right-0 bottom-0 z-20 absolute w-32 h-32" />
+          <img src={badgeImage} alt="badge" className="right-0 bottom-0 absolute w-28 h-28" />
         )}
       </div>
     </div>
