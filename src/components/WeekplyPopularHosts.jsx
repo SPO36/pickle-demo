@@ -22,7 +22,7 @@ function WeekplyPopularHosts() {
   return (
     <div>
       {/* 타이틀 */}
-      <div className="mb-2 font-semibold text-lg">
+      <div className="mb-2 font-semibold text-gray-500 text-lg">
         {hosts.length === 0 ? (
           <div className="bg-base-300 rounded-xl w-40 h-8 animate-pulse" />
         ) : (

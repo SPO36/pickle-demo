@@ -22,7 +22,7 @@ function WeeklySmartPick() {
 
   return (
     <div>
-      <div className="flex items-center gap-2 mb-2 font-semibold text-lg">
+      <div className="flex items-center gap-2 mb-2 font-semibold text-gray-500 text-lg">
         {themes.length === 0 ? (
           <div className="bg-base-300 rounded-xl w-40 h-8 animate-pulse" />
         ) : (
