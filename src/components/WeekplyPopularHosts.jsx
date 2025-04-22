@@ -47,7 +47,7 @@ function WeekplyPopularHosts() {
                 className="flex flex-col flex-shrink-0 items-center"
                 onClick={() => navigate(`/host/${host.slug}`)}
               >
-                <div className="bg-base-100 border border-base-300 rounded-full w-40 h-40 overflow-hidden">
+                <div className="border border-base-300 rounded-full w-40 h-40 overflow-hidden">
                   {host.image && (
                     <img src={host.image} alt={host.name} className="w-full h-full object-cover" />
                   )}
