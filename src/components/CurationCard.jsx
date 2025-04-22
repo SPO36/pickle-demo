@@ -10,6 +10,7 @@ function CurationCard({
   textColor,
   aspectRatio,
   isCompact = false,
+  badgeImage,
 }) {
   const navigate = useNavigate();
 
@@ -63,6 +64,10 @@ function CurationCard({
               재생하기
             </button>
           </div>
+        )}
+
+        {badgeImage && (
+          <img src={badgeImage} alt="badge" className="right-2 bottom-2 z-20 absolute w-10 h-10" />
         )}
       </div>
     </div>

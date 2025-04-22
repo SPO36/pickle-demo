@@ -45,6 +45,7 @@ function TodayTheme() {
                 image={theme.image}
                 episodeId={theme.episode_id}
                 textColor="text-white"
+                badgeImage={theme.badge_image}
               />
             ))}
       </div>
