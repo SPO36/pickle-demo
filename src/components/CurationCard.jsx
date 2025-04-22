@@ -29,7 +29,7 @@ function CurationCard({
   return (
     <div
       onClick={handleCardClick}
-      className={`relative flex flex-col p-6 w-full border border-base-300 overflow-hidden ${
+      className={`relative rounded-lg flex flex-col p-6 w-full border border-base-300 overflow-hidden ${
         aspectRatio ? '' : isCompact ? 'h-56' : 'h-60'
       } cursor-pointer ${image ? '' : 'bg-base-100'} ${
         aspectRatio === '4/5' ? 'aspect-[4/5]' : aspectRatio === '16/9' ? 'aspect-[16/9]' : ''
