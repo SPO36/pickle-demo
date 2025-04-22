@@ -67,7 +67,7 @@ function CurationCard({
         )}
 
         {badgeImage && (
-          <img src={badgeImage} alt="badge" className="right-2 bottom-2 z-20 absolute w-10 h-10" />
+          <img src={badgeImage} alt="badge" className="right-0 bottom-0 z-20 absolute w-32 h-32" />
         )}
       </div>
     </div>
