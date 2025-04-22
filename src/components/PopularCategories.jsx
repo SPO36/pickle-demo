@@ -43,7 +43,7 @@ function PopularCategories() {
 
   return (
     <div className="space-y-3">
-      <div className="mb-4 font-bold text-2xl">
+      <div className="mb-2 font-semibold text-lg">
         {shuffledCards.length === 0 ? (
           <div className="bg-base-300 rounded-xl w-40 h-8 animate-pulse" />
         ) : (

@@ -23,7 +23,7 @@ function TodayTheme() {
 
   return (
     <div>
-      <div className="mb-4 font-bold text-2xl">
+      <div className="mb-2 font-semibold text-lg">
         {themes.length === 0 ? (
           <div className="bg-base-300 rounded-xl w-40 h-8 animate-pulse" />
         ) : (

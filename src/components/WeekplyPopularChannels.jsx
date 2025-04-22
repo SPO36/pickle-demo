@@ -48,7 +48,7 @@ function WeekplyPopularChannels() {
 
   return (
     <div className="space-y-3">
-      <div className="mb-4 font-bold text-2xl">이번주 인기 채널</div>
+      <div className="mb-2 font-semibold text-lg">이번주 인기 채널</div>
       <div className="gap-4 grid grid-cols-2 md:grid-cols-4 w-full">
         {shuffledCards.map((channel) => (
           <ChannelCard

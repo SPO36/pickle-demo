@@ -22,7 +22,7 @@ function WeekplyPopularHosts() {
   return (
     <div>
       {/* 타이틀 */}
-      <div className="mb-4 font-bold text-2xl">
+      <div className="mb-2 font-semibold text-lg">
         {hosts.length === 0 ? (
           <div className="bg-base-300 rounded-xl w-40 h-8 animate-pulse" />
         ) : (
@@ -31,7 +31,7 @@ function WeekplyPopularHosts() {
       </div>
 
       {/* 호스트 리스트 or 스켈레톤 */}
-      <div className="flex gap-4 overflow-x-auto cursor-pointer scrollbar-hide">
+      <div className="flex gap-3 overflow-x-auto cursor-pointer scrollbar-hide">
         {hosts.length === 0
           ? Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="flex flex-col flex-shrink-0 items-center gap-2">
@@ -52,7 +52,7 @@ function WeekplyPopularHosts() {
                     <img src={host.image} alt={host.name} className="w-full h-full object-cover" />
                   )}
                 </div>
-                <p className="mt-2 text-lg whitespace-nowrap">{host.name}</p>
+                <p className="mt-2 text-md whitespace-nowrap">{host.name}</p>
               </div>
             ))}
       </div>
