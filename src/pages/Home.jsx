@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import PopularCategories from '../components/PopularCategories';
 import TodayTheme from '../components/TodayTheme';
-import WeeklyHotEmisodes from '../components/WeeklyHotEpisodes';
 import WeeklySmartPick from '../components/WeeklySmartPick';
 import WeeklyPopularChannels from '../components/WeekplyPopularChannels';
 import WeeklyPopularHosts from '../components/WeekplyPopularHosts';
@@ -28,7 +27,7 @@ function Home() {
         <PopularCategories />
         <WeeklySmartPick />
         <WeeklyPopularChannels />
-        <WeeklyHotEmisodes />
+        {/* <WeeklyHotEmisodes /> */}
       </div>
       <div className="z-50 drawer-side">
         <label htmlFor="menu-drawer" className="drawer-overlay"></label>

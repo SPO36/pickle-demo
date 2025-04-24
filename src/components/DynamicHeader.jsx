@@ -1,4 +1,4 @@
-import { ArrowLeft, Menu, Search } from 'lucide-react';
+import { ArrowLeft, Heart, Menu, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -81,11 +81,14 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
     themeToggleIcon,
     ...(rightIcons ?? [
       {
+        icon: <Heart size={24} />,
+        onClick: () => navigate('/likes'),
+      },
+      {
         icon: <Search size={24} />,
         onClick: () => navigate('/search'),
       },
       {
-        // ✅ 메뉴 버튼을 drawer toggle로 교체
         icon: (
           <label htmlFor="menu-drawer" className="cursor-pointer btn btn-ghost btn-circle">
             <Menu size={24} />

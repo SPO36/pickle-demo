@@ -9,6 +9,7 @@ import ZoomProvider from './components/ZoomProvider';
 import CategoryDetail from './pages/CategoryDetail';
 import Home from './pages/Home';
 import HostDetail from './pages/HostDetail';
+import LikedPage from './pages/LikedPage';
 import PlayEpisode from './pages/PlayEpisode';
 import SearchPage from './pages/SearchPage';
 import VoiceSearch from './pages/VoiceSearch';
@@ -48,7 +49,6 @@ function AppRoutes() {
         />
         {/* Tag Detail Route */}
         <Route path="/tags/:slug" element={<TagDetailLayoutWrapper />} />
-
         {/* Host Detail Route */}
         <Route
           path="/host/:slug"
@@ -58,7 +58,6 @@ function AppRoutes() {
             </Layout>
           }
         />
-
         {/* Episode Detail (Play Page) Route */}
         <Route
           path="/episode"
@@ -68,7 +67,15 @@ function AppRoutes() {
             </Layout>
           }
         />
-
+        {/* Liked Route */}
+        <Route
+          path="/likes"
+          element={
+            <Layout headerContent={<DynamicHeader centerText=" " />}>
+              <LikedPage />
+            </Layout>
+          }
+        />
         {/* Voice Search Route */}
         <Route
           path="/voiceSearch"
@@ -78,7 +85,6 @@ function AppRoutes() {
             </Layout>
           }
         />
-
         {/* Category Detail Route */}
         <Route
           path="/categories/:slug"
@@ -88,7 +94,6 @@ function AppRoutes() {
             </Layout>
           }
         />
-
         {/* SearchPage Route */}
         <Route
           path="/search"
