@@ -71,7 +71,7 @@ function AppRoutes() {
         <Route
           path="/likes"
           element={
-            <Layout headerContent={<DynamicHeader centerText=" " />}>
+            <Layout headerContent={<DynamicHeader centerText="보관함" />}>
               <LikedPage />
             </Layout>
           }

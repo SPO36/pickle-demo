@@ -46,14 +46,14 @@ export default function TodayTheme() {
 
       {/* 화살표는 항상 렌더링, hidden 클래스로 제어 */}
       <button
-        className={`swiper-button-prev-custom top-[55%] -left-5 z-10 absolute bg-base-200 hover:bg-base-300 shadow-md p-2 rounded-full -translate-y-1/2 transform ${
+        className={`today-prev top-[55%] -left-5 z-10 absolute bg-base-200 hover:bg-base-300 shadow-md p-2 rounded-full -translate-y-1/2 transform ${
           isBeginning ? 'hidden' : ''
         }`}
       >
         <ChevronLeft size={20} />
       </button>
       <button
-        className={`swiper-button-next-custom top-[55%] -right-5 z-10 absolute bg-base-200 hover:bg-base-300 shadow-md p-2 rounded-full -translate-y-1/2 transform ${
+        className={`today-next top-[55%] -right-5 z-10 absolute bg-base-200 hover:bg-base-300 shadow-md p-2 rounded-full -translate-y-1/2 transform ${
           isEnd ? 'hidden' : ''
         }`}
       >
@@ -70,8 +70,8 @@ export default function TodayTheme() {
         <Swiper
           modules={[Navigation]}
           navigation={{
-            prevEl: '.swiper-button-prev-custom',
-            nextEl: '.swiper-button-next-custom',
+            prevEl: '.today-prev',
+            nextEl: '.today-next',
           }}
           spaceBetween={16}
           onSwiper={setSwiperInstance}

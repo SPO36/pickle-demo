@@ -150,7 +150,7 @@ function SearchPage() {
         {/* 채널 섹션 */}
         <section id="channel section">
           <h2 className="mb-4 font-bold text-2xl">채널</h2>
-          <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
             {loading
               ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard keyVal={`channel-${i}`} />)
               : channels.map((channel) => (

@@ -21,13 +21,13 @@ function Home() {
   return (
     <div className="drawer drawer-end">
       <input id="menu-drawer" type="checkbox" className="drawer-toggle" />
-      <div className={`drawer-content space-y-8 ${fadeClass}`}>
+      <div className={`drawer-content pb-20 space-y-8 ${fadeClass}`}>
         {/* <TrendingBanner /> */}
         <WeeklyPopularHosts />
-        <TodayTheme />
-        <PopularCategories />
         <WeeklySmartPick />
         <WeeklyPopularChannels />
+        <TodayTheme />
+        <PopularCategories />
         <PlayerBar />
         {/* <WeeklyHotEmisodes /> */}
       </div>

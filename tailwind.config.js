@@ -7,8 +7,8 @@ module.exports = {
       },
       keyframes: {
         scroll: {
-          '0%': { transform: 'tranbaseY(0)' },
-          '100%': { transform: 'tranbaseY(-100%)' },
+          '0%': { transform: 'translateY(0)' }, // 오타 수정
+          '100%': { transform: 'translateY(-100%)' },
         },
         like: {
           '0%': { transform: 'scale(1)' },
@@ -27,7 +27,6 @@ module.exports = {
       animation: {
         scroll: 'scroll 5s linear infinite',
         like: 'like 0.3s ease-in-out',
-        micGrow: 'micGrow 1.25s ease-in-out infinite',
         micGrow: 'micGrow 1.2s ease-in-out infinite',
         'custom-ping': 'customPing 1.5s cubic-bezier(0, 0, 0.2, 1) infinite',
       },
