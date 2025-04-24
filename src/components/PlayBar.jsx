@@ -103,7 +103,7 @@ export default function PlayerBar() {
           <img
             src={episode.src || 'https://via.placeholder.com/40'}
             alt="thumbnail"
-            className="rounded-md h-12 object-cover"
+            className="rounded-xs h-12 object-cover"
           />
         </div>
       </div>
