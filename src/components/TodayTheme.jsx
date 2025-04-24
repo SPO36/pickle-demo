@@ -1,12 +1,11 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import 'swiper/css';
+import 'swiper/css/navigation';
 import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { supabase } from '../lib/supabase';
 import CurationCard from './CurationCard';
-
-import 'swiper/css';
-import 'swiper/css/navigation';
 
 export default function TodayTheme() {
   const [themes, setThemes] = useState([]);

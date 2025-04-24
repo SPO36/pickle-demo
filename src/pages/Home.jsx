@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import PlayerBar from '../components/PlayBar';
 import PopularCategories from '../components/PopularCategories';
 import TodayTheme from '../components/TodayTheme';
 import WeeklySmartPick from '../components/WeeklySmartPick';
@@ -27,6 +28,7 @@ function Home() {
         <PopularCategories />
         <WeeklySmartPick />
         <WeeklyPopularChannels />
+        <PlayerBar />
         {/* <WeeklyHotEmisodes /> */}
       </div>
       <div className="z-50 drawer-side">
