@@ -32,12 +32,12 @@ function ChannelCard({ src, title, creator, liked, onToggleLike }) {
           <img src={src} alt={title} className="w-full h-full object-cover" />
         </figure>
 
-        {/* <div className="items-center gap-4 text-center card-body">
+        <div className="gap-4 py-3">
           <div className="w-full">
-            <h2 className="font-semibold text-lg text-center truncate">{title}</h2>
-            <p className="text-gray-500 text-sm text-center truncate">{creator}</p>
+            <h2 className="font-semibold text-md truncate">{title}</h2>
+            <p className="text-gray-500 text-sm truncate">{creator}</p>
           </div>
-          <button
+          {/* <button
             onClick={(e) => {
               e.stopPropagation(); // 페이지 이동 막기
               onToggleLike();
@@ -51,8 +51,8 @@ function ChannelCard({ src, title, creator, liked, onToggleLike }) {
               stroke={liked ? '#F43F5E' : 'currentColor'}
             />
             좋아요
-          </button>
-        </div> */}
+          </button> */}
+        </div>
       </div>
     </div>
   );

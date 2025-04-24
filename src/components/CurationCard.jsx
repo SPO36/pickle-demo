@@ -24,7 +24,7 @@ function CurationCard({
 
   const handlePlayClick = (e) => {
     e.stopPropagation(); // 카드 클릭 막기
-    navigate('/episode'); // 임시로 고정된 재생 페이지로 이동
+    // navigate('/episode'); // 임시로 고정된 재생 페이지로 이동
   };
 
   return (

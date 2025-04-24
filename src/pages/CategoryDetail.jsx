@@ -138,7 +138,7 @@ function CategoryDetail() {
       </div>
 
       {/* 채널 카드 */}
-      <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+      <div className="gap-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 w-full">
         {sortedChannels.map((item) => (
           <ChannelCard
             key={item.id}

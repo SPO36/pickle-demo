@@ -40,7 +40,7 @@ export default function TodayTheme() {
         {themes.length === 0 ? (
           <div className="bg-base-300 rounded-xl w-40 h-8 animate-pulse" />
         ) : (
-          '일상의 lo-fi'
+          '드라이브 MOOD'
         )}
       </div>
 
