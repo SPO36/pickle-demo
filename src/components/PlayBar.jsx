@@ -41,8 +41,22 @@ export default function PlayerBar() {
 
   return (
     <div className="bottom-0 left-0 z-50 fixed bg-base-100 shadow-md border-t border-base-300 w-full">
-      <div className="flex justify-between items-center mx-auto px-4 py-2 max-w-screen-xl">
-        <div className="flex items-center gap-3">
+      <div className="flex sm:flex-row flex-col justify-between items-center gap-2 sm:gap-0 mx-auto px-4 py-2 max-w-screen-xl">
+        {/* 에피소드 정보 */}
+        <div className="flex sm:flex-row-reverse justify-between sm:justify-end items-center gap-3 sm:order-2 w-full sm:w-auto">
+          <img
+            src={episode.src || 'https://via.placeholder.com/40'}
+            alt="thumbnail"
+            className="h-12 object-cover shrink-0"
+          />
+          <div className="flex flex-col min-w-0 text-left sm:text-right">
+            <span className="font-semibold text-md truncate">{episode.title}</span>
+            <span className="text-gray-500 text-xs truncate">{episode.creator}</span>
+          </div>
+        </div>
+
+        {/* 플레이어 컨트롤 */}
+        <div className="flex justify-center sm:justify-start items-center gap-3 sm:order-1 w-full sm:w-auto">
           <button
             onClick={() => console.log('이전곡')}
             className="hover:bg-base-300 p-2 rounded-full transition"
@@ -92,19 +106,6 @@ export default function PlayerBar() {
               stroke={episode.isLike ? '#F43F5E' : 'currentColor'}
             />
           </button>
-        </div>
-
-        {/* 우측 에피소드 정보 */}
-        <div className="flex items-center gap-3">
-          <div className="flex flex-col items-end">
-            <span className="font-semibold text-md truncate">{episode.title}</span>
-            <span className="text-gray-500 text-xs truncate">{episode.creator}</span>
-          </div>
-          <img
-            src={episode.src || 'https://via.placeholder.com/40'}
-            alt="thumbnail"
-            className="rounded-xs h-12 object-cover"
-          />
         </div>
       </div>
     </div>
