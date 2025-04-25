@@ -61,10 +61,15 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
   };
 
   const defaultRightIcons = [
-    {
-      icon: <Heart size={24} />,
-      onClick: () => navigate('/likes'),
-    },
+    // 하트 아이콘은 /likes가 아닐 때만 보여줌
+    ...(location.pathname !== '/likes'
+      ? [
+          {
+            icon: <Heart size={24} />,
+            onClick: () => navigate('/likes'),
+          },
+        ]
+      : []),
     // 메인페이지 아니면 검색 아이콘 포함
     ...(!isHome
       ? [
