@@ -19,9 +19,18 @@ export default function WeekplyPopularChannels() {
       const { data, error } = await supabase.from('channels').select('*');
       if (error) {
         console.error('❌ Error loading channels:', error.message);
+        return;
+      }
+
+      setChannels(data);
+
+      const saved = sessionStorage.getItem('shuffledPopularChannels');
+      if (saved) {
+        setShuffledCards(JSON.parse(saved));
       } else {
-        setChannels(data);
-        setShuffledCards(getRandomCards(data));
+        const shuffled = getRandomCards(data);
+        setShuffledCards(shuffled);
+        sessionStorage.setItem('shuffledPopularChannels', JSON.stringify(shuffled));
       }
     }
 
@@ -50,7 +59,9 @@ export default function WeekplyPopularChannels() {
   };
 
   const handleRefresh = () => {
-    setShuffledCards(getRandomCards(channels));
+    const newShuffled = getRandomCards(channels);
+    setShuffledCards(newShuffled);
+    sessionStorage.setItem('shuffledPopularChannels', JSON.stringify(newShuffled));
   };
 
   const handleSlideChange = (swiper) => {
