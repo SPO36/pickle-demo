@@ -1,4 +1,5 @@
 import Lottie from 'lottie-react';
+import { ChevronDown } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import animationData from '../assets/VoiceSearch_bg2.json';
@@ -12,26 +13,22 @@ function TagDetail() {
   const [tab, setTab] = useState('episode');
   const [channels, setChannels] = useState([]);
   const [episodes, setEpisodes] = useState([]);
+  const [sort, setSort] = useState('az');
   const [fadeClass, setFadeClass] = useState('fade-enter');
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setFadeClass('fade-enter fade-enter-active');
     }, 50);
-
     return () => clearTimeout(timer);
   }, []);
 
-  // 좋아요 토글 함수
   const toggleLike = async (channelId, current) => {
     const { error } = await supabase
       .from('channels')
       .update({ isLike: !current })
       .eq('id', channelId);
-
-    if (error) {
-      console.error('❌ 좋아요 토글 실패:', error.message);
-    } else {
+    if (!error) {
       setChannels((prev) => prev.map((c) => (c.id === channelId ? { ...c, isLike: !current } : c)));
     }
   };
@@ -39,11 +36,7 @@ function TagDetail() {
   useEffect(() => {
     const fetchTheme = async () => {
       const { data, error } = await supabase.from('themes').select('*').eq('slug', slug).single();
-      if (error) {
-        console.error('❌ 테마 로딩 실패:', error.message);
-      } else {
-        setTheme(data);
-      }
+      if (!error) setTheme(data);
     };
     fetchTheme();
   }, [slug]);
@@ -70,7 +63,18 @@ function TagDetail() {
     fetchData();
   }, [tab, theme]);
 
-  // 로딩 중일 때 애니메이션만 표시
+  const sortedItems = (tab === 'channel' ? [...channels] : [...episodes]).sort((a, b) => {
+    if (sort === 'latest') return new Date(b.created_at) - new Date(a.created_at);
+    if (sort === 'popular') return (b.likes || 0) - (a.likes || 0);
+    if (sort === 'az') {
+      return (a.title || '').localeCompare(b.title || '', 'ko-KR-u-kf-upper', {
+        sensitivity: 'base',
+        ignorePunctuation: true,
+      });
+    }
+    return 0;
+  });
+
   if (!theme) {
     return (
       <div className="flex justify-center items-center p-6">
@@ -110,6 +114,33 @@ function TagDetail() {
         </button>
       </div>
 
+      <div className="mb-4 dropdown">
+        <div
+          tabIndex={0}
+          role="button"
+          className="flex items-center gap-2 bg-base-100 px-4 py-2 border-base-300 text-sm btn"
+        >
+          {sort === 'latest' && '최신순'}
+          {sort === 'popular' && '인기순'}
+          {sort === 'az' && '가나다순'}
+          <ChevronDown size={18} />
+        </div>
+        <ul
+          tabIndex={0}
+          className="z-10 bg-base-100 shadow-sm p-2 rounded-box w-40 dropdown-content menu"
+        >
+          <li>
+            <a onClick={() => setSort('latest')}>최신순</a>
+          </li>
+          <li>
+            <a onClick={() => setSort('popular')}>인기순</a>
+          </li>
+          <li>
+            <a onClick={() => setSort('az')}>가나다순</a>
+          </li>
+        </ul>
+      </div>
+
       {/* 카드 목록 */}
       <div
         className={`gap-4 grid ${
@@ -118,8 +149,8 @@ function TagDetail() {
             : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
         }`}
       >
-        {tab === 'channel' &&
-          channels.map((item) => (
+        {sortedItems.map((item) =>
+          tab === 'channel' ? (
             <ChannelCard
               key={item.id}
               src={item.src}
@@ -128,12 +159,10 @@ function TagDetail() {
               liked={item.isLike}
               onToggleLike={() => toggleLike(item.id, item.isLike)}
             />
-          ))}
-
-        {tab === 'episode' &&
-          episodes.map((item) => (
+          ) : (
             <EpisodeCard key={item.id} src={item.src} title={item.title} creator={item.creator} />
-          ))}
+          )
+        )}
       </div>
     </div>
   );
