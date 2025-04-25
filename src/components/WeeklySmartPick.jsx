@@ -45,7 +45,7 @@ function WeeklySmartPick() {
           : themes.map((theme, idx) => (
               <CurationCard
                 key={idx}
-                subTitle="P!CKLE P!CK"
+                subTitle={theme.folder}
                 title={theme.title}
                 tagId={theme.slug}
                 image={theme.image}

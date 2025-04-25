@@ -9,7 +9,7 @@ import { supabase } from '../lib/supabase';
 function TagDetail() {
   const { slug } = useParams();
   const [theme, setTheme] = useState(null);
-  const [tab, setTab] = useState('channel');
+  const [tab, setTab] = useState('episode');
   const [channels, setChannels] = useState([]);
   const [episodes, setEpisodes] = useState([]);
   const [fadeClass, setFadeClass] = useState('fade-enter');
@@ -50,16 +50,25 @@ function TagDetail() {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!theme) return;
+
       if (tab === 'channel') {
-        const { data } = await supabase.from('channels').select('*');
+        const { data } = await supabase
+          .from('channels')
+          .select('*')
+          .in('id', theme.channel_ids || []);
         setChannels(data || []);
       } else {
-        const { data } = await supabase.from('episodes').select('*');
+        const { data } = await supabase
+          .from('episodes')
+          .select('*')
+          .in('id', theme.episode_ids || []);
         setEpisodes(data || []);
       }
     };
+
     fetchData();
-  }, [tab]);
+  }, [tab, theme]);
 
   // 로딩 중일 때 애니메이션만 표시
   if (!theme) {
@@ -75,19 +84,29 @@ function TagDetail() {
 
   return (
     <div className={fadeClass}>
+      {slug === 'hyundai-heritage' && (
+        <div className="bg-base-200 mb-6 p-4 rounded-lg text-base-content leading-relaxed">
+          <p className="text-md">
+            현대자동차 디자인의 고객 중심 철학과 브랜드 정체성을 기반으로 현재와 미래로 이어지는
+            여정을 담은 위대한 유산, 자동차.
+          </p>
+          <p className="text-md">디자인 개발 과정에서의 현실적인 고민과 도전을 만나보세요.</p>
+        </div>
+      )}
+
       {/* 탭 */}
       <div role="tablist" className="mb-6 tabs-border tabs">
-        <button
-          className={`tab text-lg py-3 h-auto min-h-0 ${tab === 'channel' ? 'tab-active' : ''}`}
-          onClick={() => setTab('channel')}
-        >
-          채널
-        </button>
         <button
           className={`tab text-lg py-3 h-auto min-h-0 ${tab === 'episode' ? 'tab-active' : ''}`}
           onClick={() => setTab('episode')}
         >
           에피소드
+        </button>
+        <button
+          className={`tab text-lg py-3 h-auto min-h-0 ${tab === 'channel' ? 'tab-active' : ''}`}
+          onClick={() => setTab('channel')}
+        >
+          채널
         </button>
       </div>
 

@@ -88,9 +88,9 @@ export default function WeekplyPopularChannels() {
         onSwiper={setSwiperInstance}
         onSlideChange={handleSlideChange}
         breakpoints={{
-          0: { slidesPerView: 2 },
-          640: { slidesPerView: 3 },
-          1024: { slidesPerView: 5 },
+          0: { slidesPerView: 2, slidesPerGroup: 2 },
+          640: { slidesPerView: 3, slidesPerGroup: 3 },
+          1024: { slidesPerView: 5, slidesPerGroup: 5 },
         }}
       >
         {shuffledCards.map((channel) => (

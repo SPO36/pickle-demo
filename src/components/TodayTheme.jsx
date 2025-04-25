@@ -85,7 +85,7 @@ export default function TodayTheme() {
           {themes.map((theme, idx) => (
             <SwiperSlide key={idx} className="!flex !justify-center">
               <CurationCard
-                subTitle="P!CKLE THEME"
+                subTitle={theme.folder}
                 title={theme.title}
                 tagId={theme.slug}
                 image={theme.image}

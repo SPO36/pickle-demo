@@ -11,13 +11,13 @@ function EpisodeCard({ title, creator, src }) {
 
   return (
     <div className="cursor-pointer" onClick={handlePlayClick}>
-      <div className="bg-base-100 shadow-sm border border-base-300 card">
+      <div className="bg-base-100 shadow-sm">
         <figure>
           <img src={src} alt={creator} />
         </figure>
-        <div className="card-body">
-          <h2 className="overflow-hidden line-clamp-2 card-title">{title}</h2>
-          <p className="text-gray-500">{creator}</p>
+        <div className="gap-4 py-3">
+          <h2 className="overflow-hidden font-semibold text-md line-clamp-2">{title}</h2>
+          <p className="text-gray-500 text-sm truncate">{creator}</p>
         </div>
       </div>
     </div>
