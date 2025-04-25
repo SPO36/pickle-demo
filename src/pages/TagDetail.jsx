@@ -42,21 +42,43 @@ function TagDetail() {
   }, [slug]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!theme) return;
+    if (!theme) return; // 에러 방지
 
+    const fetchData = async () => {
       if (tab === 'channel') {
-        const { data } = await supabase
+        const { data: episodes, error: episodeErr } = await supabase
+          .from('episodes')
+          .select('id, channel_id')
+          .in('id', theme.episode_ids || []);
+
+        if (episodeErr) {
+          console.error('❌ 에피소드 로딩 실패:', episodeErr.message);
+          return;
+        }
+
+        const channelIds = [...new Set(episodes.map((ep) => ep.channel_id).filter(Boolean))];
+        console.log('📡 추출된 channelIds', channelIds);
+
+        const { data: channels, error: channelErr } = await supabase
           .from('channels')
           .select('*')
-          .in('id', theme.channel_ids || []);
-        setChannels(data || []);
+          .in('id', channelIds);
+
+        if (channelErr) {
+          console.error('❌ 채널 로딩 실패:', channelErr.message);
+        } else {
+          setChannels(channels || []);
+        }
       } else {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('episodes')
           .select('*')
           .in('id', theme.episode_ids || []);
-        setEpisodes(data || []);
+        if (!error) {
+          setEpisodes(data || []);
+          console.log('🎯 theme.episode_ids', theme.episode_ids);
+          console.log('📺 불러온 episodes', data);
+        }
       }
     };
 
@@ -114,6 +136,7 @@ function TagDetail() {
         </button>
       </div>
 
+      {/* 정렬 드롭다운 */}
       <div className="mb-4 dropdown">
         <div
           tabIndex={0}
@@ -145,7 +168,7 @@ function TagDetail() {
       <div
         className={`gap-4 grid ${
           tab === 'channel'
-            ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+            ? 'grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5'
             : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
         }`}
       >
