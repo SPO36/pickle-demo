@@ -1,9 +1,10 @@
+import { AudioLines, CircleUserRound, Heart, LogOut, Settings, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const ZOOM_KEY = 'zoomLevel';
 
 function MenuPage() {
-  const [zoomLevel, setZoomLevel] = useState(1.4); // 기본값 1.4
+  const [zoomLevel, setZoomLevel] = useState(1.4);
 
   // 초기 마운트 시 로컬스토리지에서 줌 값 불러오기
   useEffect(() => {
@@ -22,24 +23,82 @@ function MenuPage() {
     setZoomLevel(newZoom);
     document.documentElement.style.zoom = newZoom;
     localStorage.setItem(ZOOM_KEY, newZoom);
-
-    // ✅ 동일 탭에서도 실시간 반영되도록 이벤트 디스패치
     window.dispatchEvent(new Event('zoomChange'));
   };
 
   return (
-    <div className="space-y-4 p-4">
-      <h1 className="font-bold text-2xl">화면 배율</h1>
-      <label className="flex items-center gap-2">
-        <select className="select-bordered select" value={zoomLevel} onChange={handleZoomChange}>
-          <option value={1}>100%</option>
-          <option value={1.2}>120%</option>
-          <option value={1.4}>140%</option>
-          <option value={1.6}>160%</option>
-          <option value={1.8}>180%</option>
-          <option value={2.0}>200%</option>
-        </select>
-      </label>
+    <div className="space-y-10">
+      <div className="space-y-2 overflow-x-auto">
+        {/* profile */}
+        <ul className="bg-base-100 shadow-md rounded-box list">
+          <li className="flex justify-between items-center list-row">
+            <div className="flex flex-row gap-4">
+              <div>
+                <img
+                  className="rounded-box size-10"
+                  src="https://img.daisyui.com/images/profile/demo/3@94.webp"
+                />
+              </div>
+              <div className="list-col-grow">
+                <div>OBIGO</div>
+                <div className="opacity-60 font-semibold text-xs uppercase">obigo@obigo.co.kr</div>
+              </div>
+            </div>
+            <div className="hover:bg-base-300 p-3 rounded-xl cursor-pointer">
+              <LogOut size={20} />
+            </div>
+          </li>
+        </ul>
+        {/* my */}
+        <table className="table">
+          <tbody>
+            <tr className="hover:bg-base-300 cursor-pointer">
+              <td className="flex flex-row gap-3">
+                <CircleUserRound strokeWidth={1.5} size={24} />
+                <div>마이페이지</div>
+              </td>
+            </tr>
+            <tr className="hover:bg-base-300 cursor-pointer">
+              <td className="flex flex-row gap-3">
+                <Star strokeWidth={1.5} size={24} />
+                <div>최근 청취</div>
+              </td>
+            </tr>
+            <tr className="hover:bg-base-300 cursor-pointer">
+              <td className="flex flex-row gap-3">
+                <Heart strokeWidth={1.5} size={24} />
+                <div>보관함</div>
+              </td>
+            </tr>
+            <tr className="hover:bg-base-300 cursor-pointer">
+              <td className="flex flex-row gap-3">
+                <AudioLines strokeWidth={1.5} size={24} />
+                <div>사운드</div>
+              </td>
+            </tr>
+            <tr className="hover:bg-base-300 cursor-pointer">
+              <td className="flex flex-row gap-3">
+                <Settings strokeWidth={1.5} size={24} />
+                <div>설정</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      {/* setting */}
+      <div>
+        <h1 className="mb-3 font-semibold text-lg">화면 배율</h1>
+        <label className="flex items-center gap-2">
+          <select className="select-bordered select" value={zoomLevel} onChange={handleZoomChange}>
+            <option value={1}>100%</option>
+            <option value={1.2}>120%</option>
+            <option value={1.4}>140%</option>
+            <option value={1.6}>160%</option>
+            <option value={1.8}>180%</option>
+            <option value={2.0}>200%</option>
+          </select>
+        </label>
+      </div>
     </div>
   );
 }
