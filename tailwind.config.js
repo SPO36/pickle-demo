@@ -33,4 +33,25 @@ module.exports = {
     },
   },
   plugins: [require('daisyui')],
+  daisyui: {
+    themes: [
+      {
+        dark: {
+          'color-scheme': 'dark',
+          '--color-base-100': 'oklch(0 0 315)', // ✏️ 너가 바꾼 값
+          '--color-base-200': 'oklch(0 0 320)',
+          '--color-base-300': 'oklch(0 0 325)',
+          '--color-primary': 'oklch(62% 0.19 248)', // 원래 기본 primary
+          '--color-secondary': 'oklch(72% 0.16 191)',
+          '--color-accent': 'oklch(80% 0.24 125)',
+          '--color-neutral': 'oklch(24% 0.02 280)',
+          '--color-info': 'oklch(72% 0.08 215)',
+          '--color-success': 'oklch(70% 0.12 145)',
+          '--color-warning': 'oklch(90% 0.16 90)',
+          '--color-error': 'oklch(68% 0.19 25)',
+          // 필요한 것 추가 가능
+        },
+      },
+    ],
+  },
 };

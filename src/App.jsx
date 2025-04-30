@@ -103,6 +103,15 @@ function AppRoutes() {
             </Layout>
           }
         />
+        {/* Channel Route */}
+        <Route
+          path="/channel/:slug"
+          element={
+            <Layout headerContent={<DynamicHeader centerText=" " />}>
+              <CategoryDetail />
+            </Layout>
+          }
+        />
       </Routes>
     </>
   );

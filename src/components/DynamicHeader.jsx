@@ -1,5 +1,5 @@
 import { ArrowLeft, Heart, Menu, Search } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const THEME_KEY = 'siteTheme';
@@ -26,9 +26,9 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
     localStorage.setItem(THEME_KEY, newTheme);
   };
 
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
+  // useEffect(() => {
+  //   document.documentElement.setAttribute('data-theme', theme);
+  // }, [theme]);
 
   const themeToggleIcon = {
     icon: (
