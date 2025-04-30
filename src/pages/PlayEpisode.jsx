@@ -1,5 +1,6 @@
 import { Headphones, Heart, List, Pause, Play, Shuffle, SkipBack, SkipForward } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const HEADER_HEIGHT = 128;
 
@@ -7,6 +8,8 @@ function PlayEpisode() {
   const [liked, setLiked] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [containerHeight, setContainerHeight] = useState('100vh');
+  const { state } = useLocation();
+  const { title, creator, src } = state || {};
 
   // 🔁 zoomLevel 적용 및 실시간 반영
   const updateHeight = () => {
@@ -53,20 +56,14 @@ function PlayEpisode() {
         }}
       >
         {/* 상단 정보 */}
-        <div className="flex md:flex-row flex-col items-center gap-12 w-full">
-          <img
-            src="https://i.ytimg.com/vi/4wOdJ5F-5i8/maxresdefault.jpg"
-            alt="The surprising habits of original thinkers"
-            className="rounded-xl w-full md:w-1/3 object-cover"
-          />
+        <div className="flex md:flex-row flex-col items-center gap-8 w-full">
+          <img src={src} alt={title} className="rounded-lg w-full md:w-2/5 h-auto object-cover" />
           <div className="flex-1 space-y-8 w-full">
             <div className="space-y-2">
-              <h2 className="font-semibold text-4xl line-clamp-2 leading-snug">
-                The surprising habits of original thinkers | Adam Grant | TED
-              </h2>
-              <p className="text-gray-500 text-lg">TED Business</p>
+              <h2 className="font-semibold text-2xl line-clamp-2 leading-snug">{title}</h2>
+              <p className="text-gray-500 text-lg">{creator}</p>
             </div>
-            <p className="flex items-center gap-1 text-gray-500 text-lg">17:44</p>
+            {/* <p className="flex items-center gap-1 text-gray-500 text-lg">17:44</p> */}
 
             <div className="flex gap-3">
               <button

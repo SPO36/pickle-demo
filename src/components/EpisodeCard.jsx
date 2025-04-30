@@ -2,11 +2,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function EpisodeCard({ title, creator, src }) {
+function EpisodeCard({ title, creator, src, id }) {
   const navigate = useNavigate();
-  const handlePlayClick = (e) => {
-    e.stopPropagation(); // 카드 클릭 막기
-    navigate('/episode'); // 임시로 고정된 재생 페이지로 이동
+  const handlePlayClick = () => {
+    navigate('/episode', {
+      state: { title, creator, src, id }, // 필요한 정보 추가
+    });
   };
 
   return (
@@ -15,7 +16,7 @@ function EpisodeCard({ title, creator, src }) {
         <figure>
           <img src={src} alt={creator} />
         </figure>
-        <div className="gap-4 py-3">
+        <div className="gap-4 py-2">
           <h2 className="overflow-hidden font-semibold text-md line-clamp-2">{title}</h2>
           <p className="text-gray-500 text-sm truncate">{creator}</p>
         </div>

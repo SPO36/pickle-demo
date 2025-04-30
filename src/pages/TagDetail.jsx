@@ -76,8 +76,8 @@ function TagDetail() {
           .in('id', theme.episode_ids || []);
         if (!error) {
           setEpisodes(data || []);
-          console.log('🎯 theme.episode_ids', theme.episode_ids);
-          console.log('📺 불러온 episodes', data);
+          // console.log('🎯 theme.episode_ids', theme.episode_ids);
+          // console.log('📺 불러온 episodes', data);
         }
       }
     };
@@ -183,7 +183,13 @@ function TagDetail() {
               onToggleLike={() => toggleLike(item.id, item.isLike)}
             />
           ) : (
-            <EpisodeCard key={item.id} src={item.src} title={item.title} creator={item.creator} />
+            <EpisodeCard
+              key={item.id}
+              id={item.id}
+              src={item.src}
+              title={item.title}
+              creator={item.creator}
+            />
           )
         )}
       </div>
