@@ -89,7 +89,10 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
     },
   ];
 
-  const icons = [themeToggleIcon, ...(rightIcons ?? defaultRightIcons)];
+  const icons = [
+    // themeToggleIcon,
+    ...(rightIcons ?? defaultRightIcons),
+  ];
 
   return (
     <div className="relative flex items-center px-4 py-2 w-full">
