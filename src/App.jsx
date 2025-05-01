@@ -118,12 +118,12 @@ function AppRoutes() {
 }
 
 function App() {
-  useEffect(() => {
-    const savedZoom = localStorage.getItem('zoomLevel');
-    if (savedZoom) {
-      document.documentElement.style.zoom = parseFloat(savedZoom);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const savedZoom = localStorage.getItem('zoomLevel');
+  //   if (savedZoom) {
+  //     document.documentElement.style.zoom = parseFloat(savedZoom);
+  //   }
+  // }, []);
 
   return (
     <BrowserRouter>

@@ -10,6 +10,11 @@ function HostDetail() {
   const [episodes, setEpisodes] = useState([]);
 
   useEffect(() => {
+    console.log('[DEBUG] zoom 적용된 값:', document.documentElement.style.zoom);
+  }, []);
+
+
+  useEffect(() => {
     async function fetchHostAndEpisodes() {
       // 1. 호스트 정보 가져오기
       const { data: hostData, error: hostError } = await supabase
@@ -72,7 +77,7 @@ function HostDetail() {
                   slug={ep.slug}
                   summary={ep.summary}
                   thumbnail={ep.thumbnail}
-                  // 필요한 prop 더 추가 가능
+                // 필요한 prop 더 추가 가능
                 />
               </div>
             ))}

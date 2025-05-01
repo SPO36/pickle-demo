@@ -12,7 +12,7 @@ function EpisodeCard({ title, creator, src, id }) {
 
   return (
     <div className="cursor-pointer" onClick={handlePlayClick}>
-      <div className="bg-base-100 shadow-sm">
+      <div className="bg-base-100">
         <figure>
           <img src={src} alt={creator} />
         </figure>

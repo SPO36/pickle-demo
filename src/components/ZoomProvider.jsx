@@ -9,10 +9,17 @@ function ZoomProvider() {
   useEffect(() => {
     const savedZoom = localStorage.getItem(ZOOM_KEY);
     const zoom = savedZoom ? parseFloat(savedZoom) : 1;
-    document.documentElement.style.zoom = zoom;
+
+    console.log('[ZoomProvider] applying zoom', zoom, 'on path:', location.pathname);
+
+    const timeout = setTimeout(() => {
+      document.documentElement.style.zoom = zoom;
+    }, 0);
+
+    return () => clearTimeout(timeout);
   }, [location]);
 
-  return null; // 아무것도 렌더하지 않음
+  return null;
 }
 
 export default ZoomProvider;

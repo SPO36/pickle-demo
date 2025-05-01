@@ -27,10 +27,10 @@ function MenuPage() {
   };
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-4">
       <div className="space-y-2 overflow-x-auto">
         {/* profile */}
-        <ul className="bg-base-100 shadow-md rounded-box list">
+        <ul className="bg-base-100 rounded-box list">
           <li className="flex justify-between items-center list-row">
             <div className="flex flex-row gap-4">
               <div>
@@ -86,7 +86,7 @@ function MenuPage() {
         </table>
       </div>
       {/* setting */}
-      <div>
+      <div className='p-3'>
         <h1 className="mb-3 font-semibold text-lg">화면 배율</h1>
         <label className="flex items-center gap-2">
           <select className="select-bordered select" value={zoomLevel} onChange={handleZoomChange}>

@@ -1,5 +1,5 @@
 import { ArrowLeft, Heart, Menu, Search } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const THEME_KEY = 'siteTheme';
@@ -26,9 +26,9 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
     localStorage.setItem(THEME_KEY, newTheme);
   };
 
-  // useEffect(() => {
-  //   document.documentElement.setAttribute('data-theme', theme);
-  // }, [theme]);
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
 
   const themeToggleIcon = {
     icon: (
@@ -64,20 +64,20 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
     // 하트 아이콘은 /likes가 아닐 때만 보여줌
     ...(location.pathname !== '/likes'
       ? [
-          {
-            icon: <Heart size={24} />,
-            onClick: () => navigate('/likes'),
-          },
-        ]
+        {
+          icon: <Heart size={24} />,
+          onClick: () => navigate('/likes'),
+        },
+      ]
       : []),
     // 메인페이지 아니면 검색 아이콘 포함
     ...(!isHome
       ? [
-          {
-            icon: <Search size={24} />,
-            onClick: () => navigate('/search'),
-          },
-        ]
+        {
+          icon: <Search size={24} />,
+          onClick: () => navigate('/search'),
+        },
+      ]
       : []),
     {
       icon: (
@@ -90,7 +90,7 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
   ];
 
   const icons = [
-    // themeToggleIcon,
+    themeToggleIcon,
     ...(rightIcons ?? defaultRightIcons),
   ];
 
