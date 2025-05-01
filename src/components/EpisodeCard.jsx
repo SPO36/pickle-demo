@@ -1,13 +1,11 @@
-// src/components/EpisodeCard.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function EpisodeCard({ title, creator, src, id }) {
   const navigate = useNavigate();
+
   const handlePlayClick = () => {
-    navigate('/episode', {
-      state: { title, creator, src, id }, // 필요한 정보 추가
-    });
+    navigate(`/episode/${id}`); // URL만으로 이동
   };
 
   return (

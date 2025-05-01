@@ -1,5 +1,5 @@
 import { Mic } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import DynamicHeader from './components/DynamicHeader';
 import Layout from './components/Layout';
@@ -60,7 +60,7 @@ function AppRoutes() {
         />
         {/* Episode Detail (Play Page) Route */}
         <Route
-          path="/episode"
+          path="/episode/:id"
           element={
             <Layout headerContent={<DynamicHeader centerText=" " />}>
               <PlayEpisode />

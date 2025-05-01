@@ -1,15 +1,16 @@
 import { Headphones, Heart, List, Pause, Play, Shuffle, SkipBack, SkipForward } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 const HEADER_HEIGHT = 128;
 
 function PlayEpisode() {
+  const { id } = useParams();
+  const [episode, setEpisode] = useState(null);
   const [liked, setLiked] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [containerHeight, setContainerHeight] = useState('100vh');
-  const { state } = useLocation();
-  const { title, creator, src } = state || {};
 
   // 🔁 zoomLevel 적용 및 실시간 반영
   const updateHeight = () => {
@@ -20,13 +21,11 @@ function PlayEpisode() {
   };
 
   useEffect(() => {
-    updateHeight(); // 초기 적용
+    updateHeight();
 
-    // ✅ 실시간 반영: storage & custom zoomChange 이벤트
     window.addEventListener('storage', updateHeight);
     window.addEventListener('zoomChange', updateHeight);
 
-    // ✅ 스크롤 방지
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
@@ -37,8 +36,20 @@ function PlayEpisode() {
     };
   }, []);
 
+  useEffect(() => {
+    const fetchEpisode = async () => {
+      const { data, error } = await supabase.from('episodes').select('*').eq('id', id).single();
+
+      if (!error) setEpisode(data);
+    };
+
+    fetchEpisode();
+  }, [id]);
+
   const togglePlay = () => setIsPlaying((prev) => !prev);
   const toggleLike = () => setLiked((prev) => !prev);
+
+  if (!episode) return <div className="p-8 text-center">로딩 중...</div>;
 
   return (
     <div
@@ -49,21 +60,19 @@ function PlayEpisode() {
         justifyContent: 'center',
       }}
     >
-      <div
-        className="space-y-10 w-full max-w-5xl"
-        style={{
-          margin: 'auto',
-        }}
-      >
+      <div className="space-y-10 w-full max-w-5xl" style={{ margin: 'auto' }}>
         {/* 상단 정보 */}
         <div className="flex md:flex-row flex-col items-center gap-8 w-full">
-          <img src={src} alt={title} className="rounded-lg w-full md:w-2/5 h-auto object-cover" />
+          <img
+            src={episode.src}
+            alt={episode.title}
+            className="rounded-lg w-full md:w-2/5 h-auto object-cover"
+          />
           <div className="flex-1 space-y-8 w-full">
             <div className="space-y-2">
-              <h2 className="font-semibold text-2xl line-clamp-2 leading-snug">{title}</h2>
-              <p className="text-gray-500 text-lg">{creator}</p>
+              <h2 className="font-semibold text-2xl line-clamp-2 leading-snug">{episode.title}</h2>
+              <p className="text-gray-500 text-lg">{episode.creator}</p>
             </div>
-            {/* <p className="flex items-center gap-1 text-gray-500 text-lg">17:44</p> */}
 
             <div className="flex gap-3">
               <button
@@ -89,7 +98,12 @@ function PlayEpisode() {
           </div>
         </div>
 
-        {/* 플레이어 영역 */}
+        {/* 오디오 재생기 */}
+        <div className="w-full">
+          <audio src={episode.audioFile} controls autoPlay className="mt-4 w-full" />
+        </div>
+
+        {/* 커스텀 컨트롤 (추후 확장 가능) */}
         <div className="space-y-6 w-full">
           <div className="bg-base-300 rounded-full w-full h-2 overflow-hidden">
             <div className="bg-primary w-[12%] h-full" />
