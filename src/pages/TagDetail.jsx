@@ -166,10 +166,11 @@ function TagDetail() {
 
       {/* 카드 목록 */}
       <div
-        className={`gap-4 grid ${tab === 'channel'
-          ? 'grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5'
-          : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-          }`}
+        className={`gap-4 grid ${
+          tab === 'channel'
+            ? 'grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5'
+            : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+        }`}
       >
         {sortedItems.map((item) =>
           tab === 'channel' ? (
@@ -188,6 +189,7 @@ function TagDetail() {
               src={item.src}
               title={item.title}
               creator={item.creator}
+              themeSlug={slug}
             />
           )
         )}

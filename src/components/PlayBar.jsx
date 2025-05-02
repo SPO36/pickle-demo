@@ -32,7 +32,7 @@ export default function PlayerBar() {
     } else if (data?.length > 0) {
       setEpisodeList(data);
       setCurrentIndex(0);
-      setIsPlaying(flase);
+      setIsPlaying(false);
     }
   }, []);
 

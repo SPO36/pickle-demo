@@ -1,13 +1,15 @@
 import { Headphones, Heart, List, Pause, Play, Shuffle, SkipBack, SkipForward } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
 const HEADER_HEIGHT = 128;
 
 function PlayEpisode() {
-  const { id } = useParams();
+  const { id, themeSlug } = useParams();
   const [episode, setEpisode] = useState(null);
+  const [playlist, setPlaylist] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(null);
   const [liked, setLiked] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [containerHeight, setContainerHeight] = useState('100vh');
@@ -15,8 +17,8 @@ function PlayEpisode() {
   const [duration, setDuration] = useState(0);
 
   const audioRef = useRef(null);
+  const navigate = useNavigate();
 
-  // 🔁 zoomLevel 적용 및 실시간 반영
   const updateHeight = () => {
     const zoom = parseFloat(localStorage.getItem('zoomLevel')) || 1;
     const physicalViewport = window.innerHeight;
@@ -25,27 +27,68 @@ function PlayEpisode() {
   };
 
   useEffect(() => {
-    if (episode && audioRef.current) {
-      audioRef.current
-        .play()
-        .then(() => {
-          setIsPlaying(true);
-        })
-        .catch((err) => {
-          console.warn('자동 재생 실패:', err);
-        });
-    }
+    const fetchData = async () => {
+      if (themeSlug) {
+        const { data: theme, error } = await supabase
+          .from('themes')
+          .select('episode_ids')
+          .eq('slug', themeSlug)
+          .single();
+
+        if (!error && theme) {
+          setPlaylist(theme.episode_ids);
+          const index = theme.episode_ids.findIndex((epId) => epId === id);
+          setCurrentIndex(index);
+        } else {
+          setPlaylist([]);
+          setCurrentIndex(null);
+        }
+      }
+
+      const { data, error } = await supabase.from('episodes').select('*').eq('id', id).single();
+      if (!error) {
+        setEpisode(data);
+        setIsPlaying(false);
+        audioRef.current?.load();
+      }
+    };
+
+    fetchData();
+  }, [id, themeSlug]);
+
+  // ✅ 자동재생 안전하게 처리
+  useEffect(() => {
+    const playAudio = async () => {
+      if (!audioRef.current) return;
+      try {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        audioRef.current.load();
+
+        setTimeout(() => {
+          audioRef.current
+            ?.play()
+            .then(() => {
+              setIsPlaying(true);
+            })
+            .catch((err) => {
+              console.warn('🎧 자동 재생 실패:', err.message);
+            });
+        }, 100);
+      } catch (err) {
+        console.error('❌ 자동 재생 에러:', err.message);
+      }
+    };
+
+    if (episode) playAudio();
   }, [episode]);
 
   useEffect(() => {
     updateHeight();
-
     window.addEventListener('storage', updateHeight);
     window.addEventListener('zoomChange', updateHeight);
-
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-
     return () => {
       window.removeEventListener('storage', updateHeight);
       window.removeEventListener('zoomChange', updateHeight);
@@ -54,24 +97,18 @@ function PlayEpisode() {
   }, []);
 
   useEffect(() => {
-    const fetchEpisode = async () => {
-      const { data, error } = await supabase.from('episodes').select('*').eq('id', id).single();
-
-      if (!error) setEpisode(data);
-    };
-
-    fetchEpisode();
-  }, [id]);
-
-  useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     const updateTime = () => setCurrentTime(audio.currentTime);
-    const updateDuration = () => {
-      setDuration(audio.duration);
+    const updateDuration = () => setDuration(audio.duration);
+    const onEnded = () => {
+      if (currentIndex < playlist.length - 1) {
+        navigate(`/episode/${playlist[currentIndex + 1]}/${themeSlug}`);
+      } else {
+        setIsPlaying(false);
+      }
     };
-    const onEnded = () => setIsPlaying(false);
 
     audio.addEventListener('timeupdate', updateTime);
     audio.addEventListener('loadedmetadata', updateDuration);
@@ -84,7 +121,7 @@ function PlayEpisode() {
       audio.removeEventListener('canplaythrough', updateDuration);
       audio.removeEventListener('ended', onEnded);
     };
-  }, [episode]); // 🔥 episode 로딩 후에만 붙이기
+  }, [episode, currentIndex, playlist, themeSlug]);
 
   const formatTime = (sec) => {
     if (isNaN(sec)) return '00:00';
@@ -95,9 +132,20 @@ function PlayEpisode() {
 
   const progress = duration ? (currentTime / duration) * 100 : 0;
 
+  const goToPrev = () => {
+    if (currentIndex > 0) {
+      navigate(`/episode/${playlist[currentIndex - 1]}/${themeSlug}`);
+    }
+  };
+
+  const goToNext = () => {
+    if (currentIndex < playlist.length - 1) {
+      navigate(`/episode/${playlist[currentIndex + 1]}/${themeSlug}`);
+    }
+  };
+
   const togglePlay = () => {
     if (!audioRef.current) return;
-
     if (isPlaying) {
       audioRef.current.pause();
     } else {
@@ -113,14 +161,9 @@ function PlayEpisode() {
   return (
     <div
       className="px-4 py-12"
-      style={{
-        height: containerHeight,
-        display: 'flex',
-        justifyContent: 'center',
-      }}
+      style={{ height: containerHeight, display: 'flex', justifyContent: 'center' }}
     >
       <div className="space-y-10 w-full max-w-5xl" style={{ margin: 'auto' }}>
-        {/* 상단 정보 */}
         <div className="flex md:flex-row flex-col items-center gap-8 w-full">
           <img
             src={episode.src}
@@ -148,7 +191,6 @@ function PlayEpisode() {
                 />
                 좋아요
               </button>
-
               <button className="flex items-center gap-2 bg-primary px-5 py-2 rounded-full text-md text-white btn">
                 <Headphones size={18} className="transition-transform duration-300" />
                 더빙 듣기
@@ -157,7 +199,6 @@ function PlayEpisode() {
           </div>
         </div>
 
-        {/* 오디오 재생기 */}
         <div className="w-full">
           <audio
             ref={audioRef}
@@ -167,7 +208,6 @@ function PlayEpisode() {
           />
         </div>
 
-        {/* 커스텀 컨트롤 (추후 확장 가능) */}
         <div className="space-y-6 w-full">
           <div
             className="bg-base-300 rounded-full w-full h-2 overflow-hidden cursor-pointer"
@@ -185,7 +225,6 @@ function PlayEpisode() {
             />
           </div>
 
-          {/* 시간 */}
           <div className="flex justify-between w-full text-gray-500 text-sm">
             <span>{formatTime(currentTime)}</span>
             <span>{formatTime(duration)}</span>
@@ -194,10 +233,10 @@ function PlayEpisode() {
           <div className="flex justify-center items-center pt-4 w-full">
             <div className="flex justify-between items-center px-6 w-full max-w-2xl">
               <button className="hover:bg-base-300 p-3 rounded-full transition">
-                <Shuffle size={28} className="cursor-pointer" />
+                <Shuffle size={28} />
               </button>
-              <button className="hover:bg-base-300 p-3 rounded-full transition">
-                <SkipBack size={32} className="cursor-pointer" />
+              <button onClick={goToPrev} className="hover:bg-base-300 p-3 rounded-full transition">
+                <SkipBack size={32} />
               </button>
 
               <button onClick={togglePlay} className="transition-all duration-300 ease-in-out">
@@ -217,11 +256,11 @@ function PlayEpisode() {
                 </div>
               </button>
 
-              <button className="hover:bg-base-300 p-3 rounded-full transition">
-                <SkipForward size={32} className="cursor-pointer" />
+              <button onClick={goToNext} className="hover:bg-base-300 p-3 rounded-full transition">
+                <SkipForward size={32} />
               </button>
               <button className="hover:bg-base-300 p-3 rounded-full transition">
-                <List size={28} className="cursor-pointer" />
+                <List size={28} />
               </button>
             </div>
           </div>

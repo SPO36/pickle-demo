@@ -1,11 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function EpisodeCard({ title, creator, src, id }) {
+function EpisodeCard({ title, creator, src, id, themeSlug }) {
   const navigate = useNavigate();
 
   const handlePlayClick = () => {
-    navigate(`/episode/${id}`); // URL만으로 이동
+    if (themeSlug) {
+      navigate(`/episode/${id}/${themeSlug}`);
+    } else {
+      navigate(`/episode/${id}`); // fallback
+    }
   };
 
   return (

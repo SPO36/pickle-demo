@@ -1,5 +1,5 @@
 import { ArrowLeft, Heart, Menu, Search } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const THEME_KEY = 'siteTheme';
@@ -64,20 +64,20 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
     // 하트 아이콘은 /likes가 아닐 때만 보여줌
     ...(location.pathname !== '/likes'
       ? [
-        {
-          icon: <Heart size={24} />,
-          onClick: () => navigate('/likes'),
-        },
-      ]
+          {
+            icon: <Heart size={24} />,
+            onClick: () => navigate('/likes'),
+          },
+        ]
       : []),
     // 메인페이지 아니면 검색 아이콘 포함
     ...(!isHome
       ? [
-        {
-          icon: <Search size={24} />,
-          onClick: () => navigate('/search'),
-        },
-      ]
+          {
+            icon: <Search size={24} />,
+            onClick: () => navigate('/search'),
+          },
+        ]
       : []),
     {
       icon: (
@@ -89,10 +89,7 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
     },
   ];
 
-  const icons = [
-    themeToggleIcon,
-    ...(rightIcons ?? defaultRightIcons),
-  ];
+  const icons = [themeToggleIcon, ...(rightIcons ?? defaultRightIcons)];
 
   return (
     <div className="relative flex items-center px-4 py-2 w-full">

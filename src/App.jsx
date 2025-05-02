@@ -10,7 +10,7 @@ import CategoryDetail from './pages/CategoryDetail';
 import Home from './pages/Home';
 import HostDetail from './pages/HostDetail';
 import LikedPage from './pages/LikedPage';
-import PlayEpisode from './pages/PlayEpisode';
+import PlayEpisodeWrapper from './pages/PlayEpisodeWrapper';
 import SearchPage from './pages/SearchPage';
 import VoiceSearch from './pages/VoiceSearch';
 
@@ -60,13 +60,14 @@ function AppRoutes() {
         />
         {/* Episode Detail (Play Page) Route */}
         <Route
-          path="/episode/:id"
+          path="/episode/:id/:themeSlug?"
           element={
             <Layout headerContent={<DynamicHeader centerText=" " />}>
-              <PlayEpisode />
+              <PlayEpisodeWrapper />
             </Layout>
           }
         />
+
         {/* Liked Route */}
         <Route
           path="/likes"
