@@ -1,5 +1,5 @@
 import { Headphones, Heart, List, Pause, Play, Shuffle, SkipBack, SkipForward } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
@@ -11,6 +11,10 @@ function PlayEpisode() {
   const [liked, setLiked] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [containerHeight, setContainerHeight] = useState('100vh');
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  const audioRef = useRef(null);
 
   // 🔁 zoomLevel 적용 및 실시간 반영
   const updateHeight = () => {
@@ -19,6 +23,19 @@ function PlayEpisode() {
     const adjustedHeight = physicalViewport / zoom - HEADER_HEIGHT * zoom;
     setContainerHeight(`${adjustedHeight}px`);
   };
+
+  useEffect(() => {
+    if (episode && audioRef.current) {
+      audioRef.current
+        .play()
+        .then(() => {
+          setIsPlaying(true);
+        })
+        .catch((err) => {
+          console.warn('자동 재생 실패:', err);
+        });
+    }
+  }, [episode]);
 
   useEffect(() => {
     updateHeight();
@@ -46,7 +63,49 @@ function PlayEpisode() {
     fetchEpisode();
   }, [id]);
 
-  const togglePlay = () => setIsPlaying((prev) => !prev);
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const updateTime = () => setCurrentTime(audio.currentTime);
+    const updateDuration = () => {
+      setDuration(audio.duration);
+    };
+    const onEnded = () => setIsPlaying(false);
+
+    audio.addEventListener('timeupdate', updateTime);
+    audio.addEventListener('loadedmetadata', updateDuration);
+    audio.addEventListener('canplaythrough', updateDuration);
+    audio.addEventListener('ended', onEnded);
+
+    return () => {
+      audio.removeEventListener('timeupdate', updateTime);
+      audio.removeEventListener('loadedmetadata', updateDuration);
+      audio.removeEventListener('canplaythrough', updateDuration);
+      audio.removeEventListener('ended', onEnded);
+    };
+  }, [episode]); // 🔥 episode 로딩 후에만 붙이기
+
+  const formatTime = (sec) => {
+    if (isNaN(sec)) return '00:00';
+    const minutes = Math.floor(sec / 60);
+    const seconds = Math.floor(sec % 60);
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const progress = duration ? (currentTime / duration) * 100 : 0;
+
+  const togglePlay = () => {
+    if (!audioRef.current) return;
+
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+    setIsPlaying((prev) => !prev);
+  };
+
   const toggleLike = () => setLiked((prev) => !prev);
 
   if (!episode) return <div className="p-8 text-center">로딩 중...</div>;
@@ -100,18 +159,36 @@ function PlayEpisode() {
 
         {/* 오디오 재생기 */}
         <div className="w-full">
-          <audio src={episode.audioFile} controls autoPlay className="mt-4 w-full" />
+          <audio
+            ref={audioRef}
+            src={episode.audioFile}
+            preload="metadata"
+            className="mt-4 w-full"
+          />
         </div>
 
         {/* 커스텀 컨트롤 (추후 확장 가능) */}
         <div className="space-y-6 w-full">
-          <div className="bg-base-300 rounded-full w-full h-2 overflow-hidden">
-            <div className="bg-primary w-[12%] h-full" />
+          <div
+            className="bg-base-300 rounded-full w-full h-2 overflow-hidden cursor-pointer"
+            onClick={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const clickX = e.clientX - rect.left;
+              const newTime = (clickX / rect.width) * duration;
+              audioRef.current.currentTime = newTime;
+              setCurrentTime(newTime);
+            }}
+          >
+            <div
+              className="bg-primary h-full transition-all duration-300 ease-linear"
+              style={{ width: `${progress}%` }}
+            />
           </div>
 
+          {/* 시간 */}
           <div className="flex justify-between w-full text-gray-500 text-sm">
-            <span>00:03</span>
-            <span>35:00</span>
+            <span>{formatTime(currentTime)}</span>
+            <span>{formatTime(duration)}</span>
           </div>
 
           <div className="flex justify-center items-center pt-4 w-full">
