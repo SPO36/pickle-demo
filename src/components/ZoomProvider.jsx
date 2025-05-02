@@ -10,7 +10,7 @@ function ZoomProvider() {
     const savedZoom = localStorage.getItem(ZOOM_KEY);
     const zoom = savedZoom ? parseFloat(savedZoom) : 1;
 
-    console.log('[ZoomProvider] applying zoom', zoom, 'on path:', location.pathname);
+    // console.log('[ZoomProvider] applying zoom', zoom, 'on path:', location.pathname);
 
     const timeout = setTimeout(() => {
       document.documentElement.style.zoom = zoom;

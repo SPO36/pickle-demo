@@ -12,6 +12,7 @@ import HostDetail from './pages/HostDetail';
 import LikedPage from './pages/LikedPage';
 import PlayEpisodeWrapper from './pages/PlayEpisodeWrapper';
 import SearchPage from './pages/SearchPage';
+import TagTest from './pages/TagTest';
 import VoiceSearch from './pages/VoiceSearch';
 
 function AppRoutes() {
@@ -49,6 +50,10 @@ function AppRoutes() {
         />
         {/* Tag Detail Route */}
         <Route path="/tags/:slug" element={<TagDetailLayoutWrapper />} />
+
+        {/* Tag Test Route */}
+        <Route path="/tagTest" element={<TagTest />} />
+
         {/* Host Detail Route */}
         <Route
           path="/host/:slug"
