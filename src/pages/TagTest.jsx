@@ -92,7 +92,7 @@ export default function TagTest() {
     스크립트 내용을 분석하여 책 줄거리처럼, 하나의 이야기를 전하듯 자연스럽고 흡입력 있게 요약해 주세요.
 
     요구사항:
-    - 줄거리는 무조건 3문장 이하로 이루진 한 문단으로 작성되어야 합니다.
+    - 줄거리는 무조건 2문장으로 이루어진 한 문단으로 작성되어야 합니다.
     - 광고, 협찬 멘트, 출연자 자기소개, 인트로/아웃트로 등 본편과 무관한 부분은 절대로 포함해서는 안됩니다.
     요약문은 성인 독자를 대상으로 정중하고 공손한 ‘존댓말’로 작성해주세요. '~합니다', '~입니다' 같은 표현을 사용하고, 반말이나 구어체는 절대 사용하지 마세요.
     - 팟캐스트의 형식이나 제작 정보(예: 'OO 방송에서')는 절대로 언급하지 마세요.
@@ -112,7 +112,7 @@ export default function TagTest() {
     - 도서 검색 시 자주 사용되는 키워드(예: 고전, 역사, 심리, 철학 등)
 
     요구사항:
-    - **광고, 협찬 멘트, 출연자 자기소개, 인트로/아웃트로** 등 본편과 무관한 부분은 모두 제거하세요.
+    - 광고, 협찬 멘트, 출연자 자기소개, 인트로/아웃트로 등 본편과 무관한 부분은 절대로 포함해서는 안됩니다.
     - 각 태그는 **한 단어**의 명사나 형용사로 작성하세요.
     - 의미가 중복되거나 중요하지 않은 내용은 포함하지 마세요.
     - 핵심 키워드만 중요한 순으로 **최소 5개, 최대 20개** 추출하세요.
@@ -265,8 +265,21 @@ export default function TagTest() {
     return Array.from(allTags).slice(0, 20); // 최대 20개로 제한
   };
 
-  // 통합된 트랜스크립트 함수
   const handleTranscribeAndPostProcess = async (episode) => {
+    const existingFields = [];
+    if (episode.script?.trim()) existingFields.push('스크립트');
+    if (episode.summary?.trim()) existingFields.push('요약');
+    if ((episode.tags?.length ?? 0) > 0) existingFields.push('태그');
+
+    if (existingFields.length > 0) {
+      const confirmed = window.confirm(
+        `이미 생성된 항목: ${existingFields.join(
+          ', '
+        )}\n정말 모두 새로 생성하시겠어요? 기존 데이터가 덮어씌워집니다.`
+      );
+      if (!confirmed) return;
+    }
+
     setIsProcessing(true);
     setProgress('스크립트 생성 중...');
 
