@@ -87,13 +87,13 @@ export default function TagTest() {
   const [editableSummary, setEditableSummary] = useState('');
   const detailRef = useRef(null);
   const [summaryPrompt, setSummaryPrompt] =
-    useState(`당신은 스토리텔링에 능한 팟캐스트 요약 작가입니다.
+    useState(`당신은 스토리텔링에 능한 팟캐스트 에피소드 요약 작가입니다.
 
     스크립트 내용을 분석하여 책 줄거리처럼, 하나의 이야기를 전하듯 자연스럽고 흡입력 있게 요약해 주세요.
 
     요구사항:
-    - 줄거리는 무조건 2문장으로 이루어진 한 문단으로 작성되어야 합니다.
-    - 광고, 협찬 멘트, 출연자 자기소개, 인트로/아웃트로 등 본편과 무관한 부분은 절대로 포함해서는 안됩니다.
+    - 에피소드 줄거리는 무조건 2문장으로 이루어진 한 문단으로 작성되어야 합니다.
+    - 광고, 협찬 멘트, 팟캐스트나 출연자의 소개, 인트로/아웃트로 등 본편과 무관한 부분은 절대로 포함해서는 안됩니다.
     요약문은 성인 독자를 대상으로 정중하고 공손한 ‘존댓말’로 작성해주세요. '~합니다', '~입니다' 같은 표현을 사용하고, 반말이나 구어체는 절대 사용하지 마세요.
     - 팟캐스트의 형식이나 제작 정보(예: 'OO 방송에서')는 절대로 언급하지 마세요.
     - 발음 인식 오류로 생긴 이상한 단어는 자연스럽게 수정하거나 생략하세요.
@@ -449,17 +449,23 @@ export default function TagTest() {
     }
   };
 
-  // 줄거리 클릭 시 팝업 열기
-  const handleSummaryClick = () => {
-    setEditableSummary(selectedEpisode.summary || '');
+  const [summaryType, setSummaryType] = useState('whisper'); // whisper or eleven
+
+  const handleSummaryClick = (type = 'whisper') => {
+    setEditableSummary(
+      type === 'whisper' ? selectedEpisode.summary || '' : selectedEpisode.summary_eleven || ''
+    );
+    setSummaryType(type);
     setIsSummaryModalOpen(true);
   };
 
   // 줄거리 저장
   const handleSummarySave = async () => {
+    const field = summaryType === 'whisper' ? 'summary' : 'summary_eleven';
+
     const { error } = await supabase
       .from('episodes')
-      .update({ summary: editableSummary })
+      .update({ [field]: editableSummary })
       .eq('id', selectedEpisode.id);
 
     if (error) {
@@ -467,30 +473,30 @@ export default function TagTest() {
       return;
     }
 
-    setSelectedEpisode((prev) => ({ ...prev, summary: editableSummary }));
-    setSummary(editableSummary);
+    setSelectedEpisode((prev) => ({
+      ...prev,
+      [field]: editableSummary,
+    }));
+
+    if (field === 'summary') setSummary(editableSummary);
     setIsSummaryModalOpen(false);
     alert('✅ 줄거리 저장 완료!');
   };
 
-  const handleSummary = async () => {
+  const handleSummaryWhisper = async () => {
     if (!selectedEpisode?.script) {
-      alert('먼저 스크립트를 생성해주세요');
+      alert('먼저 Whisper 스크립트를 생성해주세요');
       return;
     }
 
-    const confirmed = window.confirm(
-      '정말 스크립트를 다시 요약하시겠어요?\n기존 요약이 덮어씌워집니다.'
-    );
+    const confirmed = window.confirm('정말 Whisper 스크립트를 다시 요약하시겠어요?');
     if (!confirmed) return;
 
     setIsProcessing(true);
     setProgress('요약 준비 중...');
 
     try {
-      const script = selectedEpisode.script;
-      const chunks = getTextChunks(script);
-
+      const chunks = getTextChunks(selectedEpisode.script);
       const finalSummary = await generateSummaryFromChunks(chunks);
 
       if (finalSummary) {
@@ -499,19 +505,51 @@ export default function TagTest() {
           .update({ summary: finalSummary })
           .eq('id', selectedEpisode.id);
 
-        if (error) {
-          console.error('❌ 요약 저장 실패:', error.message);
-          alert('요약 저장 실패');
-          return;
-        }
+        if (error) throw error;
 
-        setSummary(finalSummary);
         setSelectedEpisode((prev) => ({ ...prev, summary: finalSummary }));
-        alert('✅ 요약 생성 및 저장 완료!');
+        setSummary(finalSummary);
+        alert('✅ Whisper 요약 완료!');
       }
-    } catch (error) {
-      console.error('❌ 요약 생성 오류:', error);
-      alert(`요약 생성 오류: ${error.message}`);
+    } catch (err) {
+      console.error(err);
+      alert('❌ Whisper 요약 실패');
+    } finally {
+      setIsProcessing(false);
+      setProgress('');
+    }
+  };
+
+  const handleSummaryEleven = async () => {
+    if (!selectedEpisode?.script_eleven) {
+      alert('먼저 ElevenLabs 스크립트를 생성해주세요');
+      return;
+    }
+
+    const confirmed = window.confirm('정말 ElevenLabs 스크립트를 다시 요약하시겠어요?');
+    if (!confirmed) return;
+
+    setIsProcessing(true);
+    setProgress('요약 준비 중...');
+
+    try {
+      const chunks = getTextChunks(selectedEpisode.script_eleven);
+      const finalSummary = await generateSummaryFromChunks(chunks);
+
+      if (finalSummary) {
+        const { error } = await supabase
+          .from('episodes')
+          .update({ summary_eleven: finalSummary })
+          .eq('id', selectedEpisode.id);
+
+        if (error) throw error;
+
+        setSelectedEpisode((prev) => ({ ...prev, summary_eleven: finalSummary }));
+        alert('✅ ElevenLabs 요약 완료!');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('❌ ElevenLabs 요약 실패');
     } finally {
       setIsProcessing(false);
       setProgress('');
@@ -555,10 +593,124 @@ export default function TagTest() {
     }
   };
 
+  const transcribeChunksWithElevenLabs = async (file) => {
+    const chunks = splitFileIntoChunks(file);
+    const transcripts = [];
+
+    for (let i = 0; i < chunks.length; i++) {
+      const chunk = chunks[i];
+      const url = await uploadAudioToStorage(chunk); // Supabase에 청크 업로드
+      const res = await fetch('/.netlify/functions/elevenlabs-upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ audioUrl: url }),
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.transcript) {
+        console.error(`청크 ${i + 1} 처리 실패:`, data);
+        transcripts.push(`(청크 ${i + 1} 처리 실패)`);
+      } else {
+        transcripts.push(data.transcript);
+      }
+    }
+
+    return transcripts.join('\n');
+  };
+
+  const uploadAudioToStorage = async (file) => {
+    const filePath = `uploads/${Date.now()}_${file.name}`;
+    const { data, error } = await supabase.storage
+      .from('audio') // ✅ 반드시 "audio" bucket 있어야 함
+      .upload(filePath, file, { cacheControl: '3600', upsert: true });
+
+    if (error) throw error;
+
+    const { data: publicUrlData } = supabase.storage.from('audio').getPublicUrl(filePath);
+    return publicUrlData.publicUrl;
+  };
+
+  const splitFileIntoChunks = (file, chunkSize = 10 * 1024 * 1024) => {
+    const chunks = [];
+    let offset = 0;
+    while (offset < file.size) {
+      chunks.push(file.slice(offset, offset + chunkSize));
+      offset += chunkSize;
+    }
+    return chunks;
+  };
+
+  const handleElevenLabsFileUpload = async (file) => {
+    if (!selectedEpisode) {
+      alert('에피소드 선택 필요');
+      return;
+    }
+
+    setIsProcessing(true);
+    setProgress('파일 청크 분할 중...');
+
+    try {
+      const chunks = splitFileIntoChunks(file);
+      const transcripts = [];
+
+      for (let i = 0; i < chunks.length; i++) {
+        setProgress(`청크 ${i + 1}/${chunks.length} 업로드 및 변환 중...`);
+
+        const fileChunk = chunks[i];
+        const chunkUrl = await uploadAudioToStorage(fileChunk);
+
+        const res = await fetch('/.netlify/functions/elevenlabs-upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ audioUrl: chunkUrl }),
+        });
+
+        const raw = await res.text();
+        let data;
+
+        try {
+          data = JSON.parse(raw);
+        } catch (err) {
+          console.error('❌ 응답 JSON 파싱 실패:', raw);
+          transcripts.push(`(청크 ${i + 1} JSON 파싱 실패)`);
+          continue;
+        }
+
+        if (!res.ok || !data.transcript) {
+          console.warn(`⚠️ 청크 ${i + 1} 처리 실패`, data);
+          transcripts.push(`(청크 ${i + 1} 처리 실패)`);
+        } else {
+          transcripts.push(data.transcript);
+        }
+      }
+
+      const fullTranscript = transcripts.join('\n');
+
+      const { error } = await supabase
+        .from('episodes')
+        .update({ script_eleven: fullTranscript })
+        .eq('id', selectedEpisode.id);
+      if (error) throw error;
+
+      setSelectedEpisode((prev) => ({
+        ...prev,
+        script_eleven: fullTranscript,
+      }));
+
+      alert('✅ 청크 기반 STT 완료!');
+    } catch (err) {
+      console.error(err);
+      alert('❌ 처리 실패: ' + err.message);
+    } finally {
+      setIsProcessing(false);
+      setProgress('');
+    }
+  };
+
   return (
     <div className="flex h-screen">
       {/* 왼쪽: 에피소드 목록 */}
-      <div className="p-4 border-r border-base-300 w-1/2 overflow-y-auto">
+      <div className="p-4 border-r border-base-300 w-1/2 max-w-2xl overflow-y-auto">
         {/* 검색 및 정렬 */}
         <div className="flex justify-between items-center mb-4">
           <input
@@ -602,7 +754,7 @@ export default function TagTest() {
           {sortedFiltered.map((ep) => (
             <li
               key={ep.id}
-              className="flex justify-between items-center gap-4 hover:bg-base-300 shadow px-4 py-3 transition cursor-pointer"
+              className="flex justify-between items-center gap-4 hover:bg-base-300 px-4 py-3 transition cursor-pointer"
               onClick={async () => {
                 const { data: freshEp, error } = await supabase
                   .from('episodes')
@@ -647,6 +799,19 @@ export default function TagTest() {
 
       {/* 오른쪽: 상세 보기 */}
       <div className="p-6 w-1/2 overflow-y-auto" ref={detailRef}>
+        {/* 처리 상태 표시 */}
+        {isProcessing && (
+          <div className="top-0 z-20 sticky bg-blue-100 shadow-sm mb-4 p-3 border border-blue-300 rounded-lg">
+            <div className="flex items-center">
+              <svg className="mr-2 w-4 h-4 text-blue-600 animate-spin" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+              </svg>
+              <span className="font-semibold text-blue-800 text-sm">처리 중...</span>
+            </div>
+            <p className="mt-1 text-blue-700 text-xs">{progress}</p>
+          </div>
+        )}
         {selectedEpisode ? (
           <div className="space-y-4">
             <img
@@ -664,28 +829,6 @@ export default function TagTest() {
                 {selectedEpisode.likes ?? 0}
               </div>
             </div>
-
-            {/* 처리 상태 표시 */}
-            {isProcessing && (
-              <div className="top-0 z-20 sticky bg-blue-100 shadow-sm mb-4 p-3 border border-blue-300 rounded-lg">
-                <div className="flex items-center">
-                  <svg className="mr-2 w-4 h-4 text-blue-600 animate-spin" viewBox="0 0 24 24">
-                    <circle
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      fill="none"
-                    />
-                    <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                  </svg>
-                  <span className="font-semibold text-blue-800 text-sm">처리 중...</span>
-                </div>
-                <p className="mt-1 text-blue-700 text-xs">{progress}</p>
-              </div>
-            )}
-
             <p className="text-sm text-base-content whitespace-pre-line">
               {selectedEpisode.audioFile || '파일 없음'}
             </p>
@@ -696,29 +839,11 @@ export default function TagTest() {
               </audio>
             )}
             {selectedEpisode.audioFile && (
-              <>
+              <div className="gap-1 grid">
                 <div className="gap-3 grid grid-cols-1">
-                  <button
-                    className="w-full btn btn-primary"
-                    onClick={() => handleTranscribeAndPostProcess(selectedEpisode)}
-                    disabled={isProcessing}
-                  >
-                    🎙️ Whisper 스크립트 생성 + 요약 + 태깅
-                  </button>
-                  <button
-                    className="w-full btn btn-secondary"
-                    onClick={() => handleElevenLabsProcess(selectedEpisode)}
-                    disabled={isProcessing}
-                  >
-                    🧠 ElevenLabs 스크립트 생성 + 요약 + 태깅
-                  </button>
-
-                  {/* 파일 직접 업로드 UI - 오른쪽 영역에 추가 */}
-                  <div className="bg-base-200 p-4 rounded-lg">
-                    <h3 className="mb-2 font-bold">🎧 직접 파일 업로드</h3>
-                    <p className="mb-2 text-gray-500 text-sm">
-                      원본 파일이 너무 크거나 URL에서 다운로드 문제가 있을 경우
-                    </p>
+                  {/* 파일 직접 업로드 */}
+                  <div className="bg-primary p-4 rounded-lg">
+                    <h3 className="mb-2 font-bold text-base-100">Whisper 파일 업로드</h3>
                     <input
                       ref={fileInputRef}
                       type="file"
@@ -732,23 +857,51 @@ export default function TagTest() {
                     />
                   </div>
                 </div>
-              </>
+                <div className="gap-3 grid grid-cols-1">
+                  {/* 파일 직접 업로드 */}
+                  <div className="bg-secondary p-4 rounded-lg">
+                    <h3 className="mb-2 font-bold text-base-100">ElevenLabs 파일 업로드</h3>
+                    <input
+                      type="file"
+                      accept="audio/mp3,audio/mpeg,audio/wav"
+                      className="file-input-bordered w-full file-input"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleElevenLabsFileUpload(file);
+                      }}
+                      disabled={isProcessing}
+                    />
+                  </div>
+                </div>
+              </div>
             )}
 
             {selectedEpisode.script && (
               <div className="mt-8">
                 <div className="mb-1">
-                  <label className="block font-semibold">스크립트 Whisper</label>
+                  <label className="block font-semibold">Whisper 스크립트</label>
                   <div className="text-gray-500 text-xs">
                     총 글자 수: {selectedEpisode.script.length.toLocaleString()}자
                   </div>
                 </div>
-                <div className="bg-base-200 p-4 rounded-lg h-60 overflow-y-auto text-accent text-sm whitespace-pre-wrap">
+                <div className="bg-base-200 p-4 rounded-lg h-60 overflow-y-auto text-primary text-sm whitespace-pre-wrap">
                   {selectedEpisode.script}
                 </div>
               </div>
             )}
-
+            {selectedEpisode.script_eleven && (
+              <div className="mt-8">
+                <div className="mb-1">
+                  <label className="block font-semibold">ElevenLabs 스크립트</label>
+                  <div className="text-gray-500 text-xs">
+                    총 글자 수: {selectedEpisode.script_eleven.length.toLocaleString()}자
+                  </div>
+                </div>
+                <div className="bg-base-200 p-4 rounded-lg h-60 overflow-y-auto text-secondary text-sm whitespace-pre-wrap">
+                  {selectedEpisode.script_eleven}
+                </div>
+              </div>
+            )}
             {selectedEpisode.script && (
               <>
                 <div className="space-y-2">
@@ -762,15 +915,45 @@ export default function TagTest() {
                   </div>
 
                   {selectedEpisode.summary && (
-                    <div className="relative bg-base-200 p-4 rounded-lg overflow-y-auto text-accent text-sm whitespace-pre-wrap">
+                    <>
+                      <div className="relative bg-base-200 p-4 rounded-lg overflow-y-auto text-primary text-sm whitespace-pre-wrap">
+                        <button
+                          className="right-1 bottom-1 absolute p-1 btn btn-xs btn-accent"
+                          onClick={() => handleSummaryClick('whisper')}
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        {selectedEpisode.summary}
+                      </div>
                       <button
-                        className="right-1 bottom-1 absolute p-1 btn btn-xs btn-accent"
-                        onClick={handleSummaryClick}
+                        className="w-full btn btn-primary"
+                        onClick={handleSummaryWhisper}
+                        disabled={isProcessing}
                       >
-                        <Pencil size={16} />
+                        Whisper 스크립트 다시 요약하기
                       </button>
-                      {selectedEpisode.summary}
-                    </div>
+                    </>
+                  )}
+
+                  {selectedEpisode.summary_eleven && (
+                    <>
+                      <div className="relative bg-base-200 p-4 rounded-lg overflow-y-auto text-secondary text-sm whitespace-pre-wrap">
+                        <button
+                          className="right-1 bottom-1 absolute p-1 btn btn-xs btn-accent"
+                          onClick={() => handleSummaryClick('eleven')}
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        {selectedEpisode.summary_eleven}
+                      </div>
+                      <button
+                        className="w-full btn btn-secondary"
+                        onClick={handleSummaryEleven}
+                        disabled={isProcessing}
+                      >
+                        ElevenLabs 스크립트 다시 요약하기
+                      </button>
+                    </>
                   )}
 
                   {/* 요약 수정 모달 */}
@@ -795,16 +978,8 @@ export default function TagTest() {
                     </Modal>
                   )}
                 </div>
-                <button
-                  className="w-full btn btn-primary"
-                  onClick={handleSummary}
-                  disabled={isProcessing}
-                >
-                  📌 스크립트 다시 요약하기
-                </button>
               </>
             )}
-
             {selectedEpisode.script && (
               <>
                 <div>
@@ -818,7 +993,7 @@ export default function TagTest() {
                 {keywords.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-4">
                     {keywords.map((tag, i) => (
-                      <div key={i} className="items-center gap-1 badge badge-soft badge-accent">
+                      <div key={i} className="items-center gap-1 badge badge-soft badge-primary">
                         {tag}
                         <button
                           className="ml-1 hover:text-red-500 text-xs"

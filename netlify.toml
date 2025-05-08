@@ -5,3 +5,8 @@
 
 [functions]
   directory = "netlify/functions"
+  external_node_modules = ["multiparty"]
+  node_bundler = "esbuild"
+
+[build]
+  command = "git lfs install && git lfs pull && npm run build"
