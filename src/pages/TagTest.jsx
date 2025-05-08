@@ -518,6 +518,43 @@ export default function TagTest() {
     }
   };
 
+  const transcribeWithElevenLabs = async (audioUrl) => {
+    const response = await fetch('/.netlify/functions/elevenlabs-transcribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ audioUrl }),
+    });
+    const data = await response.json();
+    return data.transcript;
+  };
+
+  const handleElevenLabsProcess = async (episode) => {
+    if (!episode.audioFile) return alert('오디오 없음');
+
+    setIsProcessing(true);
+    try {
+      const transcript = await transcribeWithElevenLabs(episode.audioFile);
+      const chunks = getTextChunks(transcript);
+      const summary = await generateSummaryFromChunks(chunks);
+      const tags = await extractKeywordsFromSummary(summary);
+
+      await supabase
+        .from('episodes')
+        .update({
+          summary_eleven: summary,
+          tags_eleven: tags,
+        })
+        .eq('id', episode.id);
+
+      alert('✅ ElevenLabs 처리 완료');
+    } catch (err) {
+      console.error(err);
+      alert('ElevenLabs 처리 중 오류');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   return (
     <div className="flex h-screen">
       {/* 왼쪽: 에피소드 목록 */}
@@ -666,7 +703,14 @@ export default function TagTest() {
                     onClick={() => handleTranscribeAndPostProcess(selectedEpisode)}
                     disabled={isProcessing}
                   >
-                    🎙️ 스크립트 생성 + 요약 + 태깅
+                    🎙️ Whisper 스크립트 생성 + 요약 + 태깅
+                  </button>
+                  <button
+                    className="w-full btn btn-secondary"
+                    onClick={() => handleElevenLabsProcess(selectedEpisode)}
+                    disabled={isProcessing}
+                  >
+                    🧠 ElevenLabs 스크립트 생성 + 요약 + 태깅
                   </button>
 
                   {/* 파일 직접 업로드 UI - 오른쪽 영역에 추가 */}
@@ -690,10 +734,11 @@ export default function TagTest() {
                 </div>
               </>
             )}
+
             {selectedEpisode.script && (
               <div className="mt-8">
                 <div className="mb-1">
-                  <label className="block font-semibold">스크립트</label>
+                  <label className="block font-semibold">스크립트 Whisper</label>
                   <div className="text-gray-500 text-xs">
                     총 글자 수: {selectedEpisode.script.length.toLocaleString()}자
                   </div>
