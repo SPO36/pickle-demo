@@ -78,7 +78,8 @@ export default function TagTest() {
   const [sort, setSort] = useState('popular');
   const [filter, setFilter] = useState('');
   const [selectedEpisode, setSelectedEpisode] = useState(null);
-  const [keywords, setKeywords] = useState([]);
+  const [keywordsWhisper, setKeywordsWhisper] = useState([]);
+  const [keywordsEleven, setKeywordsEleven] = useState([]);
   const [summary, setSummary] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState('');
@@ -115,7 +116,7 @@ export default function TagTest() {
     - 광고, 협찬 멘트, 출연자 자기소개, 인트로/아웃트로 등 본편과 무관한 부분은 절대로 포함해서는 안됩니다.
     - 각 태그는 **한 단어**의 명사나 형용사로 작성하세요.
     - 의미가 중복되거나 중요하지 않은 내용은 포함하지 마세요.
-    - 핵심 키워드만 중요한 순으로 **최소 5개, 최대 20개** 추출하세요.
+    - 핵심 키워드만 중요한 순으로 **최소 5개, 최대 50개** 추출하세요.
     - 태그들은 **쉼표로 구분된 문자열**로 출력하세요 (리스트 형태 금지).
 
     예시 출력: 힐링,여행,자연,감성,대화,산책,감동,풍경,에세이,카페`);
@@ -262,7 +263,7 @@ export default function TagTest() {
       }
     }
 
-    return Array.from(allTags).slice(0, 20); // 최대 20개로 제한
+    return Array.from(allTags).slice(0, 50); // 최대 20개로 제한
   };
 
   const handleTranscribeAndPostProcess = async (episode) => {
@@ -330,7 +331,7 @@ export default function TagTest() {
       }
       if (extractedTags.length > 0) {
         await supabase.from('episodes').update({ tags: extractedTags }).eq('id', episode.id);
-        setKeywords(extractedTags);
+        setKeywordsWhisper(extractedTags);
         setSelectedEpisode((prev) => ({ ...prev, tags: extractedTags }));
       }
 
@@ -384,7 +385,7 @@ export default function TagTest() {
           .from('episodes')
           .update({ tags: extractedTags })
           .eq('id', selectedEpisode.id);
-        setKeywords(extractedTags);
+        setKeywordsWhisper(extractedTags);
         setSelectedEpisode((prev) => ({ ...prev, tags: extractedTags }));
       }
 
@@ -406,7 +407,7 @@ export default function TagTest() {
         .map((tag) => tag.trim().replace(/^#/, ''))
         .filter(Boolean);
 
-      return keywords.slice(0, 20);
+      return keywords.slice(0, 50);
     } catch (error) {
       console.error('❌ 줄거리 기반 키워드 추출 오류:', error);
       return [];
@@ -438,7 +439,7 @@ export default function TagTest() {
 
       if (error) throw new Error('DB 저장 실패');
 
-      setKeywords(extractedTags);
+      setKeywordsWhisper(extractedTags);
       setSelectedEpisode((prev) => ({ ...prev, tags: extractedTags }));
       alert('✅ 키워드 추출 및 저장 완료!');
     } catch (error) {
@@ -697,10 +698,76 @@ export default function TagTest() {
         script_eleven: fullTranscript,
       }));
 
+      // 텍스트 청크 분할
+      chunks = getTextChunks(fullTranscript);
+
+      // 요약 생성
+      setProgress('요약 생성 중...');
+      const summary = await generateSummaryFromChunks(chunks);
+
+      // 태그 추출
+      setProgress('태그 추출 중...');
+      const tags = await extractKeywordsFromSummary(summary);
+
+      // DB 저장
+      await supabase
+        .from('episodes')
+        .update({
+          script_eleven: fullTranscript,
+          summary_eleven: summary,
+          tags_eleven: tags,
+        })
+        .eq('id', selectedEpisode.id);
+
+      // 상태 업데이트
+      setSelectedEpisode((prev) => ({
+        ...prev,
+        script_eleven: fullTranscript,
+        summary_eleven: summary,
+        tags_eleven: tags,
+      }));
+      setSummary(summary);
+      setKeywordsEleven(tags);
+
       alert('✅ 청크 기반 STT 완료!');
     } catch (err) {
       console.error(err);
       alert('❌ 처리 실패: ' + err.message);
+    } finally {
+      setIsProcessing(false);
+      setProgress('');
+    }
+  };
+
+  const handleKeywordExtractEleven = async () => {
+    if (!selectedEpisode?.summary_eleven) {
+      alert('ElevenLabs 줄거리를 먼저 작성하거나 저장하세요');
+      return;
+    }
+
+    const confirmed = window.confirm(
+      '정말 ElevenLabs 태그를 다시 추출하시겠어요?\n기존 tags_eleven이 덮어씌워집니다.'
+    );
+    if (!confirmed) return;
+
+    setIsProcessing(true);
+    setProgress('ElevenLabs 기반 키워드 추출 중...');
+
+    try {
+      const extractedTags = await extractKeywordsFromSummary(selectedEpisode.summary_eleven);
+
+      const { error } = await supabase
+        .from('episodes')
+        .update({ tags_eleven: extractedTags })
+        .eq('id', selectedEpisode.id);
+
+      if (error) throw new Error('DB 저장 실패');
+
+      setSelectedEpisode((prev) => ({ ...prev, tags_eleven: extractedTags }));
+      setKeywordsEleven(extractedTags);
+      alert('✅ ElevenLabs 키워드 추출 및 저장 완료!');
+    } catch (error) {
+      alert(error.message);
     } finally {
       setIsProcessing(false);
       setProgress('');
@@ -768,7 +835,9 @@ export default function TagTest() {
                 }
 
                 setSelectedEpisode(freshEp);
-                setKeywords(freshEp.tags || []);
+                setKeywordsWhisper(freshEp.tags || []);
+                setKeywordsEleven(freshEp.tags_eleven || []);
+
                 if (fileInputRef.current) fileInputRef.current.value = '';
 
                 // 👉 스크롤 상단으로 이동
@@ -930,7 +999,7 @@ export default function TagTest() {
                         onClick={handleSummaryWhisper}
                         disabled={isProcessing}
                       >
-                        Whisper 스크립트 다시 요약하기
+                        Whisper 스크립트 요약하기
                       </button>
                     </>
                   )}
@@ -951,7 +1020,7 @@ export default function TagTest() {
                         onClick={handleSummaryEleven}
                         disabled={isProcessing}
                       >
-                        ElevenLabs 스크립트 다시 요약하기
+                        ElevenLabs 스크립트 요약하기
                       </button>
                     </>
                   )}
@@ -990,47 +1059,42 @@ export default function TagTest() {
                     onChange={(e) => setKeywordPrompt(e.target.value)}
                   />
                 </div>
-                {keywords.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {keywords.map((tag, i) => (
-                      <div key={i} className="items-center gap-1 badge badge-soft badge-primary">
-                        {tag}
-                        <button
-                          className="ml-1 hover:text-red-500 text-xs"
-                          onClick={async () => {
-                            const updatedTags = keywords.filter((_, idx) => idx !== i);
-
-                            const { error } = await supabase
-                              .from('episodes')
-                              .update({ tags: updatedTags })
-                              .eq('id', selectedEpisode.id);
-
-                            if (error) {
-                              console.error('❌ 태그 삭제 실패:', error.message);
-                              alert('태그 삭제 실패');
-                              return;
-                            }
-
-                            setKeywords(updatedTags);
-                            setSelectedEpisode((prev) => ({
-                              ...prev,
-                              tags: updatedTags,
-                            }));
-                          }}
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+                {keywordsWhisper.length > 0 && (
+                  <>
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {keywordsWhisper.map((tag, i) => (
+                        <div key={i} className="badge badge-soft badge-primary">
+                          {tag}
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      className="w-full btn btn-primary"
+                      onClick={handleKeywordExtract}
+                      disabled={isProcessing}
+                    >
+                      Whisper 태그 추출하기
+                    </button>
+                  </>
                 )}
-                <button
-                  className="w-full btn btn-primary"
-                  onClick={handleKeywordExtract}
-                  disabled={isProcessing}
-                >
-                  🍪 태그 다시 추출하기
-                </button>
+                {keywordsEleven.length > 0 && (
+                  <>
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {keywordsEleven.map((tag, i) => (
+                        <div key={i} className="badge badge-soft badge-secondary">
+                          {tag}
+                        </div>
+                      ))}
+                      <button
+                        className="w-full btn btn-secondary"
+                        onClick={handleKeywordExtractEleven}
+                        disabled={isProcessing}
+                      >
+                        ElevenLabs 태그 추출하기
+                      </button>
+                    </div>
+                  </>
+                )}
               </>
             )}
           </div>
