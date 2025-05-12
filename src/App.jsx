@@ -6,6 +6,7 @@ import Layout from './components/Layout';
 import ScrollToTop from './components/ScrollToTop';
 import TagDetailLayoutWrapper from './components/TagDetailLayoutWrapper';
 import ZoomProvider from './components/ZoomProvider';
+import AudioBooks from './pages/AudioBooks';
 import CategoryDetail from './pages/CategoryDetail';
 import Home from './pages/Home';
 import HostDetail from './pages/HostDetail';
@@ -53,6 +54,15 @@ function AppRoutes() {
 
         {/* Tag Test Route */}
         <Route path="/tagTest" element={<TagTest />} />
+        {/* AudioBooks Route */}
+        <Route
+          path="/audiobooks"
+          element={
+            <Layout headerContent={<DynamicHeader centerText="오디오북" />}>
+              <AudioBooks />
+            </Layout>
+          }
+        />
 
         {/* Host Detail Route */}
         <Route
