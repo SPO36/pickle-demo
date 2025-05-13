@@ -28,9 +28,9 @@ exports.handler = async (event) => {
     const xml = await response.text();
 
     // Debug response
-    console.log('📄 응답 본문 시작 ===');
-    console.log(xml.slice(0, 1000)); // Log first 1000 chars
-    console.log('📄 응답 본문 끝 ===');
+    // console.log('📄 응답 본문 시작 ===');
+    // console.log(xml.slice(0, 1000)); // Log first 1000 chars
+    // console.log('📄 응답 본문 끝 ===');
 
     // Check for valid XML response
     if (!xml.includes('<feed') && !xml.includes('<books')) {

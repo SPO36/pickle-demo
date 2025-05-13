@@ -11,7 +11,9 @@ export default function AudioBooks() {
   const listRef = useRef();
   const [episodes, setEpisodes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 5;
+  const [translatedSummary, setTranslatedSummary] = useState('');
+  const [isTranslating, setIsTranslating] = useState(false);
 
   const parseXML = (xmlString) => {
     const parser = new DOMParser();
@@ -107,6 +109,24 @@ export default function AudioBooks() {
     }));
   };
 
+  const translateSummary = async () => {
+    if (!selected) return;
+    setIsTranslating(true);
+    const summary = stripHtml(selected.summary?.[0] || selected.description?.[0] || '');
+    try {
+      const res = await fetch('/.netlify/functions/translate', {
+        method: 'POST',
+        body: JSON.stringify({ text: summary }),
+      });
+      const data = await res.json();
+      setTranslatedSummary(data.result);
+    } catch (err) {
+      console.error('번역 실패:', err);
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
   useEffect(() => {
     fetchBooks('', false, 0);
   }, []);
@@ -116,16 +136,16 @@ export default function AudioBooks() {
       parseRssFeed(selected.url_rss[0]).then(setEpisodes);
       setCurrentPage(1);
     }
+    setTranslatedSummary(''); // 새로운 책 선택 시 번역 리셋
   }, [selected]);
+
+  const archiveId = selected?.url_zip_file?.[0]?.split('/')[4];
+  const coverUrl = archiveId ? `https://archive.org/services/img/${archiveId}` : null;
 
   return (
     <div className="flex h-screen">
       {/* 왼쪽: 책 리스트 */}
-      <div
-        className="p-4 border-base-300 w-1/2 overflow-y-auto"
-        onScroll={handleScroll}
-        ref={listRef}
-      >
+      <div className="p-4 w-1/2 overflow-y-auto" onScroll={handleScroll} ref={listRef}>
         {/* <div className="mb-4 form-control">
           <div className="w-full join">
             <input
@@ -141,36 +161,45 @@ export default function AudioBooks() {
             </button>
           </div>
         </div> */}
-
         {!loading && books.length === 0 && (
           <div className="text-sm text-base-content/50 text-center">검색 결과가 없습니다</div>
         )}
-
         {loading && books.length === 0 ? (
           <div className="flex justify-center my-4">
             <span className="text-primary loading loading-spinner"></span>
           </div>
         ) : (
-          <ul>
-            {books.map((book, idx) => (
-              <li
-                key={book.id?.[0] || idx}
-                className={`card card-bordered cursor-pointer ${
-                  selected && book.id?.[0] === selected.id?.[0] ? 'bg-base-200' : ''
-                }`}
-                onClick={() => setSelected(book)}
-              >
-                <div className="p-4">
-                  <h3 className="text-base card-title">{book.title?.[0]}</h3>
-                  <p className="text-gray-500 text-sm">
-                    {book.authors?.[0]?.name?.[0] || '작자 미상'}
-                  </p>
-                </div>
-              </li>
-            ))}
+          <ul className="gap-1 grid grid-cols-1">
+            {books.map((book, idx) => {
+              const archiveId = book.url_zip_file?.[0]?.split('/')[4];
+              const coverUrl = archiveId ? `https://archive.org/services/img/${archiveId}` : null;
+
+              return (
+                <li
+                  key={book.id?.[0] || idx}
+                  className={`card card-side gap-2 p-2 items-center shadow-sm transition cursor-pointer ${
+                    selected && book.id?.[0] === selected.id?.[0] ? 'bg-base-200' : ''
+                  }`}
+                  onClick={() => setSelected(book)}
+                >
+                  <figure className="flex-shrink-0 bg-base-300 rounded w-16 h-16 overflow-hidden">
+                    {coverUrl ? (
+                      <img src={coverUrl} alt="책 커버" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="flex justify-center items-center w-full h-full text-gray-500 text-xs">
+                        No Image
+                      </div>
+                    )}
+                  </figure>
+                  <div className="flex flex-col p-2">
+                    <h3 className="font-semibold text-md line-clamp-2">{book.title?.[0]}</h3>
+                    <p className="text-gray-500">{book.authors?.[0]?.name?.[0] || '작자 미상'}</p>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
-
         {loading && books.length > 0 && (
           <div className="flex justify-center mt-4">
             <span className="text-primary loading loading-spinner"></span>
@@ -192,58 +221,66 @@ export default function AudioBooks() {
                   {selected.language[0]}
                 </div>
               </div>
-              <div className="space-y-2 mt-4">
-                {selected.url_rss?.[0] && (
-                  <>
-                    <p>
+              <div className="divider"></div>
+              <div className="text-gray-600 text-sm">
+                {stripHtml(selected.summary?.[0] || selected.description?.[0] || '요약 정보 없음')}
+              </div>
+              <button
+                className="mt-3 w-fit btn btn-xs btn-primary"
+                onClick={translateSummary}
+                disabled={isTranslating}
+              >
+                {isTranslating ? '번역 중...' : '번역하기'}
+              </button>
+              {translatedSummary && (
+                <p className="mt-2 text-primary-content text-sm whitespace-pre-wrap">
+                  {translatedSummary}
+                </p>
+              )}
+
+              {selected.url_rss?.[0] && (
+                <>
+                  <div className="divider"></div>
+                  <div className="mb-4">
+                    {selected.totaltime?.[0] && (
+                      <p>
+                        <span className="font-bold">총 재생 시간:</span> {selected.totaltime[0]}
+                      </p>
+                    )}
+                    <div>
                       <span className="font-bold">RSS:</span>{' '}
                       <a href={selected.url_rss[0]} className="link link-info" target="_blank">
                         {selected.url_rss[0]}
                       </a>
-                    </p>
-                    {episodes
-                      .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-                      .map((ep, idx) => (
-                        <div key={idx} className="my-2 p-2 border rounded">
-                          <p className="font-semibold">{ep.title}</p>
-                          <audio controls className="w-full" src={ep.audioUrl} />
-                          <p className="text-gray-500 text-sm">{ep.pubDate}</p>
-                        </div>
-                      ))}
-                    <div className="mt-4 join">
-                      <button
-                        className="join-item btn btn-sm"
-                        disabled={currentPage === 1}
-                        onClick={() => setCurrentPage((p) => p - 1)}
-                      >
-                        이전
-                      </button>
-                      <button
-                        className="join-item btn btn-sm"
-                        disabled={currentPage * itemsPerPage >= episodes.length}
-                        onClick={() => setCurrentPage((p) => p + 1)}
-                      >
-                        다음
-                      </button>
                     </div>
-                  </>
-                )}
-                {selected.totaltime?.[0] && (
-                  <p>
-                    <span className="font-bold">총 재생 시간:</span> {selected.totaltime[0]}
-                  </p>
-                )}
-              </div>
-
-              <div className="my-2 divider"></div>
-
-              <div className="prose">
-                <div className="mb-4 text-gray-600 text-sm">
-                  {stripHtml(
-                    selected.summary?.[0] || selected.description?.[0] || '요약 정보 없음'
-                  )}
-                </div>
-              </div>
+                  </div>
+                  {episodes
+                    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                    .map((ep, idx) => (
+                      <div key={idx} className="px-3 py-1">
+                        <p className="mb-2 font-semibold">{ep.title}</p>
+                        <audio controls className="w-full" src={ep.audioUrl} />
+                        <p className="text-gray-500 text-sm">{ep.pubDate}</p>
+                      </div>
+                    ))}
+                  <div className="mt-4 join">
+                    <button
+                      className="join-item btn btn-sm"
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage((p) => p - 1)}
+                    >
+                      이전
+                    </button>
+                    <button
+                      className="join-item btn btn-sm"
+                      disabled={currentPage * itemsPerPage >= episodes.length}
+                      onClick={() => setCurrentPage((p) => p + 1)}
+                    >
+                      다음
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         ) : (
