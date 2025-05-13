@@ -184,7 +184,7 @@ export default function TagTest() {
   // 텍스트를 적절한 크기로 청크화하는 함수
   const getTextChunks = (text, chunkSize = 4000) => {
     // 문장 단위로 분할하는 것이 좋지만, 간단히 구현
-    const chunks = [];
+    let chunks = [];
     let currentChunk = '';
 
     // 문장이나 단락 단위로 분할
