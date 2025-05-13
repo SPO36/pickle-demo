@@ -141,6 +141,73 @@ export default function AudioBooks() {
 
   const archiveId = selected?.url_zip_file?.[0]?.split('/')[4];
   const coverUrl = archiveId ? `https://archive.org/services/img/${archiveId}` : null;
+  const totalPages = Math.ceil(episodes.length / itemsPerPage);
+  const getPagination = () => {
+    const range = [];
+    const delta = 1;
+    const left = currentPage - delta;
+    const right = currentPage + delta;
+
+    let l;
+
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= left && i <= right)) {
+        range.push(i);
+      }
+    }
+
+    const result = [];
+    for (let i of range) {
+      if (l) {
+        if (i - l === 2) {
+          result.push(l + 1);
+        } else if (i - l > 2) {
+          result.push('...');
+        }
+      }
+      result.push(i);
+      l = i;
+    }
+
+    return result;
+  };
+
+  const [episodeTranscripts, setEpisodeTranscripts] = useState({});
+
+  const transcribeWithElevenLabs = async (audioUrl) => {
+    const res = await fetch('/.netlify/functions/elevenlabs-transcribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ audioUrl }),
+    });
+    const data = await res.json();
+    return data.text;
+  };
+
+  const [translatedTranscripts, setTranslatedTranscripts] = useState({});
+  const [translatingUrl, setTranslatingUrl] = useState(null);
+
+  const translateTranscript = async (audioUrl, text) => {
+    try {
+      setTranslatingUrl(audioUrl);
+      const res = await fetch('/.netlify/functions/translate', {
+        method: 'POST',
+        body: JSON.stringify({ text }),
+      });
+      const data = await res.json();
+      setTranslatedTranscripts((prev) => ({
+        ...prev,
+        [audioUrl]: data.result,
+      }));
+    } catch (err) {
+      console.error('에피소드 스크립트 번역 실패:', err);
+    } finally {
+      setTranslatingUrl(null);
+    }
+  };
+
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const audioRef = useRef(null);
 
   return (
     <div className="flex h-screen">
@@ -224,18 +291,22 @@ export default function AudioBooks() {
               <div className="divider"></div>
               <div className="text-gray-600 text-sm">
                 {stripHtml(selected.summary?.[0] || selected.description?.[0] || '요약 정보 없음')}
+                {translatedSummary && (
+                  <p className="mt-2 text-primary-content text-sm whitespace-pre-wrap">
+                    {translatedSummary}
+                  </p>
+                )}
               </div>
-              <button
-                className="mt-3 w-fit btn btn-xs btn-primary"
-                onClick={translateSummary}
-                disabled={isTranslating}
-              >
-                {isTranslating ? '번역 중...' : '번역하기'}
-              </button>
-              {translatedSummary && (
-                <p className="mt-2 text-primary-content text-sm whitespace-pre-wrap">
-                  {translatedSummary}
-                </p>
+              {translatedSummary ? (
+                ''
+              ) : (
+                <button
+                  className="mt-3 w-fit btn btn-xs btn-primary"
+                  onClick={translateSummary}
+                  disabled={isTranslating}
+                >
+                  {isTranslating ? '번역 중...' : '번역하기'}
+                </button>
               )}
 
               {selected.url_rss?.[0] && (
@@ -257,26 +328,150 @@ export default function AudioBooks() {
                   {episodes
                     .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                     .map((ep, idx) => (
-                      <div key={idx} className="px-3 py-1">
-                        <p className="mb-2 font-semibold">{ep.title}</p>
+                      <div key={idx} className="py-3">
+                        <p className="flex justify-between items-center gap-2 mb-2 font-semibold">
+                          {ep.title}
+                          <button
+                            className="btn btn-xs btn-secondary"
+                            onClick={async () => {
+                              const transcript = await transcribeWithElevenLabs(ep.audioUrl);
+                              setEpisodeTranscripts((prev) => ({
+                                ...prev,
+                                [ep.audioUrl]: transcript,
+                              }));
+                            }}
+                          >
+                            스크립트 생성
+                          </button>
+                        </p>
                         <audio controls className="w-full" src={ep.audioUrl} />
                         <p className="text-gray-500 text-sm">{ep.pubDate}</p>
+                        {episodeTranscripts[ep.audioUrl] && (
+                          <div className="bg-base-200 mt-2 p-2 max-h-32 overflow-y-auto text-gray-700 text-sm whitespace-pre-wrap">
+                            {episodeTranscripts[ep.audioUrl]}
+                          </div>
+                        )}
+                        {/* 번역 버튼 */}
+                        {episodeTranscripts[ep.audioUrl] && (
+                          <>
+                            {translatedTranscripts[ep.audioUrl] ? (
+                              <div className="mt-2 p-2 max-h-60 overflow-y-auto text-sm whitespace-pre-wrap">
+                                {translatedTranscripts[ep.audioUrl]}
+                              </div>
+                            ) : (
+                              <button
+                                className="mt-2 btn btn-xs btn-accent"
+                                onClick={() =>
+                                  translateTranscript(ep.audioUrl, episodeTranscripts[ep.audioUrl])
+                                }
+                                disabled={translatingUrl === ep.audioUrl}
+                              >
+                                {translatingUrl === ep.audioUrl ? '번역 중...' : '📘 번역하기'}
+                              </button>
+                            )}
+                          </>
+                        )}
+
+                        {translatedTranscripts[ep.audioUrl] && (
+                          <button
+                            className="mt-2 btn btn-xs btn-accent"
+                            onClick={async () => {
+                              if (isSpeaking) {
+                                // 정지
+                                if (audioRef.current) {
+                                  audioRef.current.pause();
+                                  audioRef.current = null;
+                                }
+                                setIsSpeaking(false);
+                                return;
+                              }
+
+                              // 읽기 시작
+                              try {
+                                setIsSpeaking(true);
+                                const MAX_TTS_LENGTH = 3500;
+                                const fullText = translatedTranscripts[ep.audioUrl];
+                                const chunks = fullText.match(/(.|\n|\r){1,3500}/g) || [];
+
+                                for (let i = 0; i < chunks.length; i++) {
+                                  if (!isSpeaking) break;
+
+                                  const res = await fetch('/.netlify/functions/tts', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ text: chunks[i] }),
+                                  });
+
+                                  const raw = await res.text();
+                                  let data;
+                                  try {
+                                    data = JSON.parse(raw);
+                                  } catch (e) {
+                                    throw new Error(`TTS 응답 JSON 파싱 실패: ${raw}`);
+                                  }
+
+                                  const { audioUrl, error } = data;
+                                  if (!audioUrl)
+                                    throw new Error(
+                                      `TTS 응답에 audioUrl 없음. 에러 메시지: ${error || '없음'}`
+                                    );
+
+                                  const audio = new Audio(audioUrl);
+                                  audioRef.current = audio;
+
+                                  await new Promise((resolve) => {
+                                    audio.onended = resolve;
+                                    audio.onerror = resolve;
+                                    audio.play();
+                                  });
+                                }
+                              } catch (err) {
+                                console.error('읽기 실패:', err);
+                              } finally {
+                                setIsSpeaking(false);
+                              }
+                            }}
+                          >
+                            {isSpeaking ? '⏹ 정지' : '🔊 읽어주기'}
+                          </button>
+                        )}
                       </div>
                     ))}
-                  <div className="mt-4 join">
+                  <div className="flex justify-center items-center gap-2 mt-6">
                     <button
-                      className="join-item btn btn-sm"
+                      className="btn btn-sm join-item"
                       disabled={currentPage === 1}
                       onClick={() => setCurrentPage((p) => p - 1)}
                     >
-                      이전
+                      ◀︎ 이전
                     </button>
+
+                    <div className="join">
+                      {getPagination().map((page, idx) =>
+                        page === '...' ? (
+                          <button key={idx} className="join-item btn btn-sm btn-disabled">
+                            ...
+                          </button>
+                        ) : (
+                          <button
+                            key={idx}
+                            className={`join-item btn btn-sm ${
+                              currentPage === page ? 'btn-primary' : ''
+                            }`}
+                            onClick={() => setCurrentPage(page)}
+                          >
+                            {page}
+                          </button>
+                        )
+                      )}
+                    </div>
+
                     <button
-                      className="join-item btn btn-sm"
-                      disabled={currentPage * itemsPerPage >= episodes.length}
+                      className="btn btn-sm join-item"
+                      disabled={currentPage === totalPages}
                       onClick={() => setCurrentPage((p) => p + 1)}
                     >
-                      다음
+                      다음 ▶︎
                     </button>
                   </div>
                 </>
