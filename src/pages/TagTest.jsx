@@ -595,7 +595,7 @@ export default function TagTest() {
   };
 
   const transcribeChunksWithElevenLabs = async (file) => {
-    const chunks = splitFileIntoChunks(file);
+    const fileChunks = splitFileIntoChunks(file);
     const transcripts = [];
 
     for (let i = 0; i < chunks.length; i++) {
@@ -699,11 +699,11 @@ export default function TagTest() {
       }));
 
       // 텍스트 청크 분할
-      chunks = getTextChunks(fullTranscript);
+      const textChunks = getTextChunks(fullTranscript);
 
       // 요약 생성
       setProgress('요약 생성 중...');
-      const summary = await generateSummaryFromChunks(chunks);
+      const summary = await generateSummaryFromChunks(textChunks);
 
       // 태그 추출
       setProgress('태그 추출 중...');
