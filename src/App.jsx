@@ -8,6 +8,7 @@ import TagDetailLayoutWrapper from './components/TagDetailLayoutWrapper';
 import ZoomProvider from './components/ZoomProvider';
 import AudioBooks from './pages/AudioBooks';
 import CategoryDetail from './pages/CategoryDetail';
+import DubbingTest from './pages/DubbingTest';
 import Home from './pages/Home';
 import HostDetail from './pages/HostDetail';
 import LikedPage from './pages/LikedPage';
@@ -64,6 +65,8 @@ function AppRoutes() {
             </Layout>
           }
         />
+
+        <Route path="/dubbing" element={<DubbingTest />} />
 
         {/* Host Detail Route */}
         <Route

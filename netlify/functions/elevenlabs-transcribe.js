@@ -4,44 +4,52 @@ const FormData = require('form-data');
 exports.handler = async (event) => {
   try {
     const { audioUrl } = JSON.parse(event.body);
-    console.log('[DEBUG] audioUrl:', audioUrl);
+    if (!audioUrl) throw new Error('audioUrl 누락');
 
-    if (!audioUrl) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'audioUrl 누락' }),
-      };
+    // 1. 오디오 다운로드
+    const res = await fetch(audioUrl);
+    if (!res.ok) throw new Error('오디오 다운로드 실패');
+    const buffer = await res.buffer();
+
+    // 2. 청크 분할 (20MB 이하)
+    const CHUNK_SIZE = 20 * 1024 * 1024;
+    const chunks = [];
+    for (let i = 0; i < buffer.length; i += CHUNK_SIZE) {
+      chunks.push(buffer.slice(i, i + CHUNK_SIZE));
     }
 
-    // 🔽 1. 파일 다운로드
-    const fileRes = await fetch(audioUrl);
-    if (!fileRes.ok) throw new Error('파일 다운로드 실패');
-    const fileBuffer = await fileRes.buffer();
+    // 3. 순차적으로 ElevenLabs 전송 후 결과 합치기
+    let finalText = '';
+    for (let i = 0; i < chunks.length; i++) {
+      const form = new FormData();
+      form.append('file', chunks[i], {
+        filename: `chunk-${i}.mp3`,
+        contentType: 'audio/mpeg',
+      });
+      form.append('model_id', 'scribe_v1');
 
-    // 🔽 2. FormData 구성
-    const form = new FormData();
-    form.append('file', fileBuffer, {
-      filename: 'audio.mp3',
-      contentType: 'audio/mpeg',
-    });
-    form.append('model_id', 'scribe_v1');
+      const response = await fetch('https://api.elevenlabs.io/v1/speech-to-text', {
+        method: 'POST',
+        headers: {
+          'xi-api-key': process.env.ELEVENLABS_API_KEY,
+          ...form.getHeaders(),
+        },
+        body: form,
+      });
 
-    // 🔽 3. ElevenLabs에 전송
-    const response = await fetch('https://api.elevenlabs.io/v1/speech-to-text', {
-      method: 'POST',
-      headers: {
-        'xi-api-key': process.env.ELEVENLABS_API_KEY,
-        ...form.getHeaders(), // 중요!
-      },
-      body: form,
-    });
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ STT 실패:', errorText);
+        throw new Error('STT API 실패');
+      }
 
-    const data = await response.json();
-    console.log('[📡 응답]', data);
+      const data = await response.json();
+      finalText += data.text + '\n';
+    }
 
     return {
-      statusCode: response.status,
-      body: JSON.stringify(data),
+      statusCode: 200,
+      body: JSON.stringify({ text: finalText.trim() }),
     };
   } catch (err) {
     console.error('[❌ 에러]', err);

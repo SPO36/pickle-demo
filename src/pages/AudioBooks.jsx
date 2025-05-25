@@ -374,10 +374,81 @@ export default function AudioBooks() {
 
   const [ttsUrls, setTtsUrls] = useState({});
 
+  // radionline test
+  const handleExternalUrl = async (audioUrl) => {
+    try {
+      const existing = await getTranscriptFromDB(audioUrl);
+      if (existing?.tts_url) {
+        alert('이미 처리된 오디오입니다.');
+        return;
+      }
+
+      // 1. 스크립트 생성
+      const transcript = await transcribeWithElevenLabs(audioUrl);
+      setEpisodeTranscripts((prev) => ({ ...prev, [audioUrl]: transcript }));
+
+      // 2. 번역
+      const res = await fetch('/.netlify/functions/translate', {
+        method: 'POST',
+        body: JSON.stringify({ text: transcript }),
+      });
+      const data = await res.json();
+      const translated = data.result;
+      setTranslatedTranscripts((prev) => ({ ...prev, [audioUrl]: translated }));
+
+      // 3. TTS 생성 및 병합
+      const chunks = translated.match(/(.|\n|\r){1,500}/g) || [];
+      let allBlobs = [];
+
+      for (let i = 0; i < chunks.length; i++) {
+        const res = await fetch('/.netlify/functions/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: chunks[i] }),
+        });
+
+        const raw = await res.text();
+        const json = JSON.parse(raw);
+        const base64 = json.audioUrl.split(',')[1];
+        const binary = atob(base64);
+        const bytes = new Uint8Array(binary.length);
+        for (let j = 0; j < binary.length; j++) {
+          bytes[j] = binary.charCodeAt(j);
+        }
+
+        allBlobs.push(new Blob([bytes], { type: 'audio/mpeg' }));
+      }
+
+      const mergedBlob = new Blob(allBlobs, { type: 'audio/mpeg' });
+      const filename = audioUrl.split('/').pop().split('.')[0];
+      const ttsUrl = await uploadAudioToSupabase(mergedBlob, filename);
+
+      // 4. Supabase 저장
+      await saveTranscriptToDB({
+        book: { id: ['external'], title: ['외부 오디오'] },
+        ep: { title: filename, audioUrl },
+        transcript,
+        translated,
+        ttsUrl,
+      });
+
+      alert('✅ 외부 오디오 처리 완료!');
+    } catch (err) {
+      console.error('처리 중 오류:', err);
+      alert('❌ 처리 실패');
+    }
+  };
+
   return (
     <div className="flex h-screen">
       {/* 왼쪽: 책 리스트 */}
       <div className="p-4 w-1/2 overflow-y-auto" onScroll={handleScroll} ref={listRef}>
+        <button
+          className="mb-2 btn-outline btn btn-sm btn-primary"
+          onClick={() => handleExternalUrl('https://traffic.megaphone.fm/APO2247826844.mp3')}
+        >
+          RadioLine TTS test 생성
+        </button>
         {/* <div className="mb-4 form-control">
           <div className="w-full join">
             <input
