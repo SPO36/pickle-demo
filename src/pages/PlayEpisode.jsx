@@ -223,15 +223,17 @@ function PlayEpisode() {
                 />
                 좋아요
               </button>
-              <button
-                onClick={handleToggleDub}
-                className={`flex items-center gap-2 ${
-                  isDub ? 'bg-gray-400' : 'bg-primary'
-                } px-5 py-2 rounded-full text-md text-white btn`}
-              >
-                <Headphones size={18} className="transition-transform duration-300" />
-                {isDub ? '더빙 끄기' : '더빙 듣기'}
-              </button>
+              {episode.audioFile_dubbing && (
+                <button
+                  onClick={handleToggleDub}
+                  className={`flex items-center gap-2 ${
+                    isDub ? 'bg-gray-400' : 'bg-primary'
+                  } px-5 py-2 rounded-full text-md text-white btn`}
+                >
+                  <Headphones size={18} className="transition-transform duration-300" />
+                  {isDub ? '더빙 끄기' : '더빙 듣기'}
+                </button>
+              )}
             </div>
           </div>
         </div>
