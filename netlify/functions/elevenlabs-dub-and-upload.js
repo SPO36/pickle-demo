@@ -1,13 +1,7 @@
-//elevenlabs-dub-and-upload.js
-
 const fetch = require('node-fetch');
 const { createClient } = require('@supabase/supabase-js');
-const { Readable } = require('stream');
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY // 또는 서비스 키
-);
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
@@ -23,7 +17,6 @@ exports.handler = async (event) => {
 
     const apiKey = process.env.ELEVENLABS_API_KEY;
 
-    // 1. ElevenLabs Dubbing 요청
     const dubbingRes = await fetch('https://api.elevenlabs.io/v1/dubbing', {
       method: 'POST',
       headers: {
@@ -39,7 +32,6 @@ exports.handler = async (event) => {
     });
 
     const dubbingJson = await dubbingRes.json();
-
     if (!dubbingRes.ok) {
       return {
         statusCode: dubbingRes.status,
@@ -49,7 +41,7 @@ exports.handler = async (event) => {
 
     const projectId = dubbingJson.project_id;
 
-    // 2. 상태 체크 (최대 10번 시도, 2초 간격)
+    // 상태 체크
     let status = 'queued';
     for (let i = 0; i < 10; i++) {
       await new Promise((r) => setTimeout(r, 2000));
@@ -75,7 +67,7 @@ exports.handler = async (event) => {
       };
     }
 
-    // 3. 더빙 파일 다운로드
+    // 결과 다운로드
     const audioFileRes = await fetch(`https://api.elevenlabs.io/v1/dubbing/${projectId}/audio`, {
       headers: { 'xi-api-key': apiKey },
     });
@@ -84,7 +76,6 @@ exports.handler = async (event) => {
     const filename = audioUrl.split('/').pop().split('.')[0];
     const storagePath = `dubbings/${filename}.mp3`;
 
-    // 4. Supabase Storage에 업로드
     const uploadRes = await supabase.storage.from('dubbed-audio').upload(storagePath, audioBuffer, {
       contentType: 'audio/mpeg',
       upsert: true,
@@ -96,7 +87,6 @@ exports.handler = async (event) => {
 
     const { publicUrl } = supabase.storage.from('dubbed-audio').getPublicUrl(storagePath);
 
-    // 5. DB 저장
     await supabase.from('dubbing_results').insert({
       original_url: audioUrl,
       dubbed_url: publicUrl,
