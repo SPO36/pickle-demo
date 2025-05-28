@@ -15,8 +15,12 @@ function PlayEpisode() {
   const [containerHeight, setContainerHeight] = useState('100vh');
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isDub, setIsDub] = useState(false); // 더빙 여부
+  const [targetTime, setTargetTime] = useState(null);
 
   const audioRef = useRef(null);
+  const audioRef_ko = useRef(null);
+
   const navigate = useNavigate();
 
   const updateHeight = () => {
@@ -56,32 +60,21 @@ function PlayEpisode() {
     fetchData();
   }, [id, themeSlug]);
 
-  // ✅ 자동재생 안전하게 처리
   useEffect(() => {
-    const playAudio = async () => {
-      if (!audioRef.current) return;
-      try {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-        audioRef.current.load();
+    if (!episode || !audioRef.current) return;
+    const audio = audioRef.current;
 
-        setTimeout(() => {
-          audioRef.current
-            ?.play()
-            .then(() => {
-              setIsPlaying(true);
-            })
-            .catch((err) => {
-              console.warn('🎧 자동 재생 실패:', err.message);
-            });
-        }, 100);
-      } catch (err) {
-        console.error('❌ 자동 재생 에러:', err.message);
-      }
-    };
+    audio.pause();
+    audio.src = isDub ? episode.audioFile_dubbing : episode.audioFile;
+    audio.load();
 
-    if (episode) playAudio();
-  }, [episode]);
+    // setTimeout(() => {
+    //   audio
+    //     .play()
+    //     .then(() => setIsPlaying(true))
+    //     .catch((err) => console.warn('🎧 자동 재생 실패:', err.message));
+    // }, 100);
+  }, [episode, isDub]);
 
   useEffect(() => {
     updateHeight();
@@ -130,7 +123,8 @@ function PlayEpisode() {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  const progress = duration ? (currentTime / duration) * 100 : 0;
+  const effectiveTime = targetTime !== null ? targetTime : currentTime;
+  const progress = duration ? (effectiveTime / duration) * 100 : 0;
 
   const goToPrev = () => {
     if (currentIndex > 0) {
@@ -152,6 +146,44 @@ function PlayEpisode() {
       audioRef.current.play();
     }
     setIsPlaying((prev) => !prev);
+  };
+
+  const handleToggleDub = () => {
+    if (!audioRef.current || !episode) return;
+
+    const current = audioRef.current;
+    const wasPlaying = !current.paused;
+    const time = current.currentTime;
+
+    current.pause();
+    setTargetTime(time); // 저장 먼저
+
+    const nextIsDub = !isDub;
+    const nextSrc = nextIsDub ? episode.audioFile_dubbing : episode.audioFile;
+
+    current.src = nextSrc;
+    current.load();
+
+    const onReady = () => {
+      current.currentTime = time;
+      setCurrentTime(time); // progress 상태도 맞춰줌
+      if (wasPlaying) {
+        current
+          .play()
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch((err) => {
+            console.warn('🎧 더빙 전환 재생 실패:', err.message);
+          });
+      }
+      setTargetTime(null);
+      current.removeEventListener('loadedmetadata', onReady);
+    };
+
+    current.addEventListener('loadedmetadata', onReady);
+
+    setIsDub(nextIsDub); // 마지막에 업데이트
   };
 
   const toggleLike = () => setLiked((prev) => !prev);
@@ -191,21 +223,21 @@ function PlayEpisode() {
                 />
                 좋아요
               </button>
-              <button className="flex items-center gap-2 bg-primary px-5 py-2 rounded-full text-md text-white btn">
+              <button
+                onClick={handleToggleDub}
+                className={`flex items-center gap-2 ${
+                  isDub ? 'bg-gray-400' : 'bg-primary'
+                } px-5 py-2 rounded-full text-md text-white btn`}
+              >
                 <Headphones size={18} className="transition-transform duration-300" />
-                더빙 듣기
+                {isDub ? '더빙 끄기' : '더빙 듣기'}
               </button>
             </div>
           </div>
         </div>
 
         <div className="w-full">
-          <audio
-            ref={audioRef}
-            src={episode.audioFile}
-            preload="metadata"
-            className="mt-4 w-full"
-          />
+          <audio ref={audioRef} preload="metadata" className="mt-4 w-full" />
         </div>
 
         <div className="space-y-6 w-full">
