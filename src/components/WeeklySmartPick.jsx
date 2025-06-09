@@ -15,19 +15,25 @@ function WeeklySmartPick() {
         .filter(([_, enabled]) => enabled)
         .map(([brand]) => brand);
 
-      let query = supabase.from('themes').select('*');
+      // 조건 조합:
+      // (brand IN selectedBrands OR brand IS NULL OR brand = '')
+      const conditionParts = [];
 
-      if (selectedBrands.length === 0) {
-        // ✅ 브랜드 선택 없음 → 전부 가져오기
-        query = query.eq('category', 'smart_pick');
-      } else {
-        // ✅ 선택된 브랜드 + 공통 콘텐츠
-        query = query
-          .eq('category', 'smart_pick')
-          .or([`brand.in.(${selectedBrands.join(',')})`, 'brand.is.null', "brand.eq.''"].join(','));
+      if (selectedBrands.length > 0) {
+        conditionParts.push(`brand.in.(${selectedBrands.join(',')})`);
       }
 
+      conditionParts.push('brand.is.null');
+      conditionParts.push("brand.eq.''");
+
+      const query = supabase
+        .from('themes')
+        .select('*')
+        .eq('category', 'smart_pick')
+        .or(conditionParts.join(','));
+
       const { data, error } = await query;
+
       if (error) {
         console.error('❌ Error loading themes:', error.message);
         setThemes([]);
@@ -56,22 +62,28 @@ function WeeklySmartPick() {
         )}
       </div>
 
-      <div className="gap-3 grid grid-cols-1 md:grid-cols-3">
-        {themes.length === 0
-          ? Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-base-300 rounded-xl h-56 animate-pulse" />
-            ))
-          : themes.map((theme, idx) => (
-              <CurationCard
-                key={idx}
-                subTitle={theme.folder}
-                title={theme.title}
-                tagId={theme.slug}
-                image={theme.image}
-                episodeId={theme.episode_id}
-                textColor="text-white"
-              />
-            ))}
+      <div className="px-4 overflow-x-auto scroll-smooth snap-mandatory snap-x scrollbar-hide">
+        <div className="flex gap-4 w-max">
+          {themes.length === 0
+            ? Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="flex-shrink-0 bg-base-300 rounded-xl w-[calc((100vw+3rem)/4)] h-56 animate-pulse snap-start"
+                />
+              ))
+            : themes.map((theme, idx) => (
+                <div key={idx} className="flex-shrink-0 w-[calc((100vw+3rem)/4)] snap-start">
+                  <CurationCard
+                    subTitle={theme.folder}
+                    title={theme.title}
+                    tagId={theme.slug}
+                    image={theme.image}
+                    episodeId={theme.episode_id}
+                    textColor="text-white"
+                  />
+                </div>
+              ))}
+        </div>
       </div>
     </div>
   );

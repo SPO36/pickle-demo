@@ -15,7 +15,7 @@ function WeeklyPopularHosts() {
         .select('*')
         .order('no', { ascending: true });
       if (error) console.error('❌ Error loading hosts:', error.message);
-      else setHosts(data);
+      setHosts(data.filter((host) => typeof host.no === 'number'));
     }
 
     fetchHosts();
