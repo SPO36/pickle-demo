@@ -1,6 +1,7 @@
 import Lottie from 'lottie-react';
 import { Mic } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { TypeAnimation } from 'react-type-animation';
 import animationData from '../assets/VoiceSearch_bg2.json';
@@ -8,6 +9,7 @@ import animationData from '../assets/VoiceSearch_bg2.json';
 const HEADER_HEIGHT = 128;
 
 function VoiceSearch() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [containerHeight, setContainerHeight] = useState('100vh');
 
@@ -47,7 +49,6 @@ function VoiceSearch() {
         autoplay
         className="top-0 left-0 z-0 absolute w-full h-full object-cover"
       />
-
       {/* 정중앙 콘텐츠 */}
       <div className="z-10 relative flex flex-col justify-center items-center gap-12 px-4 h-full text-center">
         <p className="text-gray-500 text-2xl animate-pulse">듣는 중...</p>
@@ -60,7 +61,7 @@ function VoiceSearch() {
         </div>
 
         <TypeAnimation
-          sequence={['"경제 관련 팟캐스트 찾아줘"', 2000]}
+          sequence={[t('placeholders.search'), 2000]}
           wrapper="p"
           speed={250}
           cursor={false}

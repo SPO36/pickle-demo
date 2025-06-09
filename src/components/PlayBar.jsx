@@ -96,7 +96,7 @@ export default function PlayerBar() {
     <div className="bottom-0 left-0 z-50 fixed bg-base-100 shadow-md border-t border-base-300 w-full">
       <audio
         ref={audioRef}
-        src={currentEpisode?.audioFile || ''}
+        src={currentEpisode?.audioFile || null}
         onEnded={() => setIsPlaying(false)}
         onTimeUpdate={handleTimeUpdate}
       />

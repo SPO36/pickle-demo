@@ -1,0 +1,28 @@
+{
+  "sections": {
+    "hot_people": "Hot Hosts",
+    "weekly_recommendations": "This Week’s Smart Picks",
+    "popular_channels": "Popular Channels This Week",
+    "drive_mood": "Drive MOOD",
+    "popular_categories": "Popular Categories"
+  },
+  "buttons": {
+    "play": "Play",
+    "recommend_channel": "Recommend another channel",
+    "recommend_category": "Recommend another category",
+    "like": "Like"
+  },
+  "placeholders": {
+    "search": "Find podcasts about economics"
+  },
+  "menu": {
+    "mypage": "My Page",
+    "recent": "Recently Played",
+    "library": "Library",
+    "sound": "Sound",
+    "settings": "Settings",
+    "zoom": "Zoom",
+    "language": "Language",
+    "oem": "OEM Contents"
+  }
+}

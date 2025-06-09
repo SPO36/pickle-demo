@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
-function WeekplyPopularHosts() {
+function WeeklyPopularHosts() {
+  const { t } = useTranslation();
   const [hosts, setHosts] = useState([]);
   const navigate = useNavigate();
 
@@ -26,7 +28,7 @@ function WeekplyPopularHosts() {
         {hosts.length === 0 ? (
           <div className="bg-base-300 rounded-xl w-40 h-8 animate-pulse" />
         ) : (
-          '뜨는 사람들'
+          t('sections.hot_people')
         )}
       </div>
 
@@ -60,4 +62,4 @@ function WeekplyPopularHosts() {
   );
 }
 
-export default WeekplyPopularHosts;
+export default WeeklyPopularHosts;

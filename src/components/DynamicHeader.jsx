@@ -1,10 +1,12 @@
 import { ArrowLeft, Heart, Menu, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const THEME_KEY = 'siteTheme';
 
 export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const isHome = location.pathname === '/';
@@ -115,7 +117,7 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
           <div className="relative mx-auto w-full max-w-xl">
             <input
               type="text"
-              placeholder="경제 관련 팟캐스트 찾아줘"
+              placeholder={t('placeholders.search')}
               className="pr-10 rounded-lg w-full input input-md"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {

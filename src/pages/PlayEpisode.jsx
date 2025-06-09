@@ -1,11 +1,13 @@
 import { Headphones, Heart, List, Pause, Play, Shuffle, SkipBack, SkipForward } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
 const HEADER_HEIGHT = 128;
 
 function PlayEpisode() {
+  const { t } = useTranslation();
   const { id, themeSlug } = useParams();
   const [episode, setEpisode] = useState(null);
   const [playlist, setPlaylist] = useState([]);
@@ -221,7 +223,7 @@ function PlayEpisode() {
                   fill={liked ? '#F43F5E' : 'none'}
                   stroke={liked ? '#F43F5E' : 'currentColor'}
                 />
-                좋아요
+                {t('buttons.like')}
               </button>
               {episode.audioFile_dubbing && (
                 <button

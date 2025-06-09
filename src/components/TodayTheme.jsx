@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { Navigation } from 'swiper/modules';
@@ -8,6 +9,7 @@ import { supabase } from '../lib/supabase';
 import CurationCard from './CurationCard';
 
 export default function TodayTheme() {
+  const { t } = useTranslation();
   const [themes, setThemes] = useState([]);
   const [swiperInstance, setSwiperInstance] = useState(null);
   const [isBeginning, setIsBeginning] = useState(true);
@@ -40,7 +42,7 @@ export default function TodayTheme() {
         {themes.length === 0 ? (
           <div className="bg-base-300 rounded-xl w-40 h-8 animate-pulse" />
         ) : (
-          '드라이브 MOOD'
+          t('sections.drive_mood')
         )}
       </div>
 

@@ -1,4 +1,5 @@
 import { Play } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 function CurationCard({
@@ -12,6 +13,7 @@ function CurationCard({
   isCompact = false,
   badgeImage,
 }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleCardClick = () => {
@@ -61,7 +63,7 @@ function CurationCard({
           <div className="z-20 mt-3 card-actions">
             <button onClick={handlePlayClick} className="rounded-full btn">
               <Play size={16} />
-              재생하기
+              {t('buttons.play')}
             </button>
           </div>
         )}

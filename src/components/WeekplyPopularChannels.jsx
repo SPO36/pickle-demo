@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight, RefreshCcw } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { Navigation } from 'swiper/modules';
@@ -8,6 +9,7 @@ import { supabase } from '../lib/supabase';
 import ChannelCard from './ChannelCard';
 
 export default function WeekplyPopularChannels() {
+  const { t } = useTranslation();
   const [channels, setChannels] = useState([]);
   const [shuffledCards, setShuffledCards] = useState([]);
   const [swiperInstance, setSwiperInstance] = useState(null);
@@ -71,8 +73,9 @@ export default function WeekplyPopularChannels() {
 
   return (
     <div className="relative space-y-3 w-full">
-      <div className="mb-2 font-semibold text-gray-500 text-lg">이번주 인기 채널</div>
-
+      <div className="mb-2 font-semibold text-gray-500 text-lg">
+        {t('sections.popular_channels')}
+      </div>
       {/* 커스텀 네비게이션 버튼 */}
       <button
         className={`swiper-button-prev-custom top-[45%] -left-5 z-10 absolute bg-base-200 hover:bg-base-300 shadow-md p-2 rounded-full -translate-y-1/2 transform ${
@@ -120,7 +123,7 @@ export default function WeekplyPopularChannels() {
       <div>
         <button onClick={handleRefresh} className="bg-base-200 w-full btn">
           <RefreshCcw size={16} />
-          다른 채널 추천받기
+          {t('buttons.recommend_channel')}
         </button>
       </div>
     </div>

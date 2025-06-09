@@ -1,23 +1,37 @@
-import { AudioLines, CircleUserRound, Heart, LogOut, Settings, Star } from 'lucide-react';
+import {
+  AudioLines,
+  ChevronLeft,
+  CircleUserRound,
+  Heart,
+  LogOut,
+  Settings,
+  Star,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useOEM } from '../context/OEMContext';
 
 const ZOOM_KEY = 'zoomLevel';
 
 function MenuPage() {
+  const { t, i18n } = useTranslation();
+  const { showOEMOnly, setShowOEMOnly, oemToggles, setOemToggles } = useOEM();
   const [zoomLevel, setZoomLevel] = useState(1.4);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const toggleOEM = (brand) => {
+    setOemToggles((prev) => ({
+      ...prev,
+      [brand]: !prev[brand],
+    }));
+  };
 
-  // 초기 마운트 시 로컬스토리지에서 줌 값 불러오기
   useEffect(() => {
     const savedZoom = localStorage.getItem(ZOOM_KEY);
-    if (savedZoom) {
-      setZoomLevel(parseFloat(savedZoom));
-      document.documentElement.style.zoom = parseFloat(savedZoom);
-    } else {
-      document.documentElement.style.zoom = 1.4;
-    }
+    const zoom = savedZoom ? parseFloat(savedZoom) : 1.4;
+    setZoomLevel(zoom);
+    document.documentElement.style.zoom = zoom;
   }, []);
 
-  // 줌 값 변경 시 적용 및 저장
   const handleZoomChange = (e) => {
     const newZoom = parseFloat(e.target.value);
     setZoomLevel(newZoom);
@@ -27,78 +41,131 @@ function MenuPage() {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="space-y-2 overflow-x-auto">
-        {/* profile */}
-        <ul className="bg-base-100 rounded-box list">
-          <li className="flex justify-between items-center list-row">
-            <div className="flex flex-row gap-4">
-              <div>
+    <div className="max-h-screen overflow-y-auto">
+      {isSettingsOpen ? (
+        <>
+          {/* 설정 화면 */}
+          <div className="flex items-center gap-2 mb-4">
+            <button className="btn btn-sm btn-ghost" onClick={() => setIsSettingsOpen(false)}>
+              <ChevronLeft size={20} />
+            </button>
+            <h2 className="font-semibold text-lg">{t('menu.settings')}</h2>
+          </div>
+
+          <div className="space-y-6 p-3">
+            {/* Zoom */}
+            <div>
+              <h1 className="mb-2 font-semibold text-md">{t('menu.zoom')}</h1>
+              <select
+                className="w-full select-bordered select"
+                value={zoomLevel}
+                onChange={handleZoomChange}
+              >
+                {[1, 1.2, 1.4, 1.6, 1.8, 2.0].map((z) => (
+                  <option key={z} value={z}>
+                    {Math.round(z * 100)}%
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Language */}
+            <div>
+              <h1 className="mb-2 font-semibold text-md">{t('menu.language')}</h1>
+              <select
+                className="w-full select-bordered select"
+                value={i18n.language}
+                onChange={(e) => i18n.changeLanguage(e.target.value)}
+              >
+                <option value="ko">ko</option>
+                <option value="en">en</option>
+              </select>
+            </div>
+
+            {/* OEM Contents */}
+            <div>
+              <h1 className="mb-2 font-semibold text-md">{t('menu.oem')}</h1>
+
+              {['Hyundai', 'RKM'].map((brand) => (
+                <label
+                  key={brand}
+                  className="flex justify-between items-center bg-base-100 py-2 rounded-md"
+                >
+                  <span className="opacity-60">{brand}</span>
+                  <input
+                    type="checkbox"
+                    className="toggle toggle-primary"
+                    checked={oemToggles[brand]}
+                    onChange={() => toggleOEM(brand)}
+                  />
+                </label>
+              ))}
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          {/* 프로필 */}
+          <ul className="bg-base-100 mb-4 rounded-box list">
+            <li className="flex justify-between items-center list-row">
+              <div className="flex gap-4">
                 <img
                   className="rounded-box size-10"
                   src="https://img.daisyui.com/images/profile/demo/3@94.webp"
                 />
+                <div>
+                  <div>OBIGO</div>
+                  <div className="opacity-60 font-semibold text-xs uppercase">
+                    obigo@obigo.co.kr
+                  </div>
+                </div>
               </div>
-              <div className="list-col-grow">
-                <div>OBIGO</div>
-                <div className="opacity-60 font-semibold text-xs uppercase">obigo@obigo.co.kr</div>
+              <div className="hover:bg-base-300 p-3 rounded-xl cursor-pointer">
+                <LogOut size={20} />
               </div>
-            </div>
-            <div className="hover:bg-base-300 p-3 rounded-xl cursor-pointer">
-              <LogOut size={20} />
-            </div>
-          </li>
-        </ul>
-        {/* my */}
-        <table className="table">
-          <tbody>
-            <tr className="hover:bg-base-300 cursor-pointer">
-              <td className="flex flex-row gap-3">
-                <CircleUserRound strokeWidth={1.5} size={24} />
-                <div>마이페이지</div>
-              </td>
-            </tr>
-            <tr className="hover:bg-base-300 cursor-pointer">
-              <td className="flex flex-row gap-3">
-                <Star strokeWidth={1.5} size={24} />
-                <div>최근 청취</div>
-              </td>
-            </tr>
-            <tr className="hover:bg-base-300 cursor-pointer">
-              <td className="flex flex-row gap-3">
-                <Heart strokeWidth={1.5} size={24} />
-                <div>보관함</div>
-              </td>
-            </tr>
-            <tr className="hover:bg-base-300 cursor-pointer">
-              <td className="flex flex-row gap-3">
-                <AudioLines strokeWidth={1.5} size={24} />
-                <div>사운드</div>
-              </td>
-            </tr>
-            <tr className="hover:bg-base-300 cursor-pointer">
-              <td className="flex flex-row gap-3">
-                <Settings strokeWidth={1.5} size={24} />
-                <div>설정</div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      {/* setting */}
-      <div className='p-3'>
-        <h1 className="mb-3 font-semibold text-lg">화면 배율</h1>
-        <label className="flex items-center gap-2">
-          <select className="select-bordered select" value={zoomLevel} onChange={handleZoomChange}>
-            <option value={1}>100%</option>
-            <option value={1.2}>120%</option>
-            <option value={1.4}>140%</option>
-            <option value={1.6}>160%</option>
-            <option value={1.8}>180%</option>
-            <option value={2.0}>200%</option>
-          </select>
-        </label>
-      </div>
+            </li>
+          </ul>
+
+          {/* 메뉴 리스트 */}
+          <table className="table">
+            <tbody>
+              <tr className="hover:bg-base-300 cursor-pointer">
+                <td className="flex gap-3">
+                  <CircleUserRound strokeWidth={1.5} size={24} />
+                  <div>{t('menu.mypage')}</div>
+                </td>
+              </tr>
+              <tr className="hover:bg-base-300 cursor-pointer">
+                <td className="flex gap-3">
+                  <Star strokeWidth={1.5} size={24} />
+                  <div>{t('menu.recent')}</div>
+                </td>
+              </tr>
+              <tr className="hover:bg-base-300 cursor-pointer">
+                <td className="flex gap-3">
+                  <Heart strokeWidth={1.5} size={24} />
+                  <div>{t('menu.library')}</div>
+                </td>
+              </tr>
+              <tr className="hover:bg-base-300 cursor-pointer">
+                <td className="flex gap-3">
+                  <AudioLines strokeWidth={1.5} size={24} />
+                  <div>{t('menu.sound')}</div>
+                </td>
+              </tr>
+              <tr
+                className="hover:bg-base-300 cursor-pointer"
+                onClick={() => setIsSettingsOpen(true)}
+              >
+                <td className="flex gap-3">
+                  <Settings strokeWidth={1.5} size={24} />
+                  <div>{t('menu.settings')}</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </>
+      )}
     </div>
   );
 }

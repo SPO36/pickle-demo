@@ -1,10 +1,12 @@
 import { RefreshCcw } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import CurationCard from './CurationCard';
 
 function PopularCategories() {
+  const { t } = useTranslation();
   const [categories, setCategories] = useState([]);
   const [shuffledCards, setShuffledCards] = useState([]);
   const navigate = useNavigate();
@@ -47,7 +49,7 @@ function PopularCategories() {
         {shuffledCards.length === 0 ? (
           <div className="bg-base-300 rounded-xl w-40 h-8 animate-pulse" />
         ) : (
-          '인기 카테고리'
+          t('sections.popular_categories')
         )}
       </div>
 
@@ -85,7 +87,7 @@ function PopularCategories() {
             className="bg-base-200 w-full btn"
           >
             <RefreshCcw size={16} />
-            다른 카테고리 추천받기
+            {t('buttons.recommend_category')}
           </button>
         )}
       </div>

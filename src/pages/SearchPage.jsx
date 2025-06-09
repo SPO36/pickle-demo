@@ -1,5 +1,6 @@
 import { Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ChannelCard from '../components/ChannelCard';
 import EpisodeCard from '../components/EpisodeCard';
 import { supabase } from '../lib/supabase';
@@ -7,6 +8,7 @@ import { supabase } from '../lib/supabase';
 const TAGS = ['경제', '주식', '재테크', '글로벌경제', '돈 버는 법', '비즈니스', '경제 브리핑'];
 
 function SearchPage() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [channels, setChannels] = useState([]);
   const [episodes, setEpisodes] = useState([]);
@@ -114,7 +116,7 @@ function SearchPage() {
       <div className="relative w-full">
         <input
           type="text"
-          placeholder="경제 관련 팟캐스트 찾아줘"
+          placeholder={t('placeholders.sarch')}
           className="pr-12 rounded-lg w-full input input-lg"
           value={query}
           onChange={(e) => setQuery(e.target.value)}

@@ -1,0 +1,28 @@
+{
+  "sections": {
+    "hot_people": "뜨는 사람들",
+    "weekly_recommendations": "이번주 똑똑한 추천",
+    "popular_channels": "이번주 인기 채널",
+    "drive_mood": "드라이브 MOOD",
+    "popular_categories": "인기 카테고리"
+  },
+  "buttons": {
+    "play": "재생하기",
+    "recommend_channel": "다른 채널 추천받기",
+    "recommend_category": "다른 카테고리 추천받기",
+    "like": "좋아요"
+  },
+  "placeholders": {
+    "search": "경제 관련 팟캐스트 찾아줘"
+  },
+  "menu": {
+    "mypage": "마이페이지",
+    "recent": "최근 청취",
+    "library": "보관함",
+    "sound": "사운드",
+    "settings": "설정",
+    "zoom": "화면 확대",
+    "language": "언어",
+    "oem": "OEM 콘텐츠"
+  }
+}
