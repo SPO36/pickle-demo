@@ -6,7 +6,7 @@ export function OEMProvider({ children }) {
   const [showOEMOnly, setShowOEMOnly] = useState(true);
   const [oemToggles, setOemToggles] = useState({
     Hyundai: true,
-    RKM: true,
+    RKM: false,
   });
 
   return (
