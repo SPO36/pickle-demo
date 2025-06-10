@@ -1,5 +1,6 @@
 import { Mic } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import DynamicHeader from './components/DynamicHeader';
 import Layout from './components/Layout';
@@ -19,6 +20,7 @@ import TagTest from './pages/TagTest';
 import VoiceSearch from './pages/VoiceSearch';
 
 function AppRoutes() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [headerTitle, setHeaderTitle] = useState('');
 
@@ -62,7 +64,7 @@ function AppRoutes() {
           <Route
             path="/audiobooks"
             element={
-              <Layout headerContent={<DynamicHeader centerText="오디오북" />}>
+              <Layout headerContent={<DynamicHeader centerText={t('page.audio_book')} />}>
                 <AudioBooks />
               </Layout>
             }
@@ -93,7 +95,7 @@ function AppRoutes() {
           <Route
             path="/likes"
             element={
-              <Layout headerContent={<DynamicHeader centerText="보관함" />}>
+              <Layout headerContent={<DynamicHeader centerText={t('page.library')} />}>
                 <LikedPage />
               </Layout>
             }
@@ -111,7 +113,7 @@ function AppRoutes() {
           <Route
             path="/categories/:slug"
             element={
-              <Layout headerContent={<DynamicHeader centerText="카테고리" />}>
+              <Layout headerContent={<DynamicHeader centerText={t('page.category')} />}>
                 <CategoryDetail />
               </Layout>
             }

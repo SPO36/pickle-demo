@@ -1,6 +1,7 @@
 import Lottie from 'lottie-react';
 import { ChevronDown } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import animationData from '../assets/VoiceSearch_bg2.json';
 import ChannelCard from '../components/ChannelCard';
@@ -8,6 +9,7 @@ import EpisodeCard from '../components/EpisodeCard';
 import { supabase } from '../lib/supabase';
 
 function TagDetail() {
+  const { t } = useTranslation();
   const { slug } = useParams();
   const [theme, setTheme] = useState(null);
   const [tab, setTab] = useState('episode');
@@ -126,13 +128,13 @@ function TagDetail() {
           className={`tab text-lg py-3 h-auto min-h-0 ${tab === 'episode' ? 'tab-active' : ''}`}
           onClick={() => setTab('episode')}
         >
-          에피소드
+          {t('buttons.episode')}
         </button>
         <button
           className={`tab text-lg py-3 h-auto min-h-0 ${tab === 'channel' ? 'tab-active' : ''}`}
           onClick={() => setTab('channel')}
         >
-          채널
+          {t('buttons.channel')}
         </button>
       </div>
 

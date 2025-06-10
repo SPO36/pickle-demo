@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ChannelCard from '../components/ChannelCard';
 import EpisodeCard from '../components/EpisodeCard';
 import { supabase } from '../lib/supabase';
 
 export default function LikedPage() {
+  const { t } = useTranslation();
   const [tab, setTab] = useState('channel');
   const [likedChannels, setLikedChannels] = useState([]);
   const [likedEpisodes, setLikedEpisodes] = useState([]);
@@ -63,13 +65,13 @@ export default function LikedPage() {
           className={`tab text-lg py-3 h-auto min-h-0 ${tab === 'channel' ? 'tab-active' : ''}`}
           onClick={() => setTab('channel')}
         >
-          채널
+          {t('buttons.channel')}
         </button>
         <button
           className={`tab text-lg py-3 h-auto min-h-0 ${tab === 'episode' ? 'tab-active' : ''}`}
           onClick={() => setTab('episode')}
         >
-          에피소드
+          {t('buttons.episode')}
         </button>
       </div>
 

@@ -10,7 +10,14 @@
     "play": "Play",
     "recommend_channel": "Recommend another channel",
     "recommend_category": "Recommend another category",
-    "like": "Like"
+    "like": "Like",
+    "episode": "Episodes",
+    "channel": "Channels"
+  },
+  "label": {
+    "popularity": "Popularity",
+    "latest": "Latest",
+    "alphabetical": "Alphabetical"
   },
   "placeholders": {
     "search": "Find podcasts about economics"
@@ -24,5 +31,10 @@
     "zoom": "Zoom",
     "language": "Language",
     "oem": "OEM Contents"
+  },
+  "page": {
+    "library": "Library",
+    "audio_book": "Audio Book",
+    "category": "Category"
   }
 }

@@ -1,10 +1,12 @@
 import { ChevronDown } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import ChannelCard from '../components/ChannelCard';
 import { supabase } from '../lib/supabase';
 
 function CategoryDetail() {
+  const { t } = useTranslation();
   const { slug } = useParams();
   const [tab, setTab] = useState('all');
   const [channels, setChannels] = useState([]);
@@ -116,9 +118,7 @@ function CategoryDetail() {
           role="button"
           className="flex items-center gap-2 bg-base-100 px-4 py-2 border-base-300 text-sm btn"
         >
-          {sort === 'latest' && '최신순'}
-          {sort === 'popular' && '인기순'}
-          {sort === 'az' && '가나다순'}
+          {t(`${sort}`)}
           <ChevronDown size={18} />
         </div>
         <ul
@@ -126,13 +126,13 @@ function CategoryDetail() {
           className="z-10 bg-base-100 shadow-sm p-2 rounded-box w-40 dropdown-content menu"
         >
           <li>
-            <a onClick={() => setSort('latest')}>최신순</a>
+            <a onClick={() => setSort('latest')}>{t('label.latest')}</a>
           </li>
           <li>
-            <a onClick={() => setSort('popular')}>인기순</a>
+            <a onClick={() => setSort('popular')}>{t('label.popularity')}</a>
           </li>
           <li>
-            <a onClick={() => setSort('az')}>가나다순</a>
+            <a onClick={() => setSort('az')}>{t('label.alphabetical')}</a>
           </li>
         </ul>
       </div>

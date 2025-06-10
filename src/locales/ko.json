@@ -10,7 +10,14 @@
     "play": "재생하기",
     "recommend_channel": "다른 채널 추천받기",
     "recommend_category": "다른 카테고리 추천받기",
-    "like": "좋아요"
+    "like": "좋아요",
+    "episode": "에피소드",
+    "channel": "채널"
+  },
+  "label": {
+    "popularity": "인기순",
+    "latest": "최신순",
+    "alphabetical": "가나다순"
   },
   "placeholders": {
     "search": "경제 관련 팟캐스트 찾아줘"
@@ -24,5 +31,10 @@
     "zoom": "화면 확대",
     "language": "언어",
     "oem": "OEM 콘텐츠"
+  },
+  "page": {
+    "library": "보관함",
+    "audio_book": "오디오북",
+    "category": "카테고리"
   }
 }
