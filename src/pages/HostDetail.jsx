@@ -67,7 +67,16 @@ function HostDetail() {
           <h2 className="mb-4 font-bold text-xl">#{host.name}</h2>
           <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {episodes.map((ep) => (
-              <div key={ep.id} onClick={() => navigate(`/episode/${ep.slug}`)}>
+              <div
+                key={ep.id}
+                onClick={() => {
+                  if (ep.slug) {
+                    navigate(`/episode/${ep.slug}`);
+                  } else {
+                    console.warn('🚨 slug가 아직 정의되지 않았습니다:', ep);
+                  }
+                }}
+              >
                 <EpisodeCard
                   id={ep.id}
                   title={ep.title}
