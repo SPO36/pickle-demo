@@ -74,7 +74,7 @@ function TagDetail() {
       } else {
         const { data, error } = await supabase
           .from('episodes')
-          .select('id, title, created_at, likes, src, creator, audioFile_dubbing') // ← audioFile_dubbing 명시!
+          .select('id, title, likes, src, creator, audioFile_dubbing') // ← audioFile_dubbing 명시!
           .in('id', theme.episode_ids || []);
         if (!error) {
           setEpisodes(data || []);
