@@ -5,8 +5,8 @@ const OEMContext = createContext();
 export function OEMProvider({ children }) {
   const [showOEMOnly, setShowOEMOnly] = useState(true);
   const [oemToggles, setOemToggles] = useState({
-    Hyundai: true,
-    RKM: false,
+    Hyundai: false,
+    RKM: true,
   });
 
   return (
