@@ -88,8 +88,15 @@ function TagDetail() {
   }, [tab, theme]);
 
   const sortedItems = (tab === 'channel' ? [...channels] : [...episodes]).sort((a, b) => {
-    if (sort === 'latest') return new Date(b.created_at) - new Date(a.created_at);
-    if (sort === 'popular') return (b.likes || 0) - (a.likes || 0);
+    if (sort === 'latest') {
+      return new Date(b.created_at) - new Date(a.created_at);
+    }
+    if (sort === 'popular') {
+      return (
+        (b.audioFile_dubbing ? 1 : 0) - (a.audioFile_dubbing ? 1 : 0) ||
+        (b.likes || 0) - (a.likes || 0)
+      );
+    }
     if (sort === 'az') {
       return (a.title || '').localeCompare(b.title || '', 'ko-KR-u-kf-upper', {
         sensitivity: 'base',
