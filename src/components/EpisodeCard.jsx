@@ -1,14 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function EpisodeCard({ title, creator, src, id, themeSlug }) {
+function EpisodeCard({ title, creator, src, id, themeSlug, audioFile }) {
   const navigate = useNavigate();
 
   const handlePlayClick = () => {
+    if (!audioFile) return; // 오디오 없으면 무시
     if (themeSlug) {
       navigate(`/episode/${id}/${themeSlug}`);
     } else {
-      navigate(`/episode/${id}`); // fallback
+      navigate(`/episode/${id}`);
     }
   };
 
