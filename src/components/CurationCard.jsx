@@ -1,4 +1,3 @@
-import { Play } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -59,14 +58,14 @@ function CurationCard({
           <h2 className="text-xl whitespace-pre-line card-title">{title.replace(/\\n/g, '\n')}</h2>
         </div>
 
-        {!isCompact && (
+        {/* {!isCompact && (
           <div className="z-20 mt-3 card-actions">
             <button onClick={handlePlayClick} className="rounded-full btn">
               <Play size={16} />
               {t('buttons.play')}
             </button>
           </div>
-        )}
+        )} */}
 
         {/* {badgeImage && (
           <img src={badgeImage} alt="badge" className="right-0 bottom-0 absolute w-28 h-28" />

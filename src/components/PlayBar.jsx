@@ -9,6 +9,50 @@ export default function PlayerBar() {
   const audioRef = useRef(null);
   const currentEpisode = episodeList[currentIndex] || null;
   const [progress, setProgress] = useState(0);
+  const progressBarRef = useRef(null);
+  const [isSeeking, setIsSeeking] = useState(false);
+
+  const seek = (clientX) => {
+    if (!audioRef.current || !progressBarRef.current) return;
+
+    const rect = progressBarRef.current.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const percent = Math.min(Math.max(x / rect.width, 0), 1); // 0~1 범위 clamp
+    audioRef.current.currentTime = percent * audioRef.current.duration;
+
+    // ⭐ 드래그 중 실시간 업데이트를 위해 추가
+    setProgress(percent * 100);
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (isSeeking) {
+        seek(e.clientX);
+      }
+    };
+
+    const handleMouseUp = () => {
+      if (isSeeking) {
+        setIsSeeking(false);
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('touchmove', (e) => {
+      if (isSeeking) seek(e.touches[0].clientX);
+    });
+    window.addEventListener('touchend', () => {
+      if (isSeeking) setIsSeeking(false);
+    });
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('touchmove', () => {});
+      window.removeEventListener('touchend', () => {});
+    };
+  }, [isSeeking]);
 
   // 오디오 재생 위치 추적
   const handleTimeUpdate = () => {
@@ -103,16 +147,15 @@ export default function PlayerBar() {
 
       {/* 상단 프로그레스바 */}
       <div
+        ref={progressBarRef}
         className="top-0 left-0 absolute bg-base-300 w-full h-1 cursor-pointer"
-        onClick={(e) => {
-          const rect = e.currentTarget.getBoundingClientRect();
-          const clickX = e.clientX - rect.left;
-          const width = rect.width;
-          const percent = clickX / width;
-
-          if (audioRef.current && audioRef.current.duration) {
-            audioRef.current.currentTime = percent * audioRef.current.duration;
-          }
+        onMouseDown={(e) => {
+          setIsSeeking(true);
+          seek(e.clientX);
+        }}
+        onTouchStart={(e) => {
+          setIsSeeking(true);
+          seek(e.touches[0].clientX);
         }}
       >
         <div

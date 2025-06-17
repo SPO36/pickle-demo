@@ -19,6 +19,50 @@ function PlayEpisode() {
   const [duration, setDuration] = useState(0);
   const [isDub, setIsDub] = useState(false); // 더빙 여부
   const [targetTime, setTargetTime] = useState(null);
+  const progressRef = useRef(null);
+  const [isSeeking, setIsSeeking] = useState(false);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!isSeeking || !progressRef.current || !audioRef.current) return;
+      const rect = progressRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const percent = Math.min(Math.max(x / rect.width, 0), 1);
+      const newTime = percent * duration;
+      audioRef.current.currentTime = newTime;
+      setCurrentTime(newTime);
+    };
+
+    const handleMouseUp = () => {
+      if (isSeeking) setIsSeeking(false);
+    };
+
+    const handleTouchMove = (e) => {
+      if (!isSeeking || !progressRef.current || !audioRef.current) return;
+      const rect = progressRef.current.getBoundingClientRect();
+      const x = e.touches[0].clientX - rect.left;
+      const percent = Math.min(Math.max(x / rect.width, 0), 1);
+      const newTime = percent * duration;
+      audioRef.current.currentTime = newTime;
+      setCurrentTime(newTime);
+    };
+
+    const handleTouchEnd = () => {
+      if (isSeeking) setIsSeeking(false);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('touchmove', handleTouchMove);
+    window.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isSeeking, duration]);
 
   const audioRef = useRef(null);
   const audioRef_ko = useRef(null);
@@ -246,11 +290,23 @@ function PlayEpisode() {
 
         <div className="space-y-3 w-full">
           <div
+            ref={progressRef}
             className="bg-base-300 rounded-full w-full h-2 overflow-hidden cursor-pointer"
-            onClick={(e) => {
+            onMouseDown={(e) => {
+              setIsSeeking(true);
               const rect = e.currentTarget.getBoundingClientRect();
-              const clickX = e.clientX - rect.left;
-              const newTime = (clickX / rect.width) * duration;
+              const x = e.clientX - rect.left;
+              const percent = Math.min(Math.max(x / rect.width, 0), 1);
+              const newTime = percent * duration;
+              audioRef.current.currentTime = newTime;
+              setCurrentTime(newTime);
+            }}
+            onTouchStart={(e) => {
+              setIsSeeking(true);
+              const rect = e.currentTarget.getBoundingClientRect();
+              const x = e.touches[0].clientX - rect.left;
+              const percent = Math.min(Math.max(x / rect.width, 0), 1);
+              const newTime = percent * duration;
               audioRef.current.currentTime = newTime;
               setCurrentTime(newTime);
             }}
