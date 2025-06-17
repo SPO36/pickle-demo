@@ -4,11 +4,13 @@ import { useNavigate } from 'react-router-dom';
 function EpisodeCard({ title, creator, src, id, themeSlug, audioFile }) {
   const navigate = useNavigate();
 
-  const handlePlayClick = () => {
+  const handlePlayClick = (e) => {
     if (!audioFile) {
       showToast(title + '의 오디오 파일이 존재하지 않습니다');
-      e.stopPropagation(); // 카드 클릭 막기
+      e.stopPropagation(); // 이제 정상 작동
+      return; // 아래로 내려가지 않게 조기 리턴
     }
+
     if (themeSlug) {
       navigate(`/episode/${id}/${themeSlug}`);
     } else {
