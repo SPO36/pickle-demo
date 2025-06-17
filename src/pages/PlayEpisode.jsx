@@ -194,15 +194,15 @@ function PlayEpisode() {
 
   return (
     <div
-      className="px-4 py-12"
+      className="px-4 py-4"
       style={{ height: containerHeight, display: 'flex', justifyContent: 'center' }}
     >
-      <div className="space-y-10 w-full max-w-5xl" style={{ margin: 'auto' }}>
+      <div className="space-y-8 w-full max-w-5xl" style={{ margin: 'auto' }}>
         <div className="flex md:flex-row flex-col items-center gap-8 w-full">
           <img
             src={episode.src}
             alt={episode.title}
-            className="rounded-lg w-full md:w-2/5 h-auto object-cover"
+            className="rounded-lg w-full md:w-4/12 h-auto object-cover"
           />
           <div className="flex-1 space-y-8 w-full">
             <div className="space-y-2">
@@ -244,7 +244,7 @@ function PlayEpisode() {
           <audio ref={audioRef} preload="metadata" className="mt-4 w-full" />
         </div>
 
-        <div className="space-y-6 w-full">
+        <div className="space-y-3 w-full">
           <div
             className="bg-base-300 rounded-full w-full h-2 overflow-hidden cursor-pointer"
             onClick={(e) => {
@@ -266,7 +266,7 @@ function PlayEpisode() {
             <span>{formatTime(duration)}</span>
           </div>
 
-          <div className="flex justify-center items-center pt-4 w-full">
+          <div className="flex justify-center items-center w-full">
             <div className="flex justify-between items-center px-6 w-full max-w-2xl">
               <button className="hover:bg-base-300 p-3 rounded-full transition">
                 <Shuffle size={28} />
