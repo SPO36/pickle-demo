@@ -85,7 +85,7 @@ function HostDetail() {
                   slug={ep.slug}
                   summary={ep.summary}
                   thumbnail={ep.thumbnail}
-                  // 필요한 prop 더 추가 가능
+                  audioFile={ep.audioFile}
                 />
               </div>
             ))}
