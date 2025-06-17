@@ -21,6 +21,23 @@ function WeeklyPopularHosts() {
     fetchHosts();
   }, []);
 
+  function showToast(message = 'test') {
+    const toast = document.createElement('div');
+    toast.className =
+      'toast toast-top toast-end z-50 fixed top-4 right-4 transition-opacity duration-300';
+    toast.innerHTML = `
+      <div class="shadow-lg text-white alert alert-error">
+        <span>${message}</span>
+      </div>
+    `;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add('opacity-0');
+      setTimeout(() => toast.remove(), 500);
+    }, 2000);
+  }
+
   return (
     <div>
       {/* 타이틀 */}
@@ -47,7 +64,13 @@ function WeeklyPopularHosts() {
               <div
                 key={host.id}
                 className="flex flex-col flex-shrink-0 items-center"
-                onClick={() => navigate(`/host/${host.slug}`)}
+                onClick={() => {
+                  if (host.isContents === 'no') {
+                    showToast(`${host.name}의 콘텐츠가 아직 준비되지 않았습니다`);
+                    return;
+                  }
+                  navigate(`/host/${host.slug}`);
+                }}
               >
                 <div className="rounded-full w-40 h-40 overflow-hidden">
                   {host.image && (
