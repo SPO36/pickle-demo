@@ -18,7 +18,7 @@ export default function WeekplyPopularChannels() {
 
   useEffect(() => {
     async function fetchChannels() {
-      const { data, error } = await supabase.from('channels').select('*');
+      const { data, error } = await supabase.from('channels').select('*').eq('isShow', true);
       if (error) {
         console.error('❌ Error loading channels:', error.message);
         return;

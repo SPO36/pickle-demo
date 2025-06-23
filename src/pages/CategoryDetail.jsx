@@ -43,7 +43,7 @@ function CategoryDetail() {
   useEffect(() => {
     const fetchData = async () => {
       const [channelRes, categoryRes] = await Promise.all([
-        supabase.from('channels').select('*'),
+        supabase.from('channels').select('*').eq('isShow', true),
         supabase.from('categories').select('*'),
       ]);
 

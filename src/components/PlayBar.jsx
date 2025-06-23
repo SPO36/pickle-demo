@@ -19,8 +19,6 @@ export default function PlayerBar() {
     const x = clientX - rect.left;
     const percent = Math.min(Math.max(x / rect.width, 0), 1); // 0~1 범위 clamp
     audioRef.current.currentTime = percent * audioRef.current.duration;
-
-    // ⭐ 드래그 중 실시간 업데이트를 위해 추가
     setProgress(percent * 100);
   };
 
@@ -64,12 +62,26 @@ export default function PlayerBar() {
   };
 
   const fetchEpisodes = useCallback(async () => {
+    const episodeUuids = [
+      'e1de54ff-06ee-4d1f-955f-3156428903c5',
+      '0c2f846b-f099-4355-8d52-031ef7498a35',
+      '14e0cafe-df58-4966-a08b-9285efb0449c',
+      '352f56fa-dd92-4ed4-b731-7e2566da96e6',
+      '7ff78815-4b3c-4624-a988-3ff5042b2483',
+      '7eb70b36-0a46-4ff4-96e3-17907da8d5e3',
+      'a08d5c6b-81bd-4a65-b663-28b2fd3868b6',
+      '2a6bf1dd-1993-4afe-bc0f-70764884bbe7',
+      'c5717237-1c86-44ae-bb92-5ca9f71e73dd',
+      '1559e0d5-2f8b-4492-9ca4-22431e157549',
+      'aa3f7200-e006-4f63-86ac-e8ba856b2136',
+      'acfa6622-080f-44f1-91a9-89c37f136bd3',
+    ];
+
     const { data, error } = await supabase
       .from('episodes')
       .select('*')
-      .eq('creator', '이차저차')
-      .order('id', { ascending: false })
-      .limit(10);
+      .in('id', episodeUuids)
+      .order('id', { ascending: true }); // 또는 원하는 정렬
 
     if (error) {
       console.error('❌ 에피소드 불러오기 실패:', error.message);

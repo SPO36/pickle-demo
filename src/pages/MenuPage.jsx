@@ -15,7 +15,7 @@ const ZOOM_KEY = 'zoomLevel';
 
 function MenuPage() {
   const { t, i18n } = useTranslation();
-  const { showOEMOnly, setShowOEMOnly, oemToggles, setOemToggles } = useOEM();
+  const { oemToggles, setOemToggles } = useOEM();
   const [zoomLevel, setZoomLevel] = useState(1.4);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const toggleOEM = (brand) => {
@@ -86,7 +86,10 @@ function MenuPage() {
             <div>
               <h1 className="mb-2 font-semibold text-md">{t('menu.oem')}</h1>
 
-              {['Hyundai', 'RKM'].map((brand) => (
+              {[
+                // 'Hyundai',
+                'RKM',
+              ].map((brand) => (
                 <label
                   key={brand}
                   className="flex justify-between items-center bg-base-100 py-2 rounded-md"
