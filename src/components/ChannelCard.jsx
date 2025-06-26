@@ -12,7 +12,7 @@ function ChannelCard({ src, title, creator, liked, onToggleLike }) {
   function showToast(message = 'test') {
     const toast = document.createElement('div');
     toast.className =
-      'toast toast-top toast-end z-50 fixed top-4 right-4 transition-opacity duration-300';
+      'toast toast-top toast-center z-50 fixed top-4 transition-opacity duration-300';
     toast.innerHTML = `
       <div class="shadow-lg text-white alert alert-error">
         <span>${message}</span>
@@ -35,8 +35,9 @@ function ChannelCard({ src, title, creator, liked, onToggleLike }) {
               e.stopPropagation(); // 페이지 이동 막기
               onToggleLike();
             }}
-            className={`w-10 h-10 flex aspect-square items-center justify-center absolute bottom-2 right-2 rounded-full ${liked ? 'bg-base-200 text-rose-500' : 'bg-base-200'
-              }`}
+            className={`w-10 h-10 flex aspect-square items-center justify-center absolute bottom-2 right-2 rounded-full ${
+              liked ? 'bg-base-200 text-rose-500' : 'bg-base-200'
+            }`}
           >
             <Heart
               size={16}

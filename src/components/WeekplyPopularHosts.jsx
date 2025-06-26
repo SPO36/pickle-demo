@@ -24,7 +24,7 @@ function WeeklyPopularHosts() {
   function showToast(message = 'test') {
     const toast = document.createElement('div');
     toast.className =
-      'toast toast-top toast-end z-50 fixed top-4 right-4 transition-opacity duration-300';
+      'toast toast-top toast-center z-50 fixed top-4 transition-opacity duration-300';
     toast.innerHTML = `
       <div class="shadow-lg text-white alert alert-error">
         <span>${message}</span>
