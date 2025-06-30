@@ -1,4 +1,4 @@
-import { ArrowLeft, Heart, Menu, Search } from 'lucide-react';
+import { ArrowLeft, Heart, Menu, Mic, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -96,10 +96,8 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
   return (
     <div className="relative flex items-center px-4 py-2 w-full">
       {/* 왼쪽 아이콘 */}
-      <div className="z-10 flex-none">
-        <button className="btn btn-ghost btn-circle" onClick={resolvedLeftIcon.onClick}>
-          {resolvedLeftIcon.icon}
-        </button>
+      <div className="z-10 flex-none cursor-pointer">
+        <button onClick={resolvedLeftIcon.onClick}>{resolvedLeftIcon.icon}</button>
       </div>
 
       {/* 중앙 텍스트 (정중앙 고정) */}
@@ -114,29 +112,39 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
       {/* 홈일 경우 검색창 */}
       {isHome && (
         <div className="flex-1 mx-4">
-          <div className="relative mx-auto w-full max-w-xl">
-            <input
-              type="text"
-              placeholder={t('placeholders.search')}
-              className="pr-10 rounded-lg w-full input input-md"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  const keyword = e.target.value.trim();
-                  if (keyword) navigate(`/search?query=${encodeURIComponent(keyword)}`);
-                }
-              }}
-            />
-            <button
-              className="top-1/2 right-3 absolute text-gray-400 -translate-y-1/2"
-              onClick={() => {
-                const input = document.querySelector('input[type="text"]');
-                if (input?.value.trim()) {
-                  navigate(`/search?query=${encodeURIComponent(input.value.trim())}`);
-                }
-              }}
+          <div className="flex items-center gap-2 mx-auto w-full max-w-xl">
+            {/* 검색창 */}
+            <div className="relative flex-1">
+              <input
+                type="text"
+                placeholder={t('placeholders.search')}
+                className="pr-10 rounded-lg w-full input input-md"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    const keyword = e.target.value.trim();
+                    if (keyword) navigate(`/search?query=${encodeURIComponent(keyword)}`);
+                  }
+                }}
+              />
+              <button
+                className="top-1/2 right-3 absolute text-gray-400 -translate-y-1/2"
+                onClick={() => {
+                  const input = document.querySelector('input[type="text"]');
+                  if (input?.value.trim()) {
+                    navigate(`/search?query=${encodeURIComponent(input.value.trim())}`);
+                  }
+                }}
+              >
+                <Search size={18} />
+              </button>
+            </div>
+            {/* 마이크 또는 왼쪽 아이콘 */}
+            <div
+              onClick={() => navigate('/voiceSearch')}
+              className="disco-border-btn cursor-pointer btn btn-circle btn-ghost"
             >
-              <Search size={18} />
-            </button>
+              <Mic size={24} className="text-white" />
+            </div>
           </div>
         </div>
       )}

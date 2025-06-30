@@ -1,4 +1,3 @@
-import { Mic } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
@@ -38,14 +37,11 @@ function AppRoutes() {
                   <DynamicHeader
                     leftIcon={{
                       icon: (
-                        <div
-                          onClick={() => navigate('/voiceSearch')}
-                          className="disco-border-btn cursor-pointer btn btn-circle btn-ghost"
-                        >
-                          <Mic size={24} className="text-white" />
-                        </div>
+                        <h1 className="bg-[linear-gradient(320deg,_#6066F0,_#36caf3)] bg-clip-text mb-2 font-semibold text-transparent text-2xl">
+                          P!ckle
+                        </h1>
                       ),
-                      onClick: () => navigate('/voiceSearch'),
+                      onClick: () => navigate('/'),
                     }}
                   />
                 }

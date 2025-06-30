@@ -51,11 +51,11 @@ function WeeklySmartPick() {
         ) : (
           <>
             {t('sections.weekly_recommendations')}
-            <div className="tooltip-top font-normal tooltip" data-tip="P!CKLE이 선별한 추천 리스트">
+            {/* <div className="tooltip-top font-normal tooltip" data-tip="P!CKLE이 선별한 추천 리스트">
               <div className="flex justify-center items-center bg-primary rounded-full w-5 h-5 font-bold text-white text-xs cursor-pointer">
                 !
               </div>
-            </div>
+            </div> */}
           </>
         )}
       </div>
