@@ -4,22 +4,26 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
 function WeeklyPopularHosts() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [hosts, setHosts] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchHosts() {
+      const currentLang = i18n.language; // 현재 선택된 언어
+
       const { data, error } = await supabase
         .from('hosts')
         .select('*')
+        .eq('language', currentLang)
         .order('no', { ascending: true });
+
       if (error) console.error('❌ Error loading hosts:', error.message);
       setHosts(data.filter((host) => typeof host.no === 'number'));
     }
 
     fetchHosts();
-  }, []);
+  }, [i18n.language]);
 
   function showToast(message = 'test') {
     const toast = document.createElement('div');
