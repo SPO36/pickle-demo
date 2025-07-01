@@ -9,7 +9,7 @@ import { supabase } from '../lib/supabase';
 import CurationCard from './CurationCard';
 
 export default function TodayTheme() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [themes, setThemes] = useState([]);
   const [swiperInstance, setSwiperInstance] = useState(null);
   const [isBeginning, setIsBeginning] = useState(true);
@@ -17,10 +17,14 @@ export default function TodayTheme() {
 
   useEffect(() => {
     async function fetchThemes() {
+      const lang = i18n.language;
+
       const { data, error } = await supabase
         .from('themes')
         .select('*')
-        .eq('category', 'today_theme');
+        .eq('category', 'today_theme')
+        .eq('language', lang);
+
       if (error) {
         console.error('❌ Error loading themes:', error.message);
       } else {
@@ -29,7 +33,7 @@ export default function TodayTheme() {
     }
 
     fetchThemes();
-  }, []);
+  }, [i18n.language]);
 
   const handleSlideChange = (swiper) => {
     setIsBeginning(swiper.isBeginning);

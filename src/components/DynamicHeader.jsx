@@ -112,13 +112,13 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
       {/* 홈일 경우 검색창 */}
       {isHome && (
         <div className="flex-1 mx-4">
-          <div className="flex items-center gap-2 mx-auto w-full max-w-xl">
+          <div className="flex items-center gap-2 mx-auto w-full max-w-md">
             {/* 검색창 */}
             <div className="relative flex-1">
               <input
                 type="text"
                 placeholder={t('placeholders.search')}
-                className="pr-10 rounded-lg w-full input input-md"
+                className="pr-10 rounded-full w-full input input-md"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     const keyword = e.target.value.trim();
@@ -141,7 +141,7 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
             {/* 마이크 또는 왼쪽 아이콘 */}
             <div
               onClick={() => navigate('/voiceSearch')}
-              className="disco-border-btn cursor-pointer btn btn-circle btn-ghost"
+              className="disco-border-btn cursor-pointer btn-md btn btn-circle btn-ghost"
             >
               <Mic size={24} className="text-white" />
             </div>
