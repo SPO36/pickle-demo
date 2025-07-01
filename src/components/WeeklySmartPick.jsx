@@ -7,7 +7,7 @@ import CurationCard from './CurationCard';
 function WeeklySmartPick() {
   const { t, i18n } = useTranslation();
   const [themes, setThemes] = useState([]);
-  const { showOEMOnly, oemToggles } = useOEM();
+  const { oemToggles } = useOEM();
 
   useEffect(() => {
     async function fetchThemes() {
@@ -15,19 +15,44 @@ function WeeklySmartPick() {
         .filter(([_, enabled]) => enabled)
         .map(([brand]) => brand);
 
-      // 조건 조합:
-      // (brand IN selectedBrands OR brand IS NULL OR brand = '')
+      const lang = i18n.language;
+
+      console.log('Current language:', lang);
+      console.log('Selected brands:', selectedBrands);
+
+      // 🔍 en 언어의 모든 카테고리 확인
+      const { data: allEnData } = await supabase
+        .from('themes')
+        .select('category')
+        .eq('language', lang);
+
+      console.log('🔍 EN 언어의 모든 카테고리:', [
+        ...new Set(allEnData?.map((item) => item.category)),
+      ]);
+
+      // 🔍 smart_pick 대신 다른 카테고리로 테스트
+      const { data: testData2 } = await supabase
+        .from('themes')
+        .select('*')
+        .eq('language', lang)
+        .limit(5);
+
+      console.log('🔍 EN 언어 샘플 데이터:', testData2);
+
+      // 기존 코드는 그대로 유지
       const conditionParts = [];
       if (selectedBrands.length > 0) {
         conditionParts.push(`brand.in.(${selectedBrands.join(',')})`);
       }
       conditionParts.push('brand.is.null');
       conditionParts.push("brand.eq.''");
+      conditionParts.push('brand.eq.EMPTY');
 
       const query = supabase
         .from('themes')
         .select('*')
-        .eq('category', 'smart_pick')
+        .eq('category', 'smart_pick') // 이 부분이 문제일 수 있음
+        .eq('language', lang)
         .or(conditionParts.join(','));
 
       const { data, error } = await query;
@@ -39,9 +64,8 @@ function WeeklySmartPick() {
         setThemes(data);
       }
     }
-
     fetchThemes();
-  }, [oemToggles]);
+  }, [oemToggles, i18n.language]);
 
   return (
     <div className="w-full overflow-hidden">
