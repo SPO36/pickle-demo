@@ -51,7 +51,7 @@ function VoiceSearch() {
       />
       {/* 정중앙 콘텐츠 */}
       <div className="z-10 relative flex flex-col justify-center items-center gap-12 px-4 h-full text-center">
-        <p className="text-gray-500 text-2xl animate-pulse">듣는 중...</p>
+        <p className="text-gray-500 text-2xl animate-pulse">{t('placeholders.listening')}</p>
 
         <div className="relative w-32 h-32">
           <div className="absolute inset-2 bg-slate-400 opacity-30 rounded-full animate-ping" />
