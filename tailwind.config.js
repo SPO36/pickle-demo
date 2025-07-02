@@ -23,8 +23,13 @@ module.exports = {
           '0%': { transform: 'scale(1)', opacity: '1' },
           '75%, 100%': { transform: 'scale(2)', opacity: '0' },
         },
+        fadeZoomIn: {
+          '0%': { opacity: 0, transform: 'scale(0.8)' },
+          '100%': { opacity: 1, transform: 'scale(1)' },
+        },
       },
       animation: {
+        'logo-appear': 'fadeZoomIn 0.8s ease-out forwards',
         scroll: 'scroll 5s linear infinite',
         like: 'like 0.3s ease-in-out',
         micGrow: 'micGrow 1.2s ease-in-out infinite',
