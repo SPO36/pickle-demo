@@ -54,7 +54,7 @@ function WeeklyPopularHosts() {
       </div>
 
       {/* 호스트 리스트 or 스켈레톤 */}
-      <div className="flex gap-3 overflow-x-auto cursor-pointer scrollbar-hide">
+      <div className="flex gap-1 overflow-x-auto cursor-pointer scrollbar-hide">
         {hosts.length === 0
           ? Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="flex flex-col flex-shrink-0 items-center gap-2">
