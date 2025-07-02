@@ -9,7 +9,7 @@ import { supabase } from '../lib/supabase';
 import ChannelCard from './ChannelCard';
 
 export default function WeekplyPopularChannels() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [channels, setChannels] = useState([]);
   const [shuffledCards, setShuffledCards] = useState([]);
   const [swiperInstance, setSwiperInstance] = useState(null);
@@ -18,7 +18,15 @@ export default function WeekplyPopularChannels() {
 
   useEffect(() => {
     async function fetchChannels() {
-      const { data, error } = await supabase.from('channels').select('*').eq('isShow', true);
+      const lang = i18n.language;
+      const storageKey = `shuffledPopularChannels_${lang}`;
+
+      const { data, error } = await supabase
+        .from('channels')
+        .select('*')
+        .eq('isShow', true)
+        .eq('language', lang);
+
       if (error) {
         console.error('❌ Error loading channels:', error.message);
         return;
@@ -26,18 +34,18 @@ export default function WeekplyPopularChannels() {
 
       setChannels(data);
 
-      const saved = sessionStorage.getItem('shuffledPopularChannels');
+      const saved = sessionStorage.getItem(storageKey);
       if (saved) {
         setShuffledCards(JSON.parse(saved));
       } else {
         const shuffled = getRandomCards(data);
         setShuffledCards(shuffled);
-        sessionStorage.setItem('shuffledPopularChannels', JSON.stringify(shuffled));
+        sessionStorage.setItem(storageKey, JSON.stringify(shuffled));
       }
     }
 
     fetchChannels();
-  }, []);
+  }, [i18n.language]);
 
   const getRandomCards = (source) => {
     const shuffled = [...source].sort(() => Math.random() - 0.5);
@@ -61,9 +69,11 @@ export default function WeekplyPopularChannels() {
   };
 
   const handleRefresh = () => {
+    const lang = i18n.language;
+    const storageKey = `shuffledPopularChannels_${lang}`;
     const newShuffled = getRandomCards(channels);
     setShuffledCards(newShuffled);
-    sessionStorage.setItem('shuffledPopularChannels', JSON.stringify(newShuffled));
+    sessionStorage.setItem(storageKey, JSON.stringify(newShuffled));
   };
 
   const handleSlideChange = (swiper) => {

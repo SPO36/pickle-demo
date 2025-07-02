@@ -17,6 +17,11 @@ function TagDetail() {
   const [episodes, setEpisodes] = useState([]);
   const [sort, setSort] = useState('popular');
   const [fadeClass, setFadeClass] = useState('fade-enter');
+  const sortLabels = {
+    latest: t('label.latest'),
+    popular: t('label.popularity'),
+    az: t('label.alphabetical'),
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -152,9 +157,7 @@ function TagDetail() {
           role="button"
           className="flex items-center gap-2 bg-base-100 px-4 py-2 border-base-300 text-sm btn"
         >
-          {sort === 'latest' && '최신순'}
-          {sort === 'popular' && '인기순'}
-          {sort === 'az' && '가나다순'}
+          {sortLabels[sort]}
           <ChevronDown size={18} />
         </div>
         <ul
@@ -162,13 +165,13 @@ function TagDetail() {
           className="z-10 bg-base-100 shadow-sm p-2 rounded-box w-40 dropdown-content menu"
         >
           <li>
-            <a onClick={() => setSort('latest')}>최신순</a>
+            <a onClick={() => setSort('latest')}>{t('label.latest')}</a>
           </li>
           <li>
-            <a onClick={() => setSort('popular')}>인기순</a>
+            <a onClick={() => setSort('popular')}>{t('label.popularity')}</a>
           </li>
           <li>
-            <a onClick={() => setSort('az')}>가나다순</a>
+            <a onClick={() => setSort('az')}>{t('label.alphabetical')}</a>
           </li>
         </ul>
       </div>

@@ -7,7 +7,7 @@ exports.handler = async (event) => {
   const baseUrl = 'https://librivox.org/api/feed/audiobooks/?format=atom';
   const url = baseUrl + (title ? `&title=${encodeURIComponent(title)}` : '') + `&offset=${offset}`;
 
-  console.log('📡 요청 URL:', url);
+  // console.log('📡 요청 URL:', url);
 
   try {
     const response = await fetch(url, {

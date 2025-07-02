@@ -6,7 +6,7 @@ import ChannelCard from '../components/ChannelCard';
 import { supabase } from '../lib/supabase';
 
 function CategoryDetail() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { slug } = useParams();
   const [tab, setTab] = useState('all');
   const [channels, setChannels] = useState([]);
@@ -14,6 +14,11 @@ function CategoryDetail() {
   const [fadeClass, setFadeClass] = useState('fade-enter');
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
+  const sortLabels = {
+    latest: t('label.latest'),
+    popular: t('label.popularity'),
+    az: t('label.alphabetical'),
+  };
 
   // 슬러그 기반 탭 설정
   useEffect(() => {
@@ -39,11 +44,12 @@ function CategoryDetail() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Supabase 데이터 fetch
   useEffect(() => {
     const fetchData = async () => {
+      const lang = i18n.language;
+
       const [channelRes, categoryRes] = await Promise.all([
-        supabase.from('channels').select('*').eq('isShow', true),
+        supabase.from('channels').select('*').eq('isShow', true).eq('language', lang),
         supabase.from('categories').select('*'),
       ]);
 
@@ -56,12 +62,16 @@ function CategoryDetail() {
       if (categoryRes.error) {
         console.error('❌ 카테고리 로딩 실패:', categoryRes.error.message);
       } else {
-        setCategories(categoryRes.data || []);
+        const usedSlugs = new Set((channelRes.data || []).map((c) => c.category_slug));
+        const filteredCategories = (categoryRes.data || []).filter((cat) =>
+          usedSlugs.has(cat.slug)
+        );
+        setCategories(filteredCategories);
       }
     };
 
     fetchData();
-  }, []);
+  }, [i18n.language, slug]);
 
   // 좋아요 토글
   const toggleLike = async (channelId, current) => {
@@ -97,7 +107,7 @@ function CategoryDetail() {
           className={`tab text-lg py-3 h-auto min-h-0 ${tab === 'all' ? 'tab-active' : ''}`}
           onClick={() => setTab('all')}
         >
-          전체
+          All
         </button>
 
         {categories.map((cat) => (
@@ -118,7 +128,7 @@ function CategoryDetail() {
           role="button"
           className="flex items-center gap-2 bg-base-100 px-4 py-2 border-base-300 text-sm btn"
         >
-          {t(`${sort}`)}
+          {sortLabels[sort]}
           <ChevronDown size={18} />
         </div>
         <ul
