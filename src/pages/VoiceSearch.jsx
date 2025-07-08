@@ -1,10 +1,9 @@
 import Lottie from 'lottie-react';
-import { Mic } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { TypeAnimation } from 'react-type-animation';
-import animationData from '../assets/VoiceSearch_bg2.json';
+import animationData from '../assets/VoiceSearch_new.json';
 
 const HEADER_HEIGHT = 128;
 
@@ -14,10 +13,7 @@ function VoiceSearch() {
   const [containerHeight, setContainerHeight] = useState('100vh');
 
   useEffect(() => {
-    // history가 너무 짧으면 홈으로 이동
-    if (window.history.length <= 2) {
-      navigate('/');
-    }
+    if (window.history.length <= 2) navigate('/');
 
     const updateHeight = () => {
       const zoom = parseFloat(localStorage.getItem('zoomLevel')) || 1;
@@ -41,32 +37,32 @@ function VoiceSearch() {
   }, [navigate]);
 
   return (
-    <div className="relative w-full overflow-hidden" style={{ height: containerHeight }}>
-      {/* 배경 로티 애니메이션 */}
-      <Lottie
-        animationData={animationData}
-        loop
-        autoplay
-        className="top-0 left-0 z-0 absolute w-full h-full object-cover"
-      />
-      {/* 정중앙 콘텐츠 */}
-      <div className="z-10 relative flex flex-col justify-center items-center gap-12 px-4 h-full text-center">
-        <p className="text-gray-500 text-2xl animate-pulse">{t('placeholders.listening')}</p>
-
-        <div className="relative w-32 h-32">
-          <div className="absolute inset-2 bg-slate-400 opacity-30 rounded-full animate-ping" />
-          <div className="relative flex justify-center items-center bg-slate-600 rounded-full w-full h-full text-white">
-            <Mic size={40} className="animate-[micGrow_1.2s_ease-in-out_infinite]" />
-          </div>
+    <div
+      className="flex justify-center items-center px-4 w-full"
+      style={{ height: containerHeight }}
+    >
+      {/* 중앙 컨테이너 */}
+      <div className="relative flex flex-col w-full max-w-xl h-full min-h-[450px]">
+        {/* 로띠 영역 (가변 높이) */}
+        <div className="flex flex-grow justify-center items-center overflow-hidden">
+          <Lottie
+            animationData={animationData}
+            loop
+            autoplay
+            className="w-full max-w-80 h-auto object-contain"
+          />
         </div>
 
-        <TypeAnimation
-          sequence={[t('placeholders.search'), 2000]}
-          wrapper="p"
-          speed={250}
-          cursor={false}
-          className="font-bold text-2xl md:text-3xl"
-        />
+        {/* 텍스트 하단 고정 + 간격 확보 */}
+        <div className="pb-8 text-center">
+          <TypeAnimation
+            sequence={[t('placeholders.search'), 2000]}
+            wrapper="p"
+            speed={250}
+            cursor={false}
+            className="font-semibold text-2xl md:text-3xl"
+          />
+        </div>
       </div>
     </div>
   );

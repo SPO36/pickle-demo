@@ -37,9 +37,14 @@ function AppRoutes() {
                   <DynamicHeader
                     leftIcon={{
                       icon: (
-                        <h1 className="bg-[linear-gradient(320deg,_#6066F0,_#36caf3)] bg-clip-text mb-2 font-semibold text-transparent text-2xl">
-                          P!ckle
-                        </h1>
+                        // <h1 className="bg-[linear-gradient(320deg,_#6066F0,_#36caf3)] bg-clip-text mb-2 font-semibold text-transparent text-2xl">
+                        //   P!ckle
+                        // </h1>
+                        <img
+                          src="/logo_new_dark.png"
+                          alt="Pickle Logo"
+                          className="h-5 object-contain"
+                        />
                       ),
                       onClick: () => navigate('/'),
                     }}

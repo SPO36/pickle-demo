@@ -96,7 +96,7 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
   return (
     <div className="relative flex items-center px-4 py-2 w-full">
       {/* 왼쪽 아이콘 */}
-      <div className="z-10 flex-none cursor-pointer">
+      <div className="z-10 flex justify-center items-center h-full cursor-pointer">
         <button onClick={resolvedLeftIcon.onClick}>{resolvedLeftIcon.icon}</button>
       </div>
 
