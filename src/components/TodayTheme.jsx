@@ -23,7 +23,8 @@ export default function TodayTheme() {
         .from('themes')
         .select('*')
         .eq('category', 'today_theme')
-        .eq('language', lang);
+        .eq('language', lang)
+        .order('no', { ascending: true });
 
       if (error) {
         console.error('❌ Error loading themes:', error.message);

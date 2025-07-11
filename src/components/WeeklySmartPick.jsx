@@ -53,7 +53,8 @@ function WeeklySmartPick() {
         .select('*')
         .eq('category', 'smart_pick') // 이 부분이 문제일 수 있음
         .eq('language', lang)
-        .or(conditionParts.join(','));
+        .or(conditionParts.join(','))
+        .order('no', { ascending: true });
 
       const { data, error } = await query;
 
