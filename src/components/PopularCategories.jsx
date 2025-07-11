@@ -71,7 +71,7 @@ function PopularCategories() {
                   to={`/categories/${category.slug}`}
                   isCompact={true}
                   textColor="text-white"
-                  // aspectRatio="4/5"
+                  aspectRatio="4/5"
                 />
               </div>
             ))}
