@@ -44,7 +44,7 @@ function CurationCard({
             alt={title}
             className="z-0 absolute inset-0 rounded-[12px] w-full h-full object-cover"
           />
-          <div className="z-0 absolute inset-0 bg-black/5 backdrop-brightness-75 rounded-[12px]" />
+          {/* <div className="z-0 absolute inset-0 bg-black/5 backdrop-brightness-75 rounded-[12px]" /> */}
         </>
       )}
 
