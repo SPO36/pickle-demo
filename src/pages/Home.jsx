@@ -8,21 +8,11 @@ import WeeklyPopularHosts from '../components/WeekplyPopularHosts';
 import MenuPage from './MenuPage';
 
 function Home() {
-  // 세션 스토리지를 확인해서 스플래시를 보여줄지 결정
-  const [splashVisible, setSplashVisible] = useState(() => {
-    return !sessionStorage.getItem('splashShown');
-  });
-  const [contentVisible, setContentVisible] = useState(() => {
-    return sessionStorage.getItem('splashShown') === 'true';
-  });
+  const [splashVisible, setSplashVisible] = useState(true);
+  const [contentVisible, setContentVisible] = useState(false);
   const splashRef = useRef();
 
   useEffect(() => {
-    // 이미 스플래시를 본 경우 바로 리턴
-    if (sessionStorage.getItem('splashShown')) {
-      return;
-    }
-
     document.body.style.overflow = 'hidden';
 
     const t1 = setTimeout(() => {
@@ -36,8 +26,6 @@ function Home() {
       setSplashVisible(false);
       setContentVisible(true);
       document.body.style.overflow = '';
-      // 스플래시를 봤다는 것을 세션 스토리지에 저장
-      sessionStorage.setItem('splashShown', 'true');
     }, 1800);
 
     return () => {
