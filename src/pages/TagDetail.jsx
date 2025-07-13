@@ -123,7 +123,21 @@ function TagDetail() {
   }
 
   return (
-    <div className={fadeClass}>
+    <>
+    {slug === 'live' ? (
+      <div className="flex flex-col items-center justify-center w-full min-h-[50vh] bg-base-100 py-8">
+  <div className="w-full max-w-screen-lg">
+    <img
+      src="/TagDetail_UI.png"
+      alt="AI Curation"
+      className="w-full rounded-xl shadow-md"
+    />
+  </div>
+</div>
+
+    ) : (
+      <>
+      <div className={fadeClass}>
       {slug === 'hyundai-heritage' && (
         <div className="bg-base-200 mb-6 p-4 rounded-lg text-base-content leading-relaxed">
           <p className="text-md">
@@ -208,6 +222,8 @@ function TagDetail() {
         )}
       </div>
     </div>
+      </>
+    )}</>
   );
 }
 
