@@ -63,33 +63,20 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
   };
 
   const defaultRightIcons = [
-    // 하트 아이콘은 /likes가 아닐 때만 보여줌
-    ...(location.pathname !== '/likes'
-      ? [
-          {
-            icon: <Heart size={24} />,
-            onClick: () => navigate('/likes'),
-          },
-        ]
-      : []),
-    // 메인페이지 아니면 검색 아이콘 포함
-    ...(!isHome
-      ? [
-          {
-            icon: <Search size={24} />,
-            onClick: () => navigate('/search'),
-          },
-        ]
-      : []),
-    {
-      icon: (
-        <label htmlFor="menu-drawer" className="cursor-pointer btn btn-ghost btn-circle">
-          <Menu size={24} />
-        </label>
-      ),
-      onClick: null,
-    },
-  ];
+  {
+    icon: <Search size={24} />,
+    onClick: () => navigate('/search'),
+  },
+  {
+    icon: (
+      <label htmlFor="menu-drawer" className="cursor-pointer btn btn-ghost btn-circle">
+        <Menu size={24} />
+      </label>
+    ),
+    onClick: null,
+  },
+];
+
 
   const icons = [themeToggleIcon, ...(rightIcons ?? defaultRightIcons)];
 
@@ -109,45 +96,44 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
         </div>
       )}
 
-      {/* 홈일 경우 검색창 */}
-      {isHome && (
-        <div className="flex-1 mx-4">
-          <div className="flex items-center gap-2 mx-auto w-full max-w-md">
-            {/* 검색창 */}
-            <div className="relative flex-1">
-              <input
-                type="text"
-                placeholder={t('placeholders.search')}
-                className="pr-10 rounded-full w-full input input-md"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    const keyword = e.target.value.trim();
-                    if (keyword) navigate(`/search?query=${encodeURIComponent(keyword)}`);
-                  }
-                }}
-              />
-              <button
-                className="top-1/2 right-3 absolute text-gray-400 -translate-y-1/2"
-                onClick={() => {
-                  const input = document.querySelector('input[type="text"]');
-                  if (input?.value.trim()) {
-                    navigate(`/search?query=${encodeURIComponent(input.value.trim())}`);
-                  }
-                }}
-              >
-                <Search size={18} />
-              </button>
-            </div>
-            {/* 마이크 또는 왼쪽 아이콘 */}
-            <div
-              onClick={() => navigate('/voiceSearch')}
-              className="disco-border-btn cursor-pointer btn-md btn btn-circle btn-ghost"
-            >
-              <Mic size={24} className="text-white" />
-            </div>
-          </div>
-        </div>
-      )}
+{isHome && (
+  <div className="flex-1 mx-4 relative flex justify-center items-center">
+    {/* 마이크 버튼 (헤더 중앙) */}
+    <button
+      onClick={() => navigate('/voiceSearch')}
+      className="btn-md btn btn-circle flex items-center justify-center btn-ghost"
+    >
+      <img
+        src="/icn_voice_search.png"
+        alt="Voice Search"
+        className="w-10 h-10 object-contain"
+      />
+    </button>
+
+    {/* 항상 보이는 툴팁 (마이크 아래에 절대 배치) */}
+    <div className="absolute flex flex-col items-center"
+      style={{
+        top: '100%',
+        marginTop: '8px'
+      }}
+    >
+      <div className="w-3 h-1"
+        style={{
+          background: 'linear-gradient(45deg, #D77AF3 0%, #758CFF 100%)',
+          clipPath: 'polygon(50% 0%, 0 100%, 100% 100%)',
+          marginBottom: '-1px'
+        }}
+      />
+      <div className="px-4 py-2 rounded-full text-white text-md shadow-md font-medium"
+        style={{
+          background: 'linear-gradient(90deg, #D77AF3 0%, #758CFF 100%)'
+        }}
+      >
+        {t('placeholders.voice_search') || '음성 검색'}
+      </div>
+    </div>
+  </div>
+)}
 
       {/* 오른쪽 아이콘 */}
       <div className="z-10 flex flex-none gap-2 ml-auto">

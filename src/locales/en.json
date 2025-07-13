@@ -21,7 +21,8 @@
   },
   "placeholders": {
     "listening": "Listening...",
-    "search": "Find podcasts about economics"
+    "search": "Find podcasts about economics",
+    "voice_search": "Tap and Speak"
   },
   "menu": {
     "mypage": "My Page",

@@ -21,7 +21,8 @@
   },
   "placeholders": {
     "listening": "듣는 중...",
-    "search": "경제 관련 팟캐스트 찾아줘"
+    "search": "경제 관련 팟캐스트 찾아줘",
+    "voice_search": "저한테 말해보세요!"
   },
   "menu": {
     "mypage": "마이페이지",

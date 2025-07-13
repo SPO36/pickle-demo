@@ -11,6 +11,7 @@ function VoiceSearch() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [containerHeight, setContainerHeight] = useState('100vh');
+  const [isClicked, setIsClicked] = useState(false);
 
   useEffect(() => {
     if (window.history.length <= 2) navigate('/');
@@ -37,32 +38,36 @@ function VoiceSearch() {
   }, [navigate]);
 
   return (
-    <div
-      className="flex justify-center items-center px-4 w-full"
-      style={{ height: containerHeight }}
-    >
-      {/* 중앙 컨테이너 */}
-      <div className="relative flex flex-col w-full max-w-xl h-full min-h-[450px]">
-        {/* 로띠 영역 (가변 높이) */}
-        <div className="flex flex-grow justify-center items-center overflow-hidden">
-          <Lottie
-            animationData={animationData}
-            loop
-            autoplay
-            className="w-full max-w-80 h-auto object-contain"
+    <div className="flex justify-center items-center w-full h-full" style={{ height: containerHeight }}>
+      <div className="w-full max-w-screen-lg mx-auto px-4 flex justify-center items-center">
+        {isClicked ? (
+          <img
+            src="/voice_sample.png"
+            alt="Voice Sample"
+            className="w-full h-auto"
           />
-        </div>
-
-        {/* 텍스트 하단 고정 + 간격 확보 */}
-        <div className="pb-8 text-center">
-          <TypeAnimation
-            sequence={[t('placeholders.search'), 2000]}
-            wrapper="p"
-            speed={250}
-            cursor={false}
-            className="font-semibold text-2xl md:text-3xl"
-          />
-        </div>
+        ) : (
+          <div
+            className="flex flex-col justify-center items-center cursor-pointer"
+            onClick={() => setIsClicked(true)}
+          >
+            <Lottie
+              animationData={animationData}
+              loop
+              autoplay
+              className="w-full max-w-80 h-auto object-contain"
+            />
+            <div className="pt-8 text-center">
+              <TypeAnimation
+                sequence={[t('placeholders.search', '검색어를 말씀해보세요'), 2000]}
+                wrapper="p"
+                speed={250}
+                cursor={false}
+                className="font-semibold text-2xl md:text-3xl"
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

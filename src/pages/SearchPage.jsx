@@ -116,7 +116,7 @@ function SearchPage() {
       <div className="relative w-full">
         <input
           type="text"
-          placeholder={t('placeholders.sarch')}
+          placeholder={t('placeholders.search')}
           className="pr-12 rounded-lg w-full input input-lg"
           value={query}
           onChange={(e) => setQuery(e.target.value)}

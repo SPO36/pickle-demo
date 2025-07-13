@@ -10,6 +10,8 @@ import {
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOEM } from '../context/OEMContext';
+import { useNavigate } from 'react-router-dom';
+
 
 const ZOOM_KEY = 'zoomLevel';
 
@@ -18,6 +20,8 @@ function MenuPage() {
   const { oemToggles, setOemToggles } = useOEM();
   const [zoomLevel, setZoomLevel] = useState(1.4);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const navigate = useNavigate();
+
   const toggleOEM = (brand) => {
     setOemToggles((prev) => ({
       ...prev,
@@ -141,7 +145,7 @@ function MenuPage() {
                   <div>{t('menu.recent')}</div>
                 </td>
               </tr>
-              <tr className="hover:bg-base-300 cursor-pointer">
+              <tr className="hover:bg-base-300 cursor-pointer" onClick={() => navigate('/likes')}>
                 <td className="flex gap-3">
                   <Heart strokeWidth={1.5} size={24} />
                   <div>{t('menu.library')}</div>
