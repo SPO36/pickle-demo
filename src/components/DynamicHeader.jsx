@@ -1,4 +1,4 @@
-import { ArrowLeft, Heart, Menu, Mic, Search } from 'lucide-react';
+import { ArrowLeft, Menu, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -12,6 +12,7 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
   const isHome = location.pathname === '/';
 
   const [theme, setTheme] = useState(() => localStorage.getItem(THEME_KEY) || 'dark');
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const defaultLeftIcon = {
     icon: <ArrowLeft size={24} />,
@@ -31,6 +32,17 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
+
+  // 툴팁 자동 등장 효과
+  useEffect(() => {
+    if (isHome) {
+      const timer = setTimeout(() => {
+        setShowTooltip(true);
+      }, 2000); // 2초 후 등장
+
+      return () => clearTimeout(timer);
+    }
+  }, [isHome]);
 
   const themeToggleIcon = {
     icon: (
@@ -63,20 +75,19 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
   };
 
   const defaultRightIcons = [
-  {
-    icon: <Search size={24} />,
-    onClick: () => navigate('/search'),
-  },
-  {
-    icon: (
-      <label htmlFor="menu-drawer" className="cursor-pointer btn btn-ghost btn-circle">
-        <Menu size={24} />
-      </label>
-    ),
-    onClick: null,
-  },
-];
-
+    {
+      icon: <Search size={24} />,
+      onClick: () => navigate('/search'),
+    },
+    {
+      icon: (
+        <label htmlFor="menu-drawer" className="cursor-pointer btn btn-ghost btn-circle">
+          <Menu size={24} />
+        </label>
+      ),
+      onClick: null,
+    },
+  ];
 
   const icons = [themeToggleIcon, ...(rightIcons ?? defaultRightIcons)];
 
@@ -96,44 +107,49 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
         </div>
       )}
 
-{isHome && (
-  <div className="flex-1 mx-4 relative flex justify-center items-center">
-    {/* 마이크 버튼 (헤더 중앙) */}
-    <button
-      onClick={() => navigate('/voiceSearch')}
-      className="btn-md btn btn-circle flex items-center justify-center btn-ghost"
-    >
-      <img
-        src="/icn_voice_search.png"
-        alt="Voice Search"
-        className="w-10 h-10 object-contain"
-      />
-    </button>
+      {isHome && (
+        <div className="relative flex flex-1 justify-center items-center mx-4">
+          {/* 마이크 버튼 (헤더 중앙) */}
+          <button
+            onClick={() => navigate('/voiceSearch')}
+            className="flex justify-center items-center btn-md btn btn-circle btn-ghost"
+          >
+            <img
+              src="/icn_voice_search.png"
+              alt="Voice Search"
+              className="w-10 h-10 object-contain"
+            />
+          </button>
 
-    {/* 항상 보이는 툴팁 (마이크 아래에 절대 배치) */}
-    <div className="absolute flex flex-col items-center"
-      style={{
-        top: '100%',
-        marginTop: '8px'
-      }}
-    >
-      <div className="w-3 h-1"
-        style={{
-          background: 'linear-gradient(45deg, #D77AF3 0%, #758CFF 100%)',
-          clipPath: 'polygon(50% 0%, 0 100%, 100% 100%)',
-          marginBottom: '-1px'
-        }}
-      />
-      <div className="px-4 py-2 rounded-full text-white text-md shadow-md font-medium"
-        style={{
-          background: 'linear-gradient(90deg, #D77AF3 0%, #758CFF 100%)'
-        }}
-      >
-        {t('placeholders.voice_search') || '음성 검색'}
-      </div>
-    </div>
-  </div>
-)}
+          {/* 자연스럽게 등장하는 툴팁 */}
+          <div
+            className={`absolute flex flex-col items-center transition-all duration-500 ease-out ${
+              showTooltip ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
+            }`}
+            style={{
+              top: '100%',
+              marginTop: '8px',
+            }}
+          >
+            <div
+              className="w-3 h-1"
+              style={{
+                background: 'linear-gradient(45deg, #D77AF3 0%, #758CFF 100%)',
+                clipPath: 'polygon(50% 0%, 0 100%, 100% 100%)',
+                marginBottom: '-1px',
+              }}
+            />
+            <div
+              className="shadow-md px-4 py-2 rounded-full font-medium text-md text-white"
+              style={{
+                background: 'linear-gradient(90deg, #D77AF3 0%, #758CFF 100%)',
+              }}
+            >
+              {t('placeholders.voice_search') || '음성 검색'}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 오른쪽 아이콘 */}
       <div className="z-10 flex flex-none gap-2 ml-auto">
