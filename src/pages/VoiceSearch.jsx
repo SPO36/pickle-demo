@@ -47,7 +47,7 @@ function VoiceSearch() {
         {isClicked ? (
           <>
             {/* <img src="/voice_sample.png" alt="Voice Sample" className="w-full h-auto" /> */}
-            <div className="flex justify-center items-center space-x-16 h-full">
+            <div className="flex justify-center items-center space-x-16">
               <img src="/voice_sampleContents.png" alt="Voice Contents" className="w-5/12 h-auto" />
               <div className="space-y-8">
                 <img src="/sub_logo.png" alt="logo" className="w-[52px] h-[52px]" />
