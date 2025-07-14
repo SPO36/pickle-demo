@@ -5,14 +5,20 @@ import TodayTheme from '../components/TodayTheme';
 import WeeklySmartPick from '../components/WeeklySmartPick';
 import WeeklyPopularChannels from '../components/WeekplyPopularChannels';
 import WeeklyPopularHosts from '../components/WeekplyPopularHosts';
+import { useSplash } from '../context/SplashContext';
 import MenuPage from './MenuPage';
 
 function Home() {
-  const [splashVisible, setSplashVisible] = useState(true);
-  const [contentVisible, setContentVisible] = useState(false);
+  const { hasShownSplash, setHasShownSplash } = useSplash(); // 추가
+  const [splashVisible, setSplashVisible] = useState(!hasShownSplash);
+  const [contentVisible, setContentVisible] = useState(hasShownSplash);
   const splashRef = useRef();
 
   useEffect(() => {
+    if (hasShownSplash) {
+      return;
+    }
+
     document.body.style.overflow = 'hidden';
 
     const t1 = setTimeout(() => {
@@ -25,6 +31,7 @@ function Home() {
     const t2 = setTimeout(() => {
       setSplashVisible(false);
       setContentVisible(true);
+      setHasShownSplash(true);
       document.body.style.overflow = '';
     }, 1800);
 
@@ -33,7 +40,7 @@ function Home() {
       clearTimeout(t2);
       document.body.style.overflow = '';
     };
-  }, []);
+  }, [hasShownSplash, setHasShownSplash]);
 
   return (
     <>

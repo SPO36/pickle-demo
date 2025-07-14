@@ -63,25 +63,35 @@ export default function PlayerBar() {
 
   const fetchEpisodes = useCallback(async () => {
     const episodeUuids = [
-      'e1de54ff-06ee-4d1f-955f-3156428903c5',
-      '0c2f846b-f099-4355-8d52-031ef7498a35',
-      '14e0cafe-df58-4966-a08b-9285efb0449c',
-      '352f56fa-dd92-4ed4-b731-7e2566da96e6',
-      '7ff78815-4b3c-4624-a988-3ff5042b2483',
-      '7eb70b36-0a46-4ff4-96e3-17907da8d5e3',
-      'a08d5c6b-81bd-4a65-b663-28b2fd3868b6',
-      '2a6bf1dd-1993-4afe-bc0f-70764884bbe7',
-      'c5717237-1c86-44ae-bb92-5ca9f71e73dd',
-      '1559e0d5-2f8b-4492-9ca4-22431e157549',
-      'aa3f7200-e006-4f63-86ac-e8ba856b2136',
-      'acfa6622-080f-44f1-91a9-89c37f136bd3',
+      'c0de80e1-0820-4706-ab44-850ad556dd03',
+      '1c90d7da-acf7-4938-9c30-70d1be5acb71',
+      '916ce7cb-9c5a-4999-be27-f9afb185d074',
+      'b6b41ae1-f697-4fa7-bdd4-9a74f9bb77ae',
+      '5531f9aa-cd14-42b7-ae05-0aba30a4aadb',
+      'e3e6dd5d-221d-4802-8c60-722d4acdfcdb',
+      '62ba7649-941e-4c9d-9fc6-3f4cab492695',
+      '3f858e8e-36c5-44b7-951b-b7e5c6482b97',
+      '5531f9aa-cd14-42b7-ae05-0aba30a4aadb',
+      'bf8d8664-0b71-4d3e-b736-483ac6357290',
+      'd12aa5ee-00ec-4d8b-a7c8-2d3ab1f272fd',
+      // '023dd864-3eda-4b6c-b1a9-2aed13b1b7d1',
+      '961dd43f-8d79-4332-a49e-cad96be75db1',
+      '9d6236b7-74a4-495f-9810-dd4f91263eea',
+      '87ce66b4-1479-48f9-ae1b-7526c781e042',
+      '89547d4b-76c7-4258-a761-f4fda5a98176',
+      '5f9127f6-8863-4daa-a664-8572944d890d',
+      '6689a55f-a846-4202-a001-4813725c6ee7',
+      'b4a6dd50-2dd9-4cc7-b292-a4d0dfdc761c',
+      '654a4ed1-a984-4179-b316-94f4c4b4d169',
+      '67fe97c0-65b1-4916-adf5-a3e225cbae50',
+      'f172987d-6105-4522-a058-1678c2b509c5',
     ];
 
     const { data, error } = await supabase
       .from('episodes')
       .select('*')
       .in('id', episodeUuids)
-      .order('id', { ascending: true }); // 또는 원하는 정렬
+      .order('id', { ascending: true });
 
     if (error) {
       console.error('❌ 에피소드 불러오기 실패:', error.message);

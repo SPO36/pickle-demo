@@ -31,8 +31,8 @@ function PopularCategories() {
       if (error) {
         console.error('❌ Error loading categories:', error.message);
       } else {
-        setCategories(data); // 전체 목록은 정렬된 그대로 저장
-        setShuffledCards(data.slice(0, 6)); // 초기에 no순으로 상위 6개만 사용
+        setCategories(data);
+        setShuffledCards(data.slice(0, 6));
       }
     }
     fetchCategories();
@@ -40,7 +40,7 @@ function PopularCategories() {
 
   const handleShuffle = () => {
     const newShuffle = getRandomCards(categories);
-    setShuffledCards(newShuffle); // 이때만 무작위 섞기
+    setShuffledCards(newShuffle);
   };
 
   return (
@@ -53,17 +53,17 @@ function PopularCategories() {
         )}
       </div>
 
-      {/* <div className="gap-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"> */}
+      {/* 원본 크기 유지하면서 스크롤 */}
       <div className="flex gap-3 overflow-x-auto cursor-pointer scrollbar-hide">
         {shuffledCards.length === 0
           ? Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="flex-shrink-0 bg-base-300 rounded-xl w-[23%] min-w-[200px] h-44 animate-pulse"
+                className="flex-shrink-0 bg-base-300 rounded-xl w-40 aspect-[4/5] animate-pulse"
               />
             ))
           : shuffledCards.map((category, idx) => (
-              <div key={category.id || idx} className="flex-shrink-0 w-[23%] min-w-[200px]">
+              <div key={category.id || idx} className="flex-shrink-0">
                 <CurationCard
                   image={category.image}
                   subTitle="CATEGORY"
@@ -71,7 +71,7 @@ function PopularCategories() {
                   to={`/categories/${category.slug}`}
                   isCompact={true}
                   textColor="text-white"
-                  // aspectRatio="4/5"
+                  aspectRatio="natural" // 원본 비율 유지
                 />
               </div>
             ))}

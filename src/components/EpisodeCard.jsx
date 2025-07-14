@@ -39,7 +39,7 @@ function EpisodeCard({ title, creator, src, id, themeSlug, audioFile }) {
     <div className="cursor-pointer" onClick={handlePlayClick}>
       <div className="bg-base-100">
         <figure>
-          <img src={src} alt={creator} />
+          <img src={src} alt={creator} className="rounded-[12px] w-full h-auto object-cover" />
         </figure>
         <div className="gap-4 py-2">
           <h2 className="overflow-hidden font-semibold text-md line-clamp-2">{title}</h2>
