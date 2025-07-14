@@ -3,7 +3,7 @@
     "hot_people": "Hot Hosts",
     "weekly_recommendations": "This Week’s Smart Picks",
     "popular_channels": "Popular Channels This Week",
-    "drive_mood": "Drive MOOD",
+    "drive_mood": "Mood & Motion",
     "popular_categories": "Popular Categories"
   },
   "buttons": {
@@ -15,9 +15,9 @@
     "channel": "Channels"
   },
   "label": {
-    "popularity": "Popularity",
-    "latest": "Latest",
-    "alphabetical": "Alphabetical"
+    "popularity": "Most popular",
+    "latest": "Newest",
+    "alphabetical": "Title(A-Z)"
   },
   "placeholders": {
     "listening": "Listening...",

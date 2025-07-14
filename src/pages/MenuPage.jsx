@@ -1,17 +1,8 @@
-import {
-  AudioLines,
-  ChevronLeft,
-  CircleUserRound,
-  Heart,
-  LogOut,
-  Settings,
-  Star,
-} from 'lucide-react';
+import { ChevronLeft, CircleUserRound, Heart, LogOut, Settings, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useOEM } from '../context/OEMContext';
 import { useNavigate } from 'react-router-dom';
-
+import { useOEM } from '../context/OEMContext';
 
 const ZOOM_KEY = 'zoomLevel';
 
@@ -151,12 +142,12 @@ function MenuPage() {
                   <div>{t('menu.library')}</div>
                 </td>
               </tr>
-              <tr className="hover:bg-base-300 cursor-pointer">
+              {/* <tr className="hover:bg-base-300 cursor-pointer">
                 <td className="flex gap-3">
                   <AudioLines strokeWidth={1.5} size={24} />
                   <div>{t('menu.sound')}</div>
                 </td>
-              </tr>
+              </tr> */}
               <tr
                 className="hover:bg-base-300 cursor-pointer"
                 onClick={() => setIsSettingsOpen(true)}

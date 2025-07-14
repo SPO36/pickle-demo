@@ -1,4 +1,3 @@
-import { Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ChannelCard from '../components/ChannelCard';
@@ -113,7 +112,7 @@ function SearchPage() {
 
   return (
     <>
-      <div className="relative w-full">
+      {/* <div className="relative w-full">
         <input
           type="text"
           placeholder={t('placeholders.search')}
@@ -130,7 +129,7 @@ function SearchPage() {
         >
           <Search size={20} />
         </button>
-      </div>
+      </div> */}
 
       <div className="flex flex-col space-y-12">
         {/* 추천 태그 */}

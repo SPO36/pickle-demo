@@ -1,4 +1,5 @@
 import Lottie from 'lottie-react';
+import { Play } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -38,14 +39,32 @@ function VoiceSearch() {
   }, [navigate]);
 
   return (
-    <div className="flex justify-center items-center w-full h-full" style={{ height: containerHeight }}>
-      <div className="w-full max-w-screen-lg mx-auto px-4 flex justify-center items-center">
+    <div
+      className="flex justify-center items-center w-full h-full"
+      style={{ height: containerHeight }}
+    >
+      <div className="flex justify-center items-center mx-auto px-4 w-full max-w-screen-lg">
         {isClicked ? (
-          <img
-            src="/voice_sample.png"
-            alt="Voice Sample"
-            className="w-full h-auto"
-          />
+          <>
+            {/* <img src="/voice_sample.png" alt="Voice Sample" className="w-full h-auto" /> */}
+            <div className="flex justify-center items-center space-x-16 h-full">
+              <img src="/voice_sampleContents.png" alt="Voice Contents" className="w-5/12 h-auto" />
+              <div className="space-y-8">
+                <img src="/sub_logo.png" alt="logo" className="w-[52px] h-[52px]" />
+                <div className="font-normal text-3xl leading-10">
+                  마음이 불편하셨겠어요.
+                  <br />
+                  부부 간 갈등 상황에서 도움이 되는
+                  <br />
+                  대화법 콘텐츠를 준비했어요.
+                </div>
+                <button className="bg-gradient-to-r from-[#D77AF3] to-[#758CFF] px-6 py-6 rounded-full text-white btn">
+                  <Play size={18} stroke="white" strokeWidth={2.5} />
+                  <span className="ml-1 font-medium text-lg">재생하기</span>
+                </button>
+              </div>
+            </div>
+          </>
         ) : (
           <div
             className="flex flex-col justify-center items-center cursor-pointer"

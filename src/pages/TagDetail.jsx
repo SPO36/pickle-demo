@@ -125,7 +125,7 @@ function TagDetail() {
   return (
     <>
       {slug === 'live' ? (
-        <div className="flex flex-col justify-center items-center bg-base-100 py-8 w-full min-h-[50vh]">
+        <div className="flex flex-col justify-center items-center bg-base-100 w-full min-h-[50vh]">
           <div className="w-full max-w-screen-lg">
             <img src="/TagDetail_UI.png" alt="AI Curation" className="w-ful" />
           </div>
