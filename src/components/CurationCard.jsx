@@ -45,7 +45,7 @@ function CurationCard({
 
   const getImageClasses = () => {
     if (aspectRatio === 'natural') {
-      return 'z-0 block rounded-[12px] w-auto h-auto max-h-60 object-contain';
+      return 'z-0 block rounded-[12px] w-auto h-auto max-h-48 object-contain';
     }
 
     return 'z-0 absolute inset-0 rounded-[12px] w-full h-full object-cover';
