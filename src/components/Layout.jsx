@@ -8,7 +8,8 @@ function Layout({ headerContent, children }) {
 
       {/* 본문 내용 */}
       <div className="min-h-screen drawer-content">
-        <div className="mx-auto max-w-screen-xl">{headerContent}</div>
+        {/* 헤더를 sticky로 고정 */}
+        <div className="top-0 z-40 sticky bg-base-100 mx-auto max-w-screen-xl">{headerContent}</div>
         <main className="space-y-12 mx-auto px-6 py-6 max-w-screen-xl">{children}</main>
       </div>
 
