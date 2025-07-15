@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { TypeAnimation } from 'react-type-animation';
 import animationData from '../assets/VoiceSearch_new.json';
 
-// EpisodeCard 컴포넌트 (임시로 여기에 정의)
+// EpisodeCard 컴포넌트 (깜빡거림 해결)
 function EpisodeCard({ title, creator, src, id, themeSlug, audioFile, showCard = true }) {
   const navigate = useNavigate();
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -42,29 +42,18 @@ function EpisodeCard({ title, creator, src, id, themeSlug, audioFile, showCard =
     }, 2000);
   }
 
-  // 카드가 표시되지 않을 때는 스켈레톤만 표시
-  if (!showCard) {
-    return (
-      <div className="bg-base-100">
-        <figure className="relative">
-          <div className="flex justify-center items-center bg-base-100 rounded-[12px] w-full h-64 animate-pulse">
-            <div className="border-slate-300 border-b-2 rounded-full w-8 h-8 animate-spin"></div>
-          </div>
-        </figure>
-        <div className="gap-4 py-2">
-          <div className="bg-base-100 mb-2 rounded h-6 animate-pulse"></div>
-          <div className="bg-base-100 rounded w-3/4 h-4 animate-pulse"></div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="cursor-pointer" onClick={handlePlayClick}>
+    <div
+      className={`cursor-pointer transition-opacity duration-700 ${
+        showCard ? 'opacity-100' : 'opacity-0'
+      }`}
+      onClick={handlePlayClick}
+    >
       <div className="bg-base-100">
         <figure className="relative">
+          {/* 스켈레톤을 절대 위치로 배치하여 겹치지 않게 함 */}
           {!imageLoaded && (
-            <div className="flex justify-center items-center bg-base-300 rounded-[12px] w-full h-64 animate-pulse">
+            <div className="flex justify-center items-center bg-base-300 rounded-[12px] w-full h-64">
               <div className="bg-base-200 border-b-2 rounded-full w-8 h-8 animate-spin"></div>
             </div>
           )}
@@ -72,10 +61,9 @@ function EpisodeCard({ title, creator, src, id, themeSlug, audioFile, showCard =
             src={src}
             alt={creator}
             className={`rounded-[12px] w-full h-auto object-cover transition-opacity duration-500 ${
-              imageLoaded ? 'opacity-100' : 'opacity-0'
+              imageLoaded ? 'opacity-100' : 'opacity-0 absolute top-0 left-0'
             }`}
             onLoad={() => setImageLoaded(true)}
-            style={imageLoaded ? {} : { position: 'absolute', top: 0, left: 0 }}
           />
         </figure>
         <div className="gap-4 py-3">
@@ -97,6 +85,7 @@ function VoiceSearch() {
   const [showButton, setShowButton] = useState(false);
   const [showLogo, setShowLogo] = useState(false);
   const [showLeftImage, setShowLeftImage] = useState(false);
+  const [showSearchText, setShowSearchText] = useState(false);
 
   useEffect(() => {
     if (window.history.length <= 2) navigate('/');
@@ -115,16 +104,18 @@ function VoiceSearch() {
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
+    // 5초 후 검색 텍스트 표시
+    const timer = setTimeout(() => {
+      setShowSearchText(true);
+    }, 3000);
+
     return () => {
       window.removeEventListener('storage', updateHeight);
       window.removeEventListener('zoomChange', updateHeight);
       document.body.style.overflow = originalOverflow;
+      clearTimeout(timer);
     };
   }, [navigate]);
-
-  const handleImageLoad = (imageName) => {
-    // 로고 이미지 로딩만 처리
-  };
 
   const handleClick = () => {
     setIsClicked(true);
@@ -136,31 +127,6 @@ function VoiceSearch() {
     setTimeout(() => {
       setShowTypingAnimation(true);
     }, 800);
-  };
-
-  const ImageWithLoader = ({ src, alt, className, imageName }) => {
-    const [imageLoaded, setImageLoaded] = useState(false);
-
-    return (
-      <div className="inline-block relative">
-        {!imageLoaded && (
-          <div
-            className={`${className} bg-base-100 animate-pulse rounded-lg flex items-center justify-center`}
-          >
-            <div className="border-b-2 border-base-300 rounded-full w-8 h-8 animate-spin"></div>
-          </div>
-        )}
-        <img
-          src={src}
-          alt={alt}
-          className={`${className} transition-opacity duration-500 ${
-            imageLoaded ? 'opacity-100' : 'opacity-0'
-          }`}
-          onLoad={() => setImageLoaded(true)}
-          style={imageLoaded ? {} : { position: 'absolute', top: 0, left: 0 }}
-        />
-      </div>
-    );
   };
 
   // 메인 카드 데이터를 상수로 정의
@@ -213,15 +179,10 @@ function VoiceSearch() {
           <>
             <div className="flex justify-center items-center space-x-5 w-full">
               <div className="flex justify-center items-center w-1/2">
-                {!showLeftImage && (
-                  <div className="flex justify-center items-center bg-gray-700 rounded-lg w-96 h-80 animate-pulse">
-                    <div className="border-gray-500 border-b-2 rounded-full w-12 h-12 animate-spin"></div>
-                  </div>
-                )}
                 <div
                   className={`transition-all duration-700 ${
                     showLeftImage ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-                  } ${showLeftImage ? '' : 'absolute'}`}
+                  }`}
                 >
                   <div className="relative w-96 h-[500px]">
                     {/* 중앙 메인 카드 */}
@@ -286,23 +247,18 @@ function VoiceSearch() {
                     showLogo ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
                   }`}
                 >
-                  <ImageWithLoader
-                    src="/sub_logo.png"
-                    alt="logo"
-                    className="w-[52px] h-[52px]"
-                    imageName="logo"
-                  />
+                  <img src="/sub_logo.png" alt="logo" className="w-[52px] h-[52px]" />
                 </div>
                 <div className="min-h-[120px] font-normal text-3xl leading-10">
                   {showTypingAnimation ? (
                     <TypeAnimation
                       sequence={[
                         '',
-                        500,
+                        400,
                         '마음이 불편하셨겠어요.',
-                        1000,
+                        400,
                         '마음이 불편하셨겠어요.\n부부 간 갈등 상황에서 도움이 되는',
-                        1000,
+                        400,
                         '마음이 불편하셨겠어요.\n부부 간 갈등 상황에서 도움이 되는\n대화법 콘텐츠를 준비했어요.',
                         () => {
                           setShowButton(true);
@@ -329,7 +285,7 @@ function VoiceSearch() {
                   className={`bg-gradient-to-r from-[#D77AF3] to-[#758CFF] px-6 py-6 rounded-full text-white btn transition-all duration-500 ${
                     showButton ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
                   }`}
-                  onClick={handleMainCardPlay} // 이 부분이 추가됨
+                  onClick={handleMainCardPlay}
                 >
                   <Play size={18} stroke="white" strokeWidth={2.5} />
                   <span className="ml-1 font-medium text-lg">재생하기</span>
@@ -349,13 +305,24 @@ function VoiceSearch() {
               className="w-full max-w-80 h-auto object-contain"
             />
             <div className="pt-8 text-center">
-              <TypeAnimation
-                sequence={[t('placeholders.search', '검색어를 말씀해보세요'), 2000]}
-                wrapper="p"
-                speed={250}
-                cursor={false}
-                className="font-semibold text-2xl md:text-3xl"
-              />
+              {!showSearchText ? (
+                <p
+                  className="font-semibold text-2xl md:text-3xl animate-pulse"
+                  style={{
+                    animation: 'pulse 1.5s ease-in-out infinite',
+                  }}
+                >
+                  듣고 있어요
+                </p>
+              ) : (
+                <TypeAnimation
+                  sequence={[t('placeholders.search', '검색어를 말씀해보세요'), 2000]}
+                  wrapper="p"
+                  speed={250}
+                  cursor={false}
+                  className="font-semibold text-2xl md:text-3xl"
+                />
+              )}
             </div>
           </div>
         )}

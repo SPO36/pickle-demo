@@ -14,6 +14,18 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
   const [theme, setTheme] = useState(() => localStorage.getItem(THEME_KEY) || 'dark');
   const [showTooltip, setShowTooltip] = useState(false);
 
+  // 홈 페이지에서 사용할 로고 아이콘
+  const homeLogoIcon = {
+    icon: (
+      <img
+        src={theme === 'dark' ? '/logo_new_dark.png' : '/logo_new_light.png'}
+        alt="Pickle Logo"
+        className="h-5 object-contain"
+      />
+    ),
+    onClick: () => navigate('/'),
+  };
+
   const defaultLeftIcon = {
     icon: <ArrowLeft size={24} />,
     onClick: () => {
@@ -22,7 +34,9 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
       navigate('/');
     },
   };
-  const resolvedLeftIcon = leftIcon ?? defaultLeftIcon;
+
+  // 홈 페이지에서는 로고를, 다른 페이지에서는 기본 아이콘을 사용
+  const resolvedLeftIcon = isHome ? leftIcon ?? homeLogoIcon : leftIcon ?? defaultLeftIcon;
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';

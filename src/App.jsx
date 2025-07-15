@@ -29,29 +29,12 @@ function AppRoutes() {
       <ZoomProvider />
       <OEMProvider>
         <SplashProvider>
-          {' '}
-          {/* 추가 */}
           <Routes>
             {/* Home Route */}
             <Route
               path="/"
               element={
-                <Layout
-                  headerContent={
-                    <DynamicHeader
-                      leftIcon={{
-                        icon: (
-                          <img
-                            src="/logo_new_dark.png"
-                            alt="Pickle Logo"
-                            className="h-5 object-contain"
-                          />
-                        ),
-                        onClick: () => navigate('/'),
-                      }}
-                    />
-                  }
-                >
+                <Layout headerContent={<DynamicHeader />}>
                   <Home />
                 </Layout>
               }
@@ -139,10 +122,32 @@ function AppRoutes() {
               }
             />
           </Routes>
-        </SplashProvider>{' '}
-        {/* 추가 */}
+        </SplashProvider>
       </OEMProvider>
     </>
+  );
+}
+
+// 새로운 DynamicLogo 컴포넌트
+function DynamicLogo() {
+  const [theme, setTheme] = useState(() => localStorage.getItem('siteTheme') || 'dark');
+
+  // 테마 변경을 감지하기 위한 effect
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setTheme(localStorage.getItem('siteTheme') || 'dark');
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  return (
+    <img
+      src={theme === 'dark' ? '/logo_new_dark.png' : '/logo_new_light.png'}
+      alt="Pickle Logo"
+      className="h-5 object-contain"
+    />
   );
 }
 

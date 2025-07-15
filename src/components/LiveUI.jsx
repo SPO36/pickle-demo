@@ -1,7 +1,8 @@
 import Lottie from 'lottie-react';
 import { ChevronRight, Pause, Play } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
-import carMotionData from '../assets/car-motion_darkmode.json';
+import carMotionDataDark from '../assets/car-motion_darkmode.json';
+import carMotionDataLight from '../assets/car-motion_lightmode.json';
 import soundWaveData from '../assets/sound-wave_darkmode.json';
 
 const LiveUI = () => {
@@ -9,8 +10,43 @@ const LiveUI = () => {
   const [currentTime, setCurrentTime] = useState(840); // 14:00 in seconds
   const [totalTime, setTotalTime] = useState(960); // 16:00 in seconds
   const [isLiked, setIsLiked] = useState(false);
+  const [theme, setTheme] = useState(() => localStorage.getItem('siteTheme') || 'dark'); // 테마 상태 추가
   const audioRef = useRef(null);
   const soundWaveRef = useRef(null);
+
+  // 테마 변경 감지
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setTheme(localStorage.getItem('siteTheme') || 'dark');
+    };
+
+    // 초기 테마 설정
+    const currentTheme = localStorage.getItem('siteTheme') || 'dark';
+    setTheme(currentTheme);
+
+    // localStorage 변경 감지
+    window.addEventListener('storage', handleStorageChange);
+
+    // MutationObserver로 data-theme 속성 변경 감지
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+          const newTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+          setTheme(newTheme);
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      observer.disconnect();
+    };
+  }, []);
 
   // Initialize audio
   useEffect(() => {
@@ -108,11 +144,17 @@ const LiveUI = () => {
 
   const progressPercentage = (currentTime / totalTime) * 100;
 
+  // 테마에 따른 선 색상 결정
+  const lineColor = theme === 'dark' ? 'bg-white' : 'bg-gray-300';
+
+  // 테마에 따른 car motion 애니메이션 선택
+  const carMotionData = theme === 'dark' ? carMotionDataDark : carMotionDataLight;
+
   return (
     <div className="flex flex-col justify-center">
       <div>
         {/* 윗섹션 - 햄버거 및 시간 표시 */}
-        <div className="flex items-center mb-5 p-6">
+        <div className="flex items-center mb-3 p-6">
           <div className="w-2/5">
             <h2 className="mb-4 font-medium text-2xl leading-9">
               오후 2시 10분,
@@ -123,7 +165,7 @@ const LiveUI = () => {
             </h2>
           </div>
           <div className="flex items-start w-3/5">
-            <div className="flex flex-col">
+            <div className="flex flex-col w-full">
               <div className="flex items-center space-x-3">
                 <div className="flex justify-center items-center bg-slate-300 rounded-full w-14 h-14 overflow-hidden">
                   <img src="/live_ad.png" alt="Live Ad" className="w-full h-full object-cover" />
@@ -137,10 +179,11 @@ const LiveUI = () => {
                 </div>
               </div>
 
-              {/* car-motion 로티 애니메이션 */}
+              {/* car-motion 로티 애니메이션 - 테마에 따라 변경 */}
               <div className="flex justify-center">
                 <div className="w-28 h-auto">
                   <Lottie
+                    key={`car-motion-${theme}`} // 테마 변경시 강제 리렌더링
                     animationData={carMotionData}
                     loop={true}
                     autoplay={true}
@@ -148,38 +191,38 @@ const LiveUI = () => {
                   />
                 </div>
               </div>
-              {/* 선 패턴 */}
-              <div className="flex justify-center items-center gap-1 mt-1">
-                {/* 짧은 선, 긴선, 짧은선 (흰색) */}
-                <div className="bg-white rounded-full w-4 h-2"></div>
-                <div className="bg-white rounded-full w-20 h-2"></div>
-                <div className="bg-white rounded-full w-4 h-2"></div>
+              {/* 선 패턴 - 테마에 따라 색상 변경 */}
+              <div className="flex items-center mt-1 w-full">
+                {/* 왼쪽 영역 (1/5) */}
+                <div className="flex justify-center items-center gap-1 w-1/5">
+                  <div className={`${lineColor} rounded-full flex-1 h-2`}></div>
+                  <div className={`${lineColor} rounded-full flex-[5] h-2`}></div>
+                  <div className={`${lineColor} rounded-full flex-1 h-2`}></div>
+                </div>
 
-                {/* 제일긴선 (노란색) */}
-                <div className="bg-yellow-400 mx-1 rounded-full w-64 h-2"></div>
+                {/* 중앙 영역 (3/5) - 노란색 */}
+                <div className="px-2 w-3/5">
+                  <div className="bg-yellow-400 rounded-full w-full h-2"></div>
+                </div>
 
-                {/* 짧은 선, 긴선, 짧은선 (흰색) */}
-                <div className="bg-white rounded-full w-4 h-2"></div>
-                <div className="bg-white rounded-full w-20 h-2"></div>
-                <div className="bg-white rounded-full w-4 h-2"></div>
+                {/* 오른쪽 영역 (1/5) */}
+                <div className="flex justify-center items-center gap-1 w-1/5">
+                  <div className={`${lineColor} rounded-full flex-1 h-2`}></div>
+                  <div className={`${lineColor} rounded-full flex-[5] h-2`}></div>
+                  <div className={`${lineColor} rounded-full flex-1 h-2`}></div>
+                </div>
               </div>
               {/* 시간 표시 - 노란색 선 양 끝에만 */}
-              <div className="flex justify-center items-center mt-2">
-                {/* 왼쪽 빈 공간 (흰색 선들 크기와 맞춤) */}
-                <div className="w-4"></div> {/* w-4 + gap */}
-                <div className="w-20"></div>
-                <div className="w-4"></div>
-                <div className="w-1"></div> {/* mx-1의 절반 */}
-                {/* 노란색 선 영역의 시간 표시 */}
-                <div className="flex justify-between px-1 w-64">
+              <div className="flex items-center mt-2 w-full">
+                {/* 왼쪽 빈 공간 (1/5) */}
+                <div className="w-1/5"></div>
+                {/* 중앙 노란색 선 영역의 시간 표시 (3/5) */}
+                <div className="flex justify-between px-2 w-3/5">
                   <span className="font-light text-gray-500 text-xs">14:00</span>
                   <span className="font-light text-gray-500 text-xs">16:00</span>
                 </div>
-                {/* 오른쪽 빈 공간 */}
-                <div className="w-1"></div> {/* mx-1의 절반 */}
-                <div className="w-4"></div>
-                <div className="w-20"></div>
-                <div className="w-4"></div>
+                {/* 오른쪽 빈 공간 (1/5) */}
+                <div className="w-1/5"></div>
               </div>
             </div>
           </div>
