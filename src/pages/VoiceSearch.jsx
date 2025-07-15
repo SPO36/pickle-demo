@@ -230,9 +230,9 @@ function VoiceSearch() {
                         title="[명강연 컬렉션] 김지윤 소장이 말하는 '남이 되지 않는 부부 싸움의 기술' [Full영상]"
                         creator="MBN Entertainment"
                         src="https://img.youtube.com/vi/l4Xxh6OjC4s/maxresdefault.jpg"
-                        id="main"
+                        id="3963038b-bbf6-427b-ae74-7917e32ca589"
                         themeSlug="couple-communication"
-                        audioFile="audio1.mp3"
+                        audioFile="Live_audio.mp3"
                         showCard={showLeftImage}
                       />
                     </div>
@@ -251,9 +251,9 @@ function VoiceSearch() {
                         title="부부싸움!!! 쉽게 화해하는 방법!! : 연애상담"
                         creator="열쩡부부passion couple"
                         src="https://img.youtube.com/vi/QLkeyTu8yRU/maxresdefault.jpg"
-                        id="top"
-                        themeSlug="couple-dialogue"
-                        audioFile="audio2.mp3"
+                        id="3963038b-bbf6-427b-ae74-7917e32ca589"
+                        themeSlug="couple-communication"
+                        audioFile="Live_audio.mp3"
                         showCard={showLeftImage}
                       />
                     </div>
@@ -271,9 +271,9 @@ function VoiceSearch() {
                         title="부부갈등의 모든 것! 이혼, 별거, 성격차이, 경제력, 가정회복 [명법문만 모았다! 명중명💡 I 법륜스님]"
                         creator="깨달음을 얻는 BTN 명법문"
                         src="https://img.youtube.com/vi/bb7tT4Gxhss/maxresdefault.jpg"
-                        id="bottom"
-                        themeSlug="couple-counseling"
-                        audioFile="audio3.mp3"
+                        id="3963038b-bbf6-427b-ae74-7917e32ca589"
+                        themeSlug="couple-communication"
+                        audioFile="Live_audio.mp3"
                         showCard={showLeftImage}
                       />
                     </div>
