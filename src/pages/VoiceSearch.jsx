@@ -168,7 +168,7 @@ function VoiceSearch() {
     id: '3963038b-bbf6-427b-ae74-7917e32ca589',
     themeSlug: 'couple-communication',
     audioFile: 'audio1.mp3',
-    title: "[명강연 컬렉션] 김지윤 소장이 말하는 '남이 되지 않는 부부 싸움의 기술' [Full영상]",
+    title: "[명강연 컬렉션] 김지윤 소장이 말하는 '남이 되지 않는 부부 싸움의 기술'",
   };
 
   // showToast 함수 추가 (EpisodeCard에서 사용하는 것과 동일)
@@ -227,7 +227,7 @@ function VoiceSearch() {
                     {/* 중앙 메인 카드 */}
                     <div className="top-28 z-30 absolute inset-x-4 scale-100 transform">
                       <EpisodeCard
-                        title="[명강연 컬렉션] 김지윤 소장이 말하는 '남이 되지 않는 부부 싸움의 기술' [Full영상]"
+                        title="[명강연 컬렉션] 김지윤 소장이 말하는 '남이 되지 않는 부부 싸움의 기술'"
                         creator="MBN Entertainment"
                         src="https://img.youtube.com/vi/l4Xxh6OjC4s/maxresdefault.jpg"
                         id="3963038b-bbf6-427b-ae74-7917e32ca589"
