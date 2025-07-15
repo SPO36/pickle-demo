@@ -15,7 +15,7 @@ const LiveUI = () => {
   // Initialize audio
   useEffect(() => {
     // Create audio element
-    audioRef.current = new Audio('/audio/sample.mp3'); // MP3 파일 경로
+    audioRef.current = new Audio('https://pickle-demo.netlify.app/Live_tgend.mp3');
     audioRef.current.loop = true;
 
     // Auto-play when component mounts
