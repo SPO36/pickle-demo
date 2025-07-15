@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import animationData from '../assets/VoiceSearch_bg2.json';
 import ChannelCard from '../components/ChannelCard';
 import EpisodeCard from '../components/EpisodeCard';
+import LiveUI from '../components/LiveUI';
 import { supabase } from '../lib/supabase';
 
 function TagDetail() {
@@ -125,11 +126,7 @@ function TagDetail() {
   return (
     <>
       {slug === 'live' ? (
-        <div className="flex flex-col justify-center items-center bg-base-100 w-full min-h-[50vh]">
-          <div className="w-full">
-            <img src="/TagDetail_UI.png" alt="AI Curation" className="w-full object-cover" />
-          </div>
-        </div>
+        <LiveUI />
       ) : (
         <>
           <div className={fadeClass}>
