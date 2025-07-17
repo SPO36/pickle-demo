@@ -1,14 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function EpisodeCard({ title, creator, src, id, themeSlug, audioFile }) {
+function EpisodeCard({ title, creator, src, id, themeSlug, audioFile, folder }) {
   const navigate = useNavigate();
 
   const handlePlayClick = (e) => {
     if (!audioFile) {
       showToast(title + '의 오디오 파일이 존재하지 않습니다');
-      e.stopPropagation(); // 이제 정상 작동
-      return; // 아래로 내려가지 않게 조기 리턴
+      e.stopPropagation();
+      return;
     }
 
     if (themeSlug) {
@@ -38,8 +38,13 @@ function EpisodeCard({ title, creator, src, id, themeSlug, audioFile }) {
   return (
     <div className="cursor-pointer" onClick={handlePlayClick}>
       <div className="bg-base-100">
-        <figure>
+        <figure className="relative">
           <img src={src} alt={creator} className="rounded-[12px] w-full h-auto object-cover" />
+          {/* 좌측 상단 오버레이 */}
+          <div className="top-2 left-2 absolute bg-black bg-opacity-60 px-2 py-1 rounded max-w-[calc(100%-16px)] text-white text-xs">
+            <div className="font-medium truncate">{title}</div>
+            {folder && <div className="opacity-80 text-xs truncate">{folder}</div>}
+          </div>
         </figure>
         <div className="gap-4 py-2">
           <h2 className="overflow-hidden font-semibold text-md line-clamp-2">{title}</h2>
