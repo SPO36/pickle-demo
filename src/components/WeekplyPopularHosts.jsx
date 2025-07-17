@@ -10,7 +10,15 @@ function WeeklyPopularHosts() {
 
   useEffect(() => {
     async function fetchHosts() {
-      const currentLang = i18n.language; // 현재 선택된 언어
+      // i18n이 완전히 초기화되지 않았다면 기다림
+      if (!i18n.isInitialized) {
+        return;
+      }
+
+      // 명시적으로 영어를 기본값으로 설정
+      const currentLang = i18n.language === 'ko' ? 'ko' : 'en';
+
+      console.log('🌐 Current language for hosts:', currentLang); // 디버깅용
 
       const { data, error } = await supabase
         .from('hosts')
@@ -19,10 +27,18 @@ function WeeklyPopularHosts() {
         .order('no', { ascending: true });
 
       if (error) console.error('❌ Error loading hosts:', error.message);
-      setHosts(data.filter((host) => typeof host.no === 'number'));
+      setHosts(data ? data.filter((host) => typeof host.no === 'number') : []);
     }
 
     fetchHosts();
+  }, [i18n.language, i18n.isInitialized]);
+
+  // 언어 변경 시 즉시 반영되도록 추가 useEffect
+  useEffect(() => {
+    if (i18n.isInitialized && hosts.length > 0) {
+      // 언어가 변경되면 호스트 목록을 다시 로드
+      setHosts([]); // 먼저 비워서 로딩 상태 표시
+    }
   }, [i18n.language]);
 
   function showToast(message = 'test') {
