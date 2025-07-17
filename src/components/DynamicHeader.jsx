@@ -29,9 +29,8 @@ export default function DynamicHeader({ leftIcon, rightIcons, centerText }) {
   const defaultLeftIcon = {
     icon: <ArrowLeft size={24} />,
     onClick: () => {
-      // if (window.history.length > 2) navigate(-1);
-      // else
-      navigate('/');
+      if (window.history.length > 2) navigate(-1);
+      else navigate('/');
     },
   };
 

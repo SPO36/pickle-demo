@@ -27,6 +27,13 @@ function MenuPage() {
     document.documentElement.style.zoom = zoom;
   }, []);
 
+  // 기본 언어를 영어로 설정
+  useEffect(() => {
+    if (i18n.language !== 'en') {
+      i18n.changeLanguage('en');
+    }
+  }, [i18n]);
+
   const handleZoomChange = (e) => {
     const newZoom = parseFloat(e.target.value);
     setZoomLevel(newZoom);
@@ -72,8 +79,8 @@ function MenuPage() {
                 value={i18n.language}
                 onChange={(e) => i18n.changeLanguage(e.target.value)}
               >
-                <option value="ko">ko</option>
                 <option value="en">en</option>
+                <option value="ko">ko</option>
               </select>
             </div>
 
